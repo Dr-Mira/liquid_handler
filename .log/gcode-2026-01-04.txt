@@ -1,0 +1,4414 @@
+12-14-46, [SYSTEM] Auto-connecting to COM5...
+12-14-47, [HOST] Connected to COM5 @ 115200
+12-14-47, [INIT] Waiting for printer boot...
+12-14-49, [INIT] Sending Setup G-Code...
+12-14-49, [HOST] >> M107
+12-14-49, [HOST] >> M104 S0
+12-14-49, [HOST] >> M140 S0
+12-14-49, [HOST] >> G90
+12-14-49, [HOST] >> G21
+12-14-49, [HOST] >> M302 S0
+12-14-49, [HOST] >> M82
+12-14-49, [HOST] >> M906 E150
+12-14-49, [HOST] >> M84 E S3
+12-14-50, [INIT] Setup Complete.
+12-14-50, [HOST] Sequence Complete
+12-14-50, [PRINTER] FIRMWARE_NAME:Marlin V1.0.9_F401 (Nov 15 2024 16:32:26) SOURCE_CODE_URL:github.com/MarlinFirmware/Marlin PROTOCOL_VERSION:1.0 MACHINE_TYPE:Ender-3 V3 SE EXTRUDER_COUNT:1 UUID:cede2a2f-41a2-4748-9b12-c55c62f367ff
+12-14-50, [PRINTER] Cap:SERIAL_XON_XOFF:0
+12-14-50, [PRINTER] Cap:BINARY_FILE_TRANSFER:0
+12-14-50, [PRINTER] Cap:EEPROM:1
+12-14-50, [PRINTER] Cap:VOLUMETRIC:1
+12-14-50, [PRINTER] Cap:AUTOREPORT_POS:0
+12-14-50, [PRINTER] Cap:AUTOREPORT_TEMP:1
+12-14-50, [PRINTER] Cap:PROGRESS:0
+12-14-50, [PRINTER] Cap:PRINT_JOB:1
+12-14-50, [PRINTER] Cap:AUTOLEVEL:1
+12-14-50, [PRINTER] Cap:RUNOUT:0
+12-14-50, [PRINTER] Cap:Z_PROBE:1
+12-14-50, [PRINTER] Cap:LEVELING_DATA:1
+12-14-50, [PRINTER] Cap:BUILD_PERCENT:0
+12-14-50, [PRINTER] Cap:SOFTWARE_POWER:0
+12-14-50, [PRINTER] Cap:TOGGLE_LIGHTS:0
+12-14-50, [PRINTER] Cap:CASE_LIGHT_BRIGHTNESS:0
+12-14-50, [PRINTER] Cap:EMERGENCY_PARSER:1
+12-14-50, [PRINTER] Cap:HOST_ACTION_COMMANDS:0
+12-14-50, [PRINTER] Cap:PROMPT_SUPPORT:0
+12-14-50, [PRINTER] Cap:SDCARD:1
+12-14-50, [PRINTER] Cap:REPEAT:0
+12-14-50, [PRINTER] Cap:SD_WRITE:1
+12-14-50, [PRINTER] Cap:AUTOREPORT_SD_STATUS:0
+12-14-50, [PRINTER] Cap:LONG_FILENAME:1
+12-14-50, [PRINTER] Cap:THERMAL_PROTECTION:1
+12-14-50, [PRINTER] Cap:MOTION_MODES:0
+12-14-50, [PRINTER] Cap:ARCS:1
+12-14-50, [PRINTER] Cap:BABYSTEPPING:1
+12-14-50, [PRINTER] Cap:CHAMBER_TEMPERATURE:0
+12-14-50, [PRINTER] Cap:COOLER_TEMPERATURE:0
+12-14-50, [PRINTER] Cap:MEATPACK:0
+12-18-31, [CMD] [COMBINE] Starting sequence with 1 lines.
+12-18-31, [COMBINE] Processing Line 1: 1 wells -> A1
+12-18-31, [COMBINE] Line 1: Ejecting old tip...
+12-18-31, [HOST] >> G90
+12-18-31, [HOST] >> G0 Z195.00 F1500
+12-18-31, [HOST] >> G0 X109.20 Y109.90 F1500
+12-18-31, [HOST] >> G0 X187.90 Y185.30 F1500
+12-18-31, [HOST] >> G0 Z190.00 F1500
+12-18-31, [HOST] >> G0 Z160.20 F1500
+12-18-31, [HOST] >> G0 Y220.90 F250
+12-18-32, [HOST] >> G0 Z190.00 F250
+12-18-32, [HOST] >> G0 Z195.00 F1500
+12-18-33, [HOST] Sequence Complete
+12-18-33, [COMBINE] Line 1: Picking Tip A1...
+12-18-33, [HOST] >> G90
+12-18-33, [HOST] >> G0 Z195.00 F1500
+12-18-34, [HOST] >> G0 X177.10 Y144.10 F1500
+12-18-34, [HOST] >> G0 Z185.00 F1500
+12-18-39, [HOST] >> G0 Z95.00 F500
+12-18-40, [HOST] >> G0 Z185.00 F1500
+12-18-47, [HOST] Sequence Complete
+12-18-48, [HOST] >> G1 E-60.380 F1000
+12-18-54, [HOST] >> G90
+12-18-54, [HOST] >> G0 Z195.00 F1500
+12-18-55, [HOST] >> G0 X3.60 Y226.90 F1500
+12-19-02, [HOST] >> G0 Z110.00 F1500
+12-19-02, [HOST] >> G0 Z77.30 F1500
+12-19-06, [HOST] >> G1 E-301.900 F1000
+12-19-08, [HOST] >> G0 Z110.00 F1500
+12-19-26, [HOST] >> G90
+12-19-26, [HOST] >> G0 Z195.00 F1500
+12-19-45, [HOST] >> G0 X14.80 Y130.00 F1500
+12-19-46, [HOST] >> G0 Z195.00 F1500
+12-19-54, [HOST] >> G0 Z180.00 F1500
+12-19-54, [HOST] >> G1 E-30.190 F1000
+12-20-11, [HOST] >> G0 Z195.00 F1500
+12-20-17, [COMBINE] Line 1: Wash Cycle 1/1 (400.0uL)...
+12-20-18, [WASH] Ejecting dirty tip...
+12-20-18, [HOST] Sequence Complete
+12-20-18, [HOST] >> G90
+12-20-18, [HOST] >> G0 Z195.00 F1500
+12-20-32, [HOST] >> G0 X109.20 Y109.90 F1500
+12-20-32, [HOST] >> G0 X187.90 Y185.30 F1500
+12-20-39, [HOST] >> G0 Z190.00 F1500
+12-20-56, [HOST] >> G0 Z160.20 F1500
+12-21-00, [HOST] >> G0 Y220.90 F250
+12-21-03, [HOST] >> G0 Z190.00 F250
+12-21-19, [HOST] >> G0 Z195.00 F1500
+12-21-22, [HOST] Sequence Complete
+12-21-22, [WASH] Picking Tip A2...
+12-21-22, [HOST] >> G90
+12-21-22, [HOST] >> G0 Z195.00 F1500
+12-21-26, [HOST] >> G0 X187.20 Y144.10 F1500
+12-21-26, [HOST] >> G0 Z185.00 F1500
+12-21-30, [HOST] >> G0 Z95.00 F500
+12-21-31, [HOST] >> G0 Z185.00 F1500
+12-21-37, [HOST] Sequence Complete
+12-21-37, [HOST] >> G1 E-60.380 F1000
+12-21-46, [HOST] >> G90
+12-21-46, [HOST] >> G0 Z195.00 F1500
+12-21-53, [HOST] >> G0 X159.90 Y62.70 F1500
+12-21-54, [HOST] >> G0 Z195.00 F1500
+12-21-57, [HOST] >> G0 Z105.00 F1500
+12-21-57, [HOST] >> G1 E-181.140 F1000
+12-21-59, [HOST] >> G0 Z195.00 F1500
+12-22-19, [HOST] Sequence Complete
+12-22-19, [HOST] >> G90
+12-22-19, [HOST] >> G0 Z195.00 F1500
+12-22-36, [HOST] >> G0 X0.00 Y0.00 F1500
+12-22-36, [HOST] >> G0 Z132.80 F1500
+12-22-38, [HOST] >> G0 Z132.80 F1500
+12-22-40, [HOST] >> G1 E-30.190 F1000
+12-22-40, [HOST] >> G0 Z132.80 F1500
+12-22-43, [HOST] Sequence Complete
+12-22-43, [WASH] Transferring mixed wash liquid to destination...
+12-22-43, [HOST] >> G1 E-60.380 F1000
+12-22-43, [HOST] >> G0 Z132.80 F1500
+12-23-01, [HOST] >> G0 X0.00 Y0.00 F1500
+12-23-01, [HOST] >> G0 Z132.80 F1500
+12-23-01, [HOST] >> G1 E-211.330 F1000
+12-23-02, [HOST] >> G0 Z132.80 F1500
+12-23-08, [HOST] Sequence Complete
+12-23-08, [HOST] >> G0 Z195.00 F1500
+12-23-08, [HOST] >> G0 X0.00 Y0.00 F1500
+12-23-27, [HOST] >> G0 Z132.80 F1500
+12-23-27, [HOST] Sequence Complete
+12-23-27, [HOST] >> G0 Z132.80 F1500
+12-23-32, [HOST] Serial read error: GetOverlappedResult failed (PermissionError(13, 'Access is denied.', None, 5))
+12-24-27, [HOST] Error: Timeout waiting for 'ok' on: G0 Z132.80 F1500
+12-24-27, [HOST] Stopping sequence to prevent crash.
+12-24-27, [HOST] Sequence Complete
+12-24-27, [WASH] Cycle complete. Ejecting wash tip...
+12-24-27, [COMBINE] Line 1 Complete. Ejecting...
+12-24-27, [CMD] [COMBINE] Sequence Finished. Parking.
+12-24-27, [SYSTEM] Parking Head...
+12-24-27, [CMD] Park Head (Center + Lower)
+12-24-27, [HOST] >> G90
+12-24-27, [HOST] Send error: WriteFile failed (PermissionError(13, 'Access is denied.', None, 5))
+12-24-27, [HOST] Sequence Complete
+12-24-27, [HOST] >> G90
+12-24-27, [HOST] Send error: WriteFile failed (PermissionError(13, 'Access is denied.', None, 5))
+12-24-27, [HOST] Sequence Complete
+12-24-27, [HOST] >> G90
+12-24-27, [HOST] Send error: WriteFile failed (PermissionError(13, 'Access is denied.', None, 5))
+12-24-27, [HOST] Sequence Complete
+12-24-27, [HOST] >> M400
+12-24-28, [HOST] Send error: WriteFile failed (PermissionError(13, 'Access is denied.', None, 5))
+12-24-28, [HOST] Sequence Complete
+12-24-40, [HOST] Disconnected
+12:38:18, [HOST] Connected to COM5 @ 115200
+12:38:18, [INIT] Waiting for printer boot...
+12:38:20, [INIT] Sending Setup G-Code...
+12:38:20, [HOST] >> M107
+12:38:20, [HOST] >> M104 S0
+12:38:20, [HOST] >> M140 S0
+12:38:20, [HOST] >> G90
+12:38:21, [HOST] >> G21
+12:38:21, [HOST] >> M302 S0
+12:38:21, [HOST] >> M82
+12:38:21, [HOST] >> M906 E150
+12:38:21, [HOST] >> M84 E S3
+12:38:21, [HOST] Sequence Complete
+12:38:21, [INIT] Setup Complete.
+12:38:21, [PRINTER] FIRMWARE_NAME:Marlin V1.0.9_F401 (Nov 15 2024 16:32:26) SOURCE_CODE_URL:github.com/MarlinFirmware/Marlin PROTOCOL_VERSION:1.0 MACHINE_TYPE:Ender-3 V3 SE EXTRUDER_COUNT:1 UUID:cede2a2f-41a2-4748-9b12-c55c62f367ff
+12:38:21, [PRINTER] Cap:SERIAL_XON_XOFF:0
+12:38:21, [PRINTER] Cap:BINARY_FILE_TRANSFER:0
+12:38:21, [PRINTER] Cap:EEPROM:1
+12:38:21, [PRINTER] Cap:VOLUMETRIC:1
+12:38:21, [PRINTER] Cap:AUTOREPORT_POS:0
+12:38:21, [PRINTER] Cap:AUTOREPORT_TEMP:1
+12:38:21, [PRINTER] Cap:PROGRESS:0
+12:38:21, [PRINTER] Cap:PRINT_JOB:1
+12:38:21, [PRINTER] Cap:AUTOLEVEL:1
+12:38:21, [PRINTER] Cap:RUNOUT:0
+12:38:21, [PRINTER] Cap:Z_PROBE:1
+12:38:21, [PRINTER] Cap:LEVELING_DATA:1
+12:38:21, [PRINTER] Cap:BUILD_PERCENT:0
+12:38:21, [PRINTER] Cap:SOFTWARE_POWER:0
+12:38:21, [PRINTER] Cap:TOGGLE_LIGHTS:0
+12:38:21, [PRINTER] Cap:CASE_LIGHT_BRIGHTNESS:0
+12:38:21, [PRINTER] Cap:EMERGENCY_PARSER:1
+12:38:21, [PRINTER] Cap:HOST_ACTION_COMMANDS:0
+12:38:21, [PRINTER] Cap:PROMPT_SUPPORT:0
+12:38:21, [PRINTER] Cap:SDCARD:1
+12:38:21, [PRINTER] Cap:REPEAT:0
+12:38:21, [PRINTER] Cap:SD_WRITE:1
+12:38:21, [PRINTER] Cap:AUTOREPORT_SD_STATUS:0
+12:38:21, [PRINTER] Cap:LONG_FILENAME:1
+12:38:21, [PRINTER] Cap:THERMAL_PROTECTION:1
+12:38:21, [PRINTER] Cap:MOTION_MODES:0
+12:38:21, [PRINTER] Cap:ARCS:1
+12:38:21, [PRINTER] Cap:BABYSTEPPING:1
+12:38:21, [PRINTER] Cap:CHAMBER_TEMPERATURE:0
+12:38:21, [PRINTER] Cap:COOLER_TEMPERATURE:0
+12:38:21, [PRINTER] Cap:MEATPACK:0
+12:38:24, [SYSTEM] Calibration: 600.0uL -> 200.0uL
+12:38:24, [CMD] Calibrate Pipette: 600.0 -> 200.0uL
+12:38:24, [HOST] >> G92 E-181.140
+12:38:24, [HOST] >> G1 E-60.380 F1000
+12:38:24, [HOST] >> M107
+12:38:24, [HOST] >> M104 S0
+12:38:24, [HOST] >> M140 S0
+12:38:24, [HOST] >> G90
+12:38:25, [HOST] >> G21
+12:38:25, [HOST] >> M302 S0
+12:38:25, [HOST] >> M82
+12:38:25, [HOST] >> M906 E150
+12:38:25, [HOST] >> M84 E S3
+12:38:25, [HOST] Sequence Complete
+12:38:25, [HOST] >> M400
+12:38:31, [HOST] Sequence Complete
+12:38:34, [MANUAL] Homing ALL...
+12:38:34, [HOST] >> G28
+12:38:37, [HOST] Serial read error: GetOverlappedResult failed (PermissionError(13, 'Access is denied.', None, 5))
+12:38:44, [HOST] Disconnected
+12:38:49, [HOST] Connected to COM5 @ 115200
+12:38:49, [INIT] Waiting for printer boot...
+12:38:51, [INIT] Sending Setup G-Code...
+12:38:51, [HOST] >> M107
+12:38:51, [HOST] >> M18 E
+12:38:51, [HOST] >> M104 S0
+12:38:51, [HOST] >> G0 Z185.00
+12:38:51, [HOST] >> M140 S0
+12:38:51, [HOST] Sequence Complete
+12:38:51, [HOST] >> M400
+12:38:51, [HOST] >> G90
+12:38:51, [MANUAL] Homing ALL...
+12:38:51, [HOST] >> G28
+12:38:56, [HOST] Disconnected
+12:39:17, [SYSTEM] Auto-connecting to COM5...
+12:39:18, [HOST] Connected to COM5 @ 115200
+12:39:18, [INIT] Waiting for printer boot...
+12:39:20, [INIT] Sending Setup G-Code...
+12:39:20, [HOST] >> M107
+12:39:20, [HOST] >> M104 S0
+12:39:21, [HOST] >> M140 S0
+12:39:21, [HOST] >> G90
+12:39:21, [HOST] >> G21
+12:39:21, [HOST] >> M302 S0
+12:39:21, [HOST] >> M82
+12:39:21, [HOST] >> M906 E150
+12:39:21, [HOST] >> M84 E S3
+12:39:21, [INIT] Setup Complete.
+12:39:21, [HOST] Sequence Complete
+12:39:21, [PRINTER] FIRMWARE_NAME:Marlin V1.0.9_F401 (Nov 15 2024 16:32:26) SOURCE_CODE_URL:github.com/MarlinFirmware/Marlin PROTOCOL_VERSION:1.0 MACHINE_TYPE:Ender-3 V3 SE EXTRUDER_COUNT:1 UUID:cede2a2f-41a2-4748-9b12-c55c62f367ff
+12:39:21, [PRINTER] Cap:SERIAL_XON_XOFF:0
+12:39:21, [PRINTER] Cap:BINARY_FILE_TRANSFER:0
+12:39:21, [PRINTER] Cap:EEPROM:1
+12:39:21, [PRINTER] Cap:VOLUMETRIC:1
+12:39:21, [PRINTER] Cap:AUTOREPORT_POS:0
+12:39:21, [PRINTER] Cap:AUTOREPORT_TEMP:1
+12:39:21, [PRINTER] Cap:PROGRESS:0
+12:39:21, [PRINTER] Cap:PRINT_JOB:1
+12:39:21, [PRINTER] Cap:AUTOLEVEL:1
+12:39:21, [PRINTER] Cap:RUNOUT:0
+12:39:21, [PRINTER] Cap:Z_PROBE:1
+12:39:21, [PRINTER] Cap:LEVELING_DATA:1
+12:39:21, [PRINTER] Cap:BUILD_PERCENT:0
+12:39:21, [PRINTER] Cap:SOFTWARE_POWER:0
+12:39:21, [PRINTER] Cap:TOGGLE_LIGHTS:0
+12:39:21, [PRINTER] Cap:CASE_LIGHT_BRIGHTNESS:0
+12:39:21, [PRINTER] Cap:EMERGENCY_PARSER:1
+12:39:21, [PRINTER] Cap:HOST_ACTION_COMMANDS:0
+12:39:21, [PRINTER] Cap:PROMPT_SUPPORT:0
+12:39:21, [PRINTER] Cap:SDCARD:1
+12:39:21, [PRINTER] Cap:REPEAT:0
+12:39:21, [PRINTER] Cap:SD_WRITE:1
+12:39:21, [PRINTER] Cap:AUTOREPORT_SD_STATUS:0
+12:39:21, [PRINTER] Cap:LONG_FILENAME:1
+12:39:21, [PRINTER] Cap:THERMAL_PROTECTION:1
+12:39:21, [PRINTER] Cap:MOTION_MODES:0
+12:39:21, [PRINTER] Cap:ARCS:1
+12:39:21, [PRINTER] Cap:BABYSTEPPING:1
+12:39:21, [PRINTER] Cap:CHAMBER_TEMPERATURE:0
+12:39:21, [PRINTER] Cap:COOLER_TEMPERATURE:0
+12:39:21, [PRINTER] Cap:MEATPACK:0
+12:39:22, [SYSTEM] Calibration: 200.0uL -> 200.0uL
+12:39:22, [CMD] Calibrate Pipette: 200.0 -> 200.0uL
+12:39:22, [HOST] >> G92 E-60.380
+12:39:22, [HOST] >> G1 E-60.380 F1000
+12:39:22, [HOST] >> M107
+12:39:22, [HOST] >> M104 S0
+12:39:22, [HOST] >> M140 S0
+12:39:23, [HOST] >> G90
+12:39:23, [HOST] >> G21
+12:39:23, [HOST] >> M302 S0
+12:39:23, [HOST] >> M82
+12:39:23, [HOST] >> M906 E150
+12:39:23, [HOST] >> M84 E S3
+12:39:23, [HOST] Sequence Complete
+12:39:23, [HOST] >> M400
+12:39:23, [HOST] Sequence Complete
+12:39:24, [MANUAL] Homing ALL...
+12:39:24, [HOST] >> G28
+12:40:22, [PRINTER] echo:Bed Leveling ON
+12:40:22, [PRINTER] echo:Fade Height 10.00
+12:40:22, [HOST] >> M18 E
+12:40:22, [HOST] >> G0 Z185.00
+12:40:22, [HOST] Sequence Complete
+12:40:22, [HOST] >> M400
+12:40:58, [HOST] Sequence Complete
+12:44:27, [CMD] [COMBINE] Starting sequence with 1 lines.
+12:44:27, [COMBINE] Processing Line 1: 1 wells -> A1
+12:44:27, [COMBINE] Line 1: Ejecting old tip...
+12:44:27, [HOST] >> G90
+12:44:27, [HOST] >> G0 Z195.00 F1500
+12:44:27, [HOST] >> G0 X109.20 Y109.90 F1500
+12:44:27, [HOST] >> G0 X187.90 Y185.30 F1500
+12:44:27, [HOST] >> G0 Z190.00 F1500
+12:44:27, [HOST] >> G0 Z160.20 F1500
+12:44:27, [HOST] >> G0 Y220.90 F250
+12:44:27, [HOST] >> G0 Z190.00 F250
+12:44:28, [HOST] >> G0 Z195.00 F1500
+12:44:29, [COMBINE] Line 1: Picking Tip A1...
+12:44:29, [HOST] Sequence Complete
+12:44:29, [HOST] >> G90
+12:44:29, [HOST] >> G0 Z195.00 F1500
+12:44:30, [HOST] >> G0 X177.10 Y144.10 F1500
+12:44:30, [HOST] >> G0 Z185.00 F1500
+12:44:35, [HOST] >> G0 Z95.00 F500
+12:44:36, [HOST] >> G0 Z185.00 F1500
+12:44:42, [HOST] Sequence Complete
+12:44:42, [HOST] >> G1 E-60.380 F1000
+12:44:50, [HOST] >> G90
+12:44:50, [HOST] >> G0 Z195.00 F1500
+12:44:50, [HOST] >> G0 X3.60 Y226.90 F1500
+12:44:57, [HOST] >> G0 Z110.00 F1500
+12:44:58, [HOST] >> G0 Z77.30 F1500
+12:45:01, [HOST] >> G1 E-181.140 F1000
+12:45:04, [HOST] >> G0 Z110.00 F1500
+12:45:22, [HOST] >> G90
+12:45:22, [HOST] >> G0 Z195.00 F1500
+12:45:40, [HOST] >> G0 X14.80 Y130.00 F1500
+12:45:42, [HOST] >> G0 Z195.00 F1500
+12:45:50, [HOST] >> G0 Z180.00 F1500
+12:45:50, [HOST] >> G1 E-30.190 F1000
+12:46:07, [HOST] >> G0 Z195.00 F1500
+12:46:13, [HOST] Sequence Complete
+12:46:13, [COMBINE] Line 1: Wash Cycle 1/1 (400.0uL)...
+12:46:13, [WASH] Ejecting dirty tip...
+12:46:14, [HOST] >> G90
+12:46:14, [HOST] >> G0 Z195.00 F1500
+12:46:21, [HOST] >> G0 X109.20 Y109.90 F1500
+12:46:21, [HOST] >> G0 X187.90 Y185.30 F1500
+12:46:27, [HOST] >> G0 Z190.00 F1500
+12:46:44, [HOST] >> G0 Z160.20 F1500
+12:46:48, [HOST] >> G0 Y220.90 F250
+12:46:51, [HOST] >> G0 Z190.00 F250
+12:47:00, [HOST] >> G0 Z195.00 F1500
+12:47:03, [WASH] Picking Tip A2...
+12:47:03, [HOST] Sequence Complete
+12:47:03, [HOST] >> G90
+12:47:04, [HOST] >> G0 Z195.00 F1500
+12:47:07, [HOST] >> G0 X187.20 Y144.10 F1500
+12:47:07, [HOST] >> G0 Z185.00 F1500
+12:47:12, [HOST] >> G0 Z95.00 F500
+12:47:13, [HOST] >> G0 Z185.00 F1500
+12:47:19, [HOST] Sequence Complete
+12:47:19, [HOST] >> G1 E-60.380 F1000
+12:47:27, [HOST] >> G90
+12:47:27, [HOST] >> G0 Z195.00 F1500
+12:47:35, [HOST] >> G0 X159.90 Y62.70 F1500
+12:47:35, [HOST] >> G0 Z195.00 F1500
+12:47:39, [HOST] >> G0 Z105.00 F1500
+12:47:39, [HOST] >> G1 E-181.140 F1000
+12:47:41, [HOST] >> G0 Z195.00 F1500
+12:47:59, [HOST] Sequence Complete
+12:47:59, [HOST] >> G90
+12:47:59, [HOST] >> G0 Z195.00 F1500
+12:48:17, [HOST] >> G0 X3.60 Y226.90 F1500
+12:48:17, [HOST] >> G0 Z110.00 F1500
+12:48:19, [HOST] >> G0 Z97.30 F1500
+12:48:21, [HOST] >> G1 E-30.190 F1000
+12:48:24, [HOST] >> G0 Z110.00 F1500
+12:48:42, [HOST] Sequence Complete
+12:48:42, [WASH] Mixing in source vial...
+12:48:42, [HOST] >> G90
+12:48:42, [HOST] >> G1 E-60.380 F1000
+12:48:50, [HOST] >> G0 Z77.30 F1500
+12:49:08, [HOST] >> G1 E-301.900 F1000
+12:49:17, [HOST] >> G0 Z97.30 F1500
+12:49:34, [HOST] >> G1 E-30.190 F1000
+12:49:37, [HOST] >> G0 Z110.00 F1500
+12:49:46, [HOST] >> M18 E
+12:50:35, [HOST] Sequence Complete
+12:50:35, [WASH] Transferring mixed wash liquid to destination...
+12:50:36, [HOST] >> G1 E-60.380 F1000
+12:50:36, [HOST] >> G0 Z110.00 F1500
+12:50:36, [HOST] >> G0 X3.60 Y226.90 F1500
+12:50:36, [HOST] >> G0 Z77.30 F1500
+12:50:36, [HOST] >> G1 E-211.330 F1000
+12:50:36, [HOST] >> G0 Z110.00 F1500
+12:50:36, [HOST] Sequence Complete
+12:50:36, [HOST] >> G0 Z195.00 F1500
+12:50:36, [HOST] >> G0 X0.00 Y0.00 F1500
+12:50:36, [HOST] >> G0 Z132.80 F1500
+12:50:37, [HOST] Sequence Complete
+12:50:37, [HOST] >> G0 Z132.80 F1500
+12:50:38, [HOST] >> G1 E-30.190 F1000
+12:50:38, [HOST] >> G0 Z132.80 F1500
+12:50:44, [HOST] >> G1 E-60.380 F1000
+12:50:44, [WASH] Cycle complete. Ejecting wash tip...
+12:50:44, [HOST] Sequence Complete
+12:50:44, [HOST] >> G90
+12:50:44, [HOST] >> G0 Z195.00 F1500
+12:50:53, [HOST] >> G0 X109.20 Y109.90 F1500
+12:51:00, [HOST] >> G0 X187.90 Y185.30 F1500
+12:51:19, [HOST] >> G0 Z190.00 F1500
+12:51:30, [HOST] >> G0 Z160.20 F1500
+12:51:32, [HOST] Serial read error: ClearCommError failed (PermissionError(13, 'Access is denied.', None, 5))
+12:52:05, [HOST] Disconnected
+12:55:57, [HOST] Disconnected
+13:01:20, [SYSTEM] Auto-connecting to COM5...
+13:01:20, [HOST] Connected to COM5 @ 115200
+13:01:20, [INIT] Waiting for printer boot...
+13:01:22, [INIT] Sending Setup G-Code...
+13:01:22, [HOST] >> M107
+13:01:23, [HOST] >> M104 S0
+13:01:23, [HOST] >> M140 S0
+13:01:23, [HOST] >> G90
+13:01:23, [HOST] >> G21
+13:01:23, [HOST] >> M302 S0
+13:01:23, [HOST] >> M82
+13:01:23, [HOST] >> M906 E150
+13:01:23, [HOST] >> M84 E S3
+13:01:23, [HOST] Sequence Complete
+13:01:23, [INIT] Setup Complete.
+13:01:24, [PRINTER] FIRMWARE_NAME:Marlin V1.0.9_F401 (Nov 15 2024 16:32:26) SOURCE_CODE_URL:github.com/MarlinFirmware/Marlin PROTOCOL_VERSION:1.0 MACHINE_TYPE:Ender-3 V3 SE EXTRUDER_COUNT:1 UUID:cede2a2f-41a2-4748-9b12-c55c62f367ff
+13:01:24, [PRINTER] Cap:SERIAL_XON_XOFF:0
+13:01:24, [PRINTER] Cap:BINARY_FILE_TRANSFER:0
+13:01:24, [PRINTER] Cap:EEPROM:1
+13:01:24, [PRINTER] Cap:VOLUMETRIC:1
+13:01:24, [PRINTER] Cap:AUTOREPORT_POS:0
+13:01:24, [PRINTER] Cap:AUTOREPORT_TEMP:1
+13:01:24, [PRINTER] Cap:PROGRESS:0
+13:01:24, [PRINTER] Cap:PRINT_JOB:1
+13:01:24, [PRINTER] Cap:AUTOLEVEL:1
+13:01:24, [PRINTER] Cap:RUNOUT:0
+13:01:24, [PRINTER] Cap:Z_PROBE:1
+13:01:24, [PRINTER] Cap:LEVELING_DATA:1
+13:01:24, [PRINTER] Cap:BUILD_PERCENT:0
+13:01:24, [PRINTER] Cap:SOFTWARE_POWER:0
+13:01:24, [PRINTER] Cap:TOGGLE_LIGHTS:0
+13:01:24, [PRINTER] Cap:CASE_LIGHT_BRIGHTNESS:0
+13:01:24, [PRINTER] Cap:EMERGENCY_PARSER:1
+13:01:24, [PRINTER] Cap:HOST_ACTION_COMMANDS:0
+13:01:24, [PRINTER] Cap:PROMPT_SUPPORT:0
+13:01:24, [PRINTER] Cap:SDCARD:1
+13:01:24, [PRINTER] Cap:REPEAT:0
+13:01:24, [PRINTER] Cap:SD_WRITE:1
+13:01:24, [PRINTER] Cap:AUTOREPORT_SD_STATUS:0
+13:01:24, [PRINTER] Cap:LONG_FILENAME:1
+13:01:24, [PRINTER] Cap:THERMAL_PROTECTION:1
+13:01:24, [PRINTER] Cap:MOTION_MODES:0
+13:01:24, [PRINTER] Cap:ARCS:1
+13:01:24, [PRINTER] Cap:BABYSTEPPING:1
+13:01:24, [PRINTER] Cap:CHAMBER_TEMPERATURE:0
+13:01:24, [PRINTER] Cap:COOLER_TEMPERATURE:0
+13:01:24, [PRINTER] Cap:MEATPACK:0
+13:01:29, [SYSTEM] Calibration: 700.0uL -> 200.0uL
+13:01:29, [CMD] Calibrate Pipette: 700.0 -> 200.0uL
+13:01:29, [HOST] >> G92 E-211.330
+13:01:29, [HOST] >> G1 E-60.380 F1000
+13:01:29, [HOST] >> M107
+13:01:29, [HOST] >> M104 S0
+13:01:29, [HOST] >> M140 S0
+13:01:29, [HOST] >> G90
+13:01:29, [HOST] >> G21
+13:01:30, [HOST] >> M302 S0
+13:01:30, [HOST] >> M82
+13:01:30, [HOST] >> M906 E150
+13:01:30, [HOST] >> M84 E S3
+13:01:30, [HOST] Sequence Complete
+13:01:30, [HOST] >> M400
+13:01:38, [HOST] Sequence Complete
+13:01:39, [MANUAL] Homing ALL...
+13:01:40, [HOST] >> G28
+13:02:33, [PRINTER] echo:Bed Leveling ON
+13:02:33, [PRINTER] echo:Fade Height 10.00
+13:02:33, [HOST] >> M18 E
+13:02:33, [HOST] >> G0 Z185.00
+13:02:34, [HOST] Sequence Complete
+13:02:34, [HOST] >> M400
+13:03:09, [HOST] Sequence Complete
+13:03:41, [CMD] [COMBINE] Starting sequence with 1 lines.
+13:03:41, [COMBINE] Processing Line 1: 1 wells -> A1
+13:03:41, [COMBINE] Line 1: Ejecting old tip...
+13:03:41, [HOST] >> G90
+13:03:41, [HOST] >> G0 Z195.00 F1500
+13:03:41, [HOST] >> G0 X109.20 Y109.90 F1500
+13:03:41, [HOST] >> G0 X187.90 Y185.30 F1500
+13:03:41, [HOST] >> G0 Z190.00 F1500
+13:03:42, [HOST] >> G0 Z160.20 F1500
+13:03:42, [HOST] >> G0 Y220.90 F250
+13:03:42, [HOST] >> G0 Z190.00 F250
+13:03:42, [HOST] >> G0 Z195.00 F1500
+13:03:43, [HOST] Sequence Complete
+13:03:43, [COMBINE] Line 1: Picking Tip A1...
+13:03:43, [HOST] >> G90
+13:03:44, [HOST] >> G0 Z195.00 F1500
+13:03:45, [HOST] >> G0 X177.10 Y144.10 F1500
+13:03:45, [HOST] >> G0 Z185.00 F1500
+13:03:49, [HOST] >> G0 Z95.00 F500
+13:03:50, [HOST] >> G0 Z185.00 F1500
+13:03:56, [HOST] Sequence Complete
+13:03:56, [HOST] >> G1 E-60.380 F1000
+13:04:04, [HOST] >> G90
+13:04:05, [HOST] >> G0 Z195.00 F1500
+13:04:05, [HOST] >> G0 X3.60 Y226.90 F1500
+13:04:12, [HOST] >> G0 Z110.00 F1500
+13:04:13, [HOST] >> G0 Z77.30 F1500
+13:04:16, [HOST] >> G1 E-301.900 F1000
+13:04:18, [HOST] >> G0 Z110.00 F1500
+13:04:36, [HOST] >> G90
+13:04:36, [HOST] >> G0 Z195.00 F1500
+13:04:54, [HOST] >> G0 X14.80 Y130.00 F1500
+13:04:56, [HOST] >> G0 Z195.00 F1500
+13:05:04, [HOST] >> G0 Z180.00 F1500
+13:05:04, [HOST] >> G1 E-30.190 F1000
+13:05:21, [HOST] >> G0 Z195.00 F1500
+13:05:28, [HOST] Sequence Complete
+13:05:28, [COMBINE] Line 1: Wash Cycle 1/1 (400.0uL)...
+13:05:28, [WASH] Ejecting dirty tip...
+13:05:28, [HOST] >> G90
+13:05:28, [HOST] >> G0 Z195.00 F1500
+13:05:42, [HOST] >> G0 X109.20 Y109.90 F1500
+13:05:42, [HOST] >> G0 X187.90 Y185.30 F1500
+13:05:49, [HOST] >> G0 Z190.00 F1500
+13:06:06, [HOST] >> G0 Z160.20 F1500
+13:06:10, [HOST] >> G0 Y220.90 F250
+13:06:13, [HOST] >> G0 Z190.00 F250
+13:06:29, [HOST] >> G0 Z195.00 F1500
+13:06:32, [WASH] Picking Tip A2...
+13:06:32, [HOST] Sequence Complete
+13:06:32, [HOST] >> G90
+13:06:32, [HOST] >> G0 Z195.00 F1500
+13:06:36, [HOST] >> G0 X187.20 Y144.10 F1500
+13:06:36, [HOST] >> G0 Z185.00 F1500
+13:06:41, [HOST] >> G0 Z95.00 F500
+13:06:42, [HOST] >> G0 Z185.00 F1500
+13:06:48, [HOST] Sequence Complete
+13:06:48, [HOST] >> G1 E-60.380 F1000
+13:06:56, [HOST] >> G90
+13:06:56, [HOST] >> G0 Z195.00 F1500
+13:07:03, [HOST] >> G0 X159.90 Y62.70 F1500
+13:07:04, [HOST] >> G0 Z195.00 F1500
+13:07:07, [HOST] >> G0 Z105.00 F1500
+13:07:08, [HOST] >> G1 E-181.140 F1000
+13:07:09, [HOST] >> G0 Z195.00 F1500
+13:07:28, [HOST] Sequence Complete
+13:07:28, [HOST] >> G90
+13:07:28, [HOST] >> G0 Z195.00 F1500
+13:07:46, [HOST] >> G0 X3.60 Y226.90 F1500
+13:07:46, [HOST] >> G0 Z110.00 F1500
+13:07:48, [HOST] >> G0 Z97.30 F1500
+13:07:50, [HOST] >> G1 E-30.190 F1000
+13:07:53, [HOST] >> G0 Z110.00 F1500
+13:08:11, [WASH] Mixing in source vial...
+13:08:11, [HOST] Sequence Complete
+13:08:11, [HOST] >> G90
+13:08:11, [HOST] >> G1 E-60.380 F1000
+13:08:19, [HOST] >> G0 Z77.30 F1500
+13:08:37, [HOST] >> G1 E-301.900 F1000
+13:08:46, [HOST] >> G0 Z97.30 F1500
+13:09:03, [HOST] >> G1 E-30.190 F1000
+13:09:06, [HOST] >> G0 Z110.00 F1500
+13:09:15, [HOST] >> M18 E
+13:10:03, [WASH] Transferring mixed wash liquid to destination...
+13:10:03, [HOST] Sequence Complete
+13:10:03, [HOST] >> G1 E-60.380 F1000
+13:10:03, [HOST] >> G0 Z110.00 F1500
+13:10:03, [HOST] >> G0 X3.60 Y226.90 F1500
+13:10:03, [HOST] >> G0 Z77.30 F1500
+13:10:04, [HOST] >> G1 E-211.330 F1000
+13:10:04, [HOST] >> G0 Z110.00 F1500
+13:10:04, [HOST] Sequence Complete
+13:10:04, [HOST] >> G0 Z195.00 F1500
+13:10:04, [HOST] >> G0 X14.80 Y130.00 F1500
+13:10:04, [HOST] >> G0 Z195.00 F1500
+13:10:04, [HOST] Sequence Complete
+13:10:04, [HOST] >> G0 Z180.00 F1500
+13:10:04, [HOST] >> G1 E-30.190 F1000
+13:10:05, [HOST] >> G0 Z195.00 F1500
+13:10:12, [HOST] >> G1 E-60.380 F1000
+13:10:21, [HOST] Sequence Complete
+13:10:21, [WASH] Cycle complete. Ejecting wash tip...
+13:10:21, [HOST] >> G90
+13:10:21, [HOST] >> G0 Z195.00 F1500
+13:10:28, [HOST] >> G0 X109.20 Y109.90 F1500
+13:10:28, [HOST] >> G0 X187.90 Y185.30 F1500
+13:10:45, [HOST] >> G0 Z190.00 F1500
+13:10:49, [HOST] >> G0 Z160.20 F1500
+13:10:52, [HOST] >> G0 Y220.90 F250
+13:11:03, [HOST] >> G0 Z190.00 F250
+13:11:06, [HOST] >> G0 Z195.00 F1500
+13:11:07, [COMBINE] Line 1 Complete. Ejecting...
+13:11:07, [HOST] Sequence Complete
+13:11:07, [HOST] >> G90
+13:11:08, [HOST] >> G0 Z195.00 F1500
+13:11:11, [HOST] >> G0 X109.20 Y109.90 F1500
+13:11:11, [HOST] >> G0 X187.90 Y185.30 F1500
+13:11:16, [HOST] >> G0 Z190.00 F1500
+13:11:17, [HOST] >> G0 Z160.20 F1500
+13:11:23, [HOST] >> G0 Y220.90 F250
+13:11:31, [HOST] >> G0 Z190.00 F250
+13:11:38, [HOST] >> G0 Z195.00 F1500
+13:11:39, [HOST] Sequence Complete
+13:11:39, [CMD] [COMBINE] Sequence Finished. Parking.
+13:11:39, [SYSTEM] Parking Head...
+13:11:40, [CMD] Park Head (Center + Lower)
+13:11:40, [HOST] >> G90
+13:11:40, [HOST] >> G0 Z195.00 F1500
+13:11:45, [HOST] >> G0 X109.20 Y109.90 F1500
+13:11:45, [HOST] >> G0 Z175.00 F1500
+13:11:49, [HOST] Sequence Complete
+13:11:49, [HOST] >> M400
+13:12:23, [HOST] Sequence Complete
+13:12:34, [HOST] Serial read error: GetOverlappedResult failed (PermissionError(13, 'Access is denied.', None, 5))
+13:29:58, [CMD] [COMBINE] Starting sequence with 3 lines.
+13:29:58, [COMBINE] Processing Line 1: 2 wells -> A1
+13:29:58, [COMBINE] Line 1: Ejecting old tip...
+13:29:58, [COMBINE] Line 1: Picking Tip A3...
+13:29:58, [HOST] >> G90
+13:29:58, [HOST] Send error: WriteFile failed (PermissionError(13, 'Access is denied.', None, 5))
+13:29:58, [HOST] Sequence Complete
+13:29:58, [HOST] >> G90
+13:29:58, [HOST] Send error: WriteFile failed (PermissionError(13, 'Access is denied.', None, 5))
+13:29:58, [HOST] Sequence Complete
+13:29:58, [HOST] >> G1 E-60.380 F1000
+13:29:58, [HOST] Send error: WriteFile failed (PermissionError(13, 'Access is denied.', None, 5))
+13:29:58, [HOST] Sequence Complete
+13:29:58, [HOST] >> G1 E-60.380 F1000
+13:29:58, [HOST] Send error: WriteFile failed (PermissionError(13, 'Access is denied.', None, 5))
+13:29:58, [HOST] Sequence Complete
+13:29:58, [COMBINE] Line 1: Wash Cycle 1/2 (400.0uL)...
+13:29:58, [WASH] Ejecting dirty tip...
+13:29:58, [WASH] Picking Tip A4...
+13:29:58, [WASH] Mixing in source vial...
+13:29:58, [WASH] Transferring mixed wash liquid to destination...
+13:29:58, [HOST] >> G90
+13:29:58, [HOST] Send error: WriteFile failed (PermissionError(13, 'Access is denied.', None, 5))
+13:29:58, [HOST] Sequence Complete
+13:29:58, [HOST] >> G90
+13:29:58, [HOST] Send error: WriteFile failed (PermissionError(13, 'Access is denied.', None, 5))
+13:29:58, [HOST] Sequence Complete
+13:29:58, [HOST] >> G1 E-60.380 F1000
+13:29:58, [HOST] Send error: WriteFile failed (PermissionError(13, 'Access is denied.', None, 5))
+13:29:58, [HOST] Sequence Complete
+13:29:58, [HOST] >> G90
+13:29:58, [HOST] Send error: WriteFile failed (PermissionError(13, 'Access is denied.', None, 5))
+13:29:58, [HOST] Sequence Complete
+13:29:58, [HOST] >> G90
+13:29:58, [HOST] Send error: WriteFile failed (PermissionError(13, 'Access is denied.', None, 5))
+13:29:58, [HOST] Sequence Complete
+13:29:58, [HOST] >> G1 E-60.380 F1000
+13:29:58, [HOST] Send error: WriteFile failed (PermissionError(13, 'Access is denied.', None, 5))
+13:29:58, [HOST] Sequence Complete
+13:29:58, [HOST] >> G0 Z195.00 F1500
+13:29:58, [HOST] Send error: WriteFile failed (PermissionError(13, 'Access is denied.', None, 5))
+13:29:58, [HOST] Sequence Complete
+13:29:58, [WASH] Cycle complete. Ejecting wash tip...
+13:29:58, [COMBINE] Line 1: Wash Cycle 2/2 (400.0uL)...
+13:29:58, [WASH] Tip already ejected, skipping redundant eject.
+13:29:58, [WASH] Picking Tip B1...
+13:29:58, [HOST] >> G0 Z180.00 F1500
+13:29:58, [HOST] Send error: WriteFile failed (PermissionError(13, 'Access is denied.', None, 5))
+13:29:58, [HOST] Sequence Complete
+13:29:58, [HOST] >> G90
+13:29:58, [HOST] Send error: WriteFile failed (PermissionError(13, 'Access is denied.', None, 5))
+13:29:58, [HOST] Sequence Complete
+13:29:58, [HOST] >> G90
+13:29:58, [HOST] Send error: WriteFile failed (PermissionError(13, 'Access is denied.', None, 5))
+13:29:58, [HOST] Sequence Complete
+13:29:58, [HOST] >> G1 E-60.380 F1000
+13:29:58, [HOST] Send error: WriteFile failed (PermissionError(13, 'Access is denied.', None, 5))
+13:29:58, [HOST] Sequence Complete
+13:29:58, [HOST] >> G90
+13:29:58, [HOST] Send error: WriteFile failed (PermissionError(13, 'Access is denied.', None, 5))
+13:29:58, [HOST] Sequence Complete
+13:29:58, [WASH] Mixing in source vial...
+13:29:58, [HOST] >> G90
+13:29:58, [HOST] Send error: WriteFile failed (PermissionError(13, 'Access is denied.', None, 5))
+13:29:58, [HOST] Sequence Complete
+13:29:58, [WASH] Transferring mixed wash liquid to destination...
+13:29:58, [HOST] >> G1 E-60.380 F1000
+13:29:58, [HOST] Send error: WriteFile failed (PermissionError(13, 'Access is denied.', None, 5))
+13:29:58, [HOST] Sequence Complete
+13:29:58, [HOST] >> G0 Z195.00 F1500
+13:29:59, [HOST] Send error: WriteFile failed (PermissionError(13, 'Access is denied.', None, 5))
+13:29:59, [HOST] Sequence Complete
+13:29:59, [HOST] >> G0 Z180.00 F1500
+13:29:59, [HOST] Send error: WriteFile failed (PermissionError(13, 'Access is denied.', None, 5))
+13:29:59, [HOST] Sequence Complete
+13:29:59, [WASH] Cycle complete. Ejecting wash tip...
+13:29:59, [COMBINE] Line 1 Complete. Ejecting...
+13:29:59, [COMBINE] Processing Line 2: 2 wells -> A2
+13:29:59, [COMBINE] Line 2: Ejecting old tip...
+13:29:59, [HOST] >> G90
+13:29:59, [HOST] Send error: WriteFile failed (PermissionError(13, 'Access is denied.', None, 5))
+13:29:59, [HOST] Sequence Complete
+13:29:59, [HOST] >> G90
+13:29:59, [HOST] Send error: WriteFile failed (PermissionError(13, 'Access is denied.', None, 5))
+13:29:59, [HOST] Sequence Complete
+13:29:59, [HOST] >> G90
+13:29:59, [HOST] Send error: WriteFile failed (PermissionError(13, 'Access is denied.', None, 5))
+13:29:59, [HOST] Sequence Complete
+13:29:59, [COMBINE] Line 2: Picking Tip B2...
+13:29:59, [COMBINE] Line 2: Wash Cycle 1/1 (800.0uL)...
+13:29:59, [WASH] Ejecting dirty tip...
+13:29:59, [HOST] >> G90
+13:29:59, [HOST] Send error: WriteFile failed (PermissionError(13, 'Access is denied.', None, 5))
+13:29:59, [HOST] Sequence Complete
+13:29:59, [HOST] >> G1 E-60.380 F1000
+13:29:59, [HOST] Send error: WriteFile failed (PermissionError(13, 'Access is denied.', None, 5))
+13:29:59, [HOST] Sequence Complete
+13:29:59, [HOST] >> G1 E-60.380 F1000
+13:29:59, [HOST] Send error: WriteFile failed (PermissionError(13, 'Access is denied.', None, 5))
+13:29:59, [HOST] Sequence Complete
+13:29:59, [HOST] >> G90
+13:29:59, [HOST] Send error: WriteFile failed (PermissionError(13, 'Access is denied.', None, 5))
+13:29:59, [HOST] Sequence Complete
+13:29:59, [WASH] Picking Tip B3...
+13:29:59, [WASH] Mixing in source vial...
+13:29:59, [WASH] Transferring mixed wash liquid to destination...
+13:29:59, [WASH] Cycle complete. Ejecting wash tip...
+13:29:59, [HOST] >> G90
+13:29:59, [HOST] Send error: WriteFile failed (PermissionError(13, 'Access is denied.', None, 5))
+13:29:59, [HOST] Sequence Complete
+13:29:59, [HOST] >> G1 E-60.380 F1000
+13:29:59, [HOST] Send error: WriteFile failed (PermissionError(13, 'Access is denied.', None, 5))
+13:29:59, [HOST] Sequence Complete
+13:29:59, [HOST] >> G90
+13:29:59, [HOST] Send error: WriteFile failed (PermissionError(13, 'Access is denied.', None, 5))
+13:29:59, [HOST] Sequence Complete
+13:29:59, [HOST] >> G90
+13:29:59, [HOST] Send error: WriteFile failed (PermissionError(13, 'Access is denied.', None, 5))
+13:29:59, [HOST] Sequence Complete
+13:29:59, [HOST] >> G1 E-60.380 F1000
+13:29:59, [HOST] Send error: WriteFile failed (PermissionError(13, 'Access is denied.', None, 5))
+13:29:59, [HOST] Sequence Complete
+13:29:59, [HOST] >> G0 Z195.00 F1500
+13:29:59, [HOST] Send error: WriteFile failed (PermissionError(13, 'Access is denied.', None, 5))
+13:29:59, [HOST] Sequence Complete
+13:29:59, [HOST] >> G0 Z180.00 F1500
+13:29:59, [HOST] Send error: WriteFile failed (PermissionError(13, 'Access is denied.', None, 5))
+13:29:59, [HOST] Sequence Complete
+13:29:59, [HOST] >> G90
+13:29:59, [HOST] Send error: WriteFile failed (PermissionError(13, 'Access is denied.', None, 5))
+13:29:59, [HOST] Sequence Complete
+13:29:59, [COMBINE] Line 2 Complete. Ejecting...
+13:29:59, [COMBINE] Processing Line 3: 2 wells -> A3
+13:29:59, [COMBINE] Line 3: Ejecting old tip...
+13:29:59, [COMBINE] Line 3: Picking Tip B4...
+13:29:59, [HOST] >> G90
+13:29:59, [HOST] Send error: WriteFile failed (PermissionError(13, 'Access is denied.', None, 5))
+13:29:59, [HOST] Sequence Complete
+13:29:59, [HOST] >> G90
+13:29:59, [HOST] Send error: WriteFile failed (PermissionError(13, 'Access is denied.', None, 5))
+13:29:59, [HOST] Sequence Complete
+13:29:59, [HOST] >> G90
+13:29:59, [HOST] Send error: WriteFile failed (PermissionError(13, 'Access is denied.', None, 5))
+13:29:59, [HOST] Sequence Complete
+13:29:59, [HOST] >> G1 E-60.380 F1000
+13:29:59, [HOST] Send error: WriteFile failed (PermissionError(13, 'Access is denied.', None, 5))
+13:29:59, [HOST] Sequence Complete
+13:29:59, [COMBINE] Line 3: Wash Cycle 1/3 (200.0uL)...
+13:29:59, [WASH] Ejecting dirty tip...
+13:29:59, [HOST] >> G1 E-60.380 F1000
+13:29:59, [HOST] Send error: WriteFile failed (PermissionError(13, 'Access is denied.', None, 5))
+13:29:59, [HOST] Sequence Complete
+13:29:59, [HOST] >> G90
+13:29:59, [HOST] Send error: WriteFile failed (PermissionError(13, 'Access is denied.', None, 5))
+13:29:59, [HOST] Sequence Complete
+13:29:59, [WASH] Picking Tip C1...
+13:29:59, [WASH] Mixing in source vial...
+13:29:59, [WASH] Transferring mixed wash liquid to destination...
+13:29:59, [WASH] Cycle complete. Ejecting wash tip...
+13:29:59, [HOST] >> G90
+13:29:59, [HOST] Send error: WriteFile failed (PermissionError(13, 'Access is denied.', None, 5))
+13:29:59, [HOST] Sequence Complete
+13:29:59, [HOST] >> G1 E-60.380 F1000
+13:29:59, [HOST] Send error: WriteFile failed (PermissionError(13, 'Access is denied.', None, 5))
+13:29:59, [HOST] Sequence Complete
+13:29:59, [HOST] >> G90
+13:29:59, [HOST] Send error: WriteFile failed (PermissionError(13, 'Access is denied.', None, 5))
+13:29:59, [HOST] Sequence Complete
+13:29:59, [HOST] >> G90
+13:29:59, [HOST] Send error: WriteFile failed (PermissionError(13, 'Access is denied.', None, 5))
+13:29:59, [HOST] Sequence Complete
+13:30:00, [HOST] >> G1 E-60.380 F1000
+13:30:00, [HOST] Send error: WriteFile failed (PermissionError(13, 'Access is denied.', None, 5))
+13:30:00, [HOST] Sequence Complete
+13:30:00, [HOST] >> G0 Z195.00 F1500
+13:30:00, [HOST] Send error: WriteFile failed (PermissionError(13, 'Access is denied.', None, 5))
+13:30:00, [HOST] Sequence Complete
+13:30:00, [HOST] >> G0 Z180.00 F1500
+13:30:00, [HOST] Send error: WriteFile failed (PermissionError(13, 'Access is denied.', None, 5))
+13:30:00, [HOST] Sequence Complete
+13:30:00, [HOST] >> G90
+13:30:00, [HOST] Send error: WriteFile failed (PermissionError(13, 'Access is denied.', None, 5))
+13:30:00, [HOST] Sequence Complete
+13:30:00, [COMBINE] Line 3: Wash Cycle 2/3 (200.0uL)...
+13:30:00, [WASH] Tip already ejected, skipping redundant eject.
+13:30:00, [WASH] Picking Tip C2...
+13:30:00, [WASH] Mixing in source vial...
+13:30:00, [HOST] >> G90
+13:30:00, [HOST] Send error: WriteFile failed (PermissionError(13, 'Access is denied.', None, 5))
+13:30:00, [HOST] Sequence Complete
+13:30:00, [HOST] >> G1 E-60.380 F1000
+13:30:00, [HOST] Send error: WriteFile failed (PermissionError(13, 'Access is denied.', None, 5))
+13:30:00, [HOST] Sequence Complete
+13:30:00, [HOST] >> G90
+13:30:00, [HOST] Send error: WriteFile failed (PermissionError(13, 'Access is denied.', None, 5))
+13:30:00, [HOST] Sequence Complete
+13:30:00, [HOST] >> G90
+13:30:00, [HOST] Send error: WriteFile failed (PermissionError(13, 'Access is denied.', None, 5))
+13:30:00, [HOST] Sequence Complete
+13:30:00, [WASH] Transferring mixed wash liquid to destination...
+13:30:00, [HOST] >> G1 E-60.380 F1000
+13:30:00, [WASH] Cycle complete. Ejecting wash tip...
+13:30:00, [HOST] Send error: WriteFile failed (PermissionError(13, 'Access is denied.', None, 5))
+13:30:00, [HOST] Sequence Complete
+13:30:00, [HOST] >> G0 Z195.00 F1500
+13:30:00, [HOST] Send error: WriteFile failed (PermissionError(13, 'Access is denied.', None, 5))
+13:30:00, [HOST] Sequence Complete
+13:30:00, [HOST] >> G0 Z180.00 F1500
+13:30:00, [HOST] Send error: WriteFile failed (PermissionError(13, 'Access is denied.', None, 5))
+13:30:00, [HOST] Sequence Complete
+13:30:00, [HOST] >> G90
+13:30:00, [HOST] Send error: WriteFile failed (PermissionError(13, 'Access is denied.', None, 5))
+13:30:00, [HOST] Sequence Complete
+13:30:00, [COMBINE] Line 3: Wash Cycle 3/3 (200.0uL)...
+13:30:00, [WASH] Tip already ejected, skipping redundant eject.
+13:30:00, [WASH] Picking Tip C3...
+13:30:00, [HOST] >> G90
+13:30:00, [HOST] Send error: WriteFile failed (PermissionError(13, 'Access is denied.', None, 5))
+13:30:00, [HOST] Sequence Complete
+13:30:00, [HOST] >> G1 E-60.380 F1000
+13:30:00, [HOST] Send error: WriteFile failed (PermissionError(13, 'Access is denied.', None, 5))
+13:30:00, [HOST] Sequence Complete
+13:30:00, [HOST] >> G90
+13:30:00, [HOST] Send error: WriteFile failed (PermissionError(13, 'Access is denied.', None, 5))
+13:30:00, [HOST] Sequence Complete
+13:30:00, [WASH] Mixing in source vial...
+13:30:00, [WASH] Transferring mixed wash liquid to destination...
+13:30:00, [WASH] Cycle complete. Ejecting wash tip...
+13:30:00, [HOST] >> G90
+13:30:00, [HOST] Send error: WriteFile failed (PermissionError(13, 'Access is denied.', None, 5))
+13:30:00, [HOST] Sequence Complete
+13:30:00, [HOST] >> G1 E-60.380 F1000
+13:30:00, [HOST] Send error: WriteFile failed (PermissionError(13, 'Access is denied.', None, 5))
+13:30:00, [HOST] Sequence Complete
+13:30:00, [HOST] >> G0 Z195.00 F1500
+13:30:00, [HOST] Send error: WriteFile failed (PermissionError(13, 'Access is denied.', None, 5))
+13:30:00, [HOST] Sequence Complete
+13:30:00, [HOST] >> G0 Z180.00 F1500
+13:30:00, [HOST] Send error: WriteFile failed (PermissionError(13, 'Access is denied.', None, 5))
+13:30:00, [HOST] Sequence Complete
+13:30:00, [HOST] >> G90
+13:30:00, [HOST] Send error: WriteFile failed (PermissionError(13, 'Access is denied.', None, 5))
+13:30:00, [HOST] Sequence Complete
+13:30:00, [COMBINE] Line 3 Complete. Ejecting...
+13:30:00, [CMD] [COMBINE] Sequence Finished. Parking.
+13:30:00, [SYSTEM] Parking Head...
+13:30:00, [CMD] Park Head (Center + Lower)
+13:30:00, [HOST] >> G90
+13:30:00, [HOST] Send error: WriteFile failed (PermissionError(13, 'Access is denied.', None, 5))
+13:30:00, [HOST] Sequence Complete
+13:30:00, [HOST] >> G90
+13:30:00, [HOST] Send error: WriteFile failed (PermissionError(13, 'Access is denied.', None, 5))
+13:30:00, [HOST] Sequence Complete
+13:30:00, [HOST] >> M400
+13:30:00, [HOST] Send error: WriteFile failed (PermissionError(13, 'Access is denied.', None, 5))
+13:30:00, [HOST] Sequence Complete
+13:30:12, [MANUAL] Jog Z -10.0mm
+13:30:12, [HOST] >> G91
+13:30:12, [HOST] Send error: WriteFile failed (PermissionError(13, 'Access is denied.', None, 5))
+13:30:12, [HOST] Sequence Complete
+13:30:12, [HOST] >> M400
+13:30:12, [HOST] Send error: WriteFile failed (PermissionError(13, 'Access is denied.', None, 5))
+13:30:12, [HOST] Sequence Complete
+13:30:33, [SYSTEM] Calibration: 200.0uL -> 200.0uL
+13:30:33, [CMD] Calibrate Pipette: 200.0 -> 200.0uL
+13:30:33, [HOST] >> G92 E-60.380
+13:30:33, [HOST] Send error: WriteFile failed (PermissionError(13, 'Access is denied.', None, 5))
+13:30:33, [HOST] Sequence Complete
+13:30:33, [HOST] >> M400
+13:30:33, [HOST] Send error: WriteFile failed (PermissionError(13, 'Access is denied.', None, 5))
+13:30:33, [HOST] Sequence Complete
+13:30:40, [CMD] [COMBINE] Starting sequence with 3 lines.
+13:30:40, [COMBINE] Processing Line 1: 2 wells -> A1
+13:30:40, [COMBINE] Line 1: Ejecting old tip...
+13:30:40, [COMBINE] Line 1: Picking Tip A3...
+13:30:40, [HOST] >> G90
+13:30:40, [HOST] Send error: WriteFile failed (PermissionError(13, 'Access is denied.', None, 5))
+13:30:40, [HOST] Sequence Complete
+13:30:40, [HOST] >> G90
+13:30:40, [HOST] Send error: WriteFile failed (PermissionError(13, 'Access is denied.', None, 5))
+13:30:40, [HOST] Sequence Complete
+13:30:40, [HOST] >> G1 E-60.380 F1000
+13:30:40, [HOST] Send error: WriteFile failed (PermissionError(13, 'Access is denied.', None, 5))
+13:30:40, [HOST] Sequence Complete
+13:30:40, [COMBINE] Line 1: Wash Cycle 1/2 (400.0uL)...
+13:30:41, [HOST] >> G1 E-60.380 F1000
+13:30:41, [HOST] Send error: WriteFile failed (PermissionError(13, 'Access is denied.', None, 5))
+13:30:41, [HOST] Sequence Complete
+13:30:41, [WASH] Ejecting dirty tip...
+13:30:41, [WASH] Picking Tip A4...
+13:30:41, [WASH] Mixing in source vial...
+13:30:41, [WASH] Transferring mixed wash liquid to destination...
+13:30:41, [HOST] >> G90
+13:30:41, [HOST] Send error: WriteFile failed (PermissionError(13, 'Access is denied.', None, 5))
+13:30:41, [HOST] Sequence Complete
+13:30:41, [HOST] >> G90
+13:30:41, [HOST] Send error: WriteFile failed (PermissionError(13, 'Access is denied.', None, 5))
+13:30:41, [HOST] Sequence Complete
+13:30:41, [HOST] >> G1 E-60.380 F1000
+13:30:41, [HOST] Send error: WriteFile failed (PermissionError(13, 'Access is denied.', None, 5))
+13:30:41, [HOST] Sequence Complete
+13:30:41, [HOST] >> G90
+13:30:41, [HOST] Send error: WriteFile failed (PermissionError(13, 'Access is denied.', None, 5))
+13:30:41, [HOST] Sequence Complete
+13:30:41, [HOST] >> G90
+13:30:41, [HOST] Send error: WriteFile failed (PermissionError(13, 'Access is denied.', None, 5))
+13:30:41, [HOST] Sequence Complete
+13:30:41, [HOST] >> G1 E-60.380 F1000
+13:30:41, [HOST] Send error: WriteFile failed (PermissionError(13, 'Access is denied.', None, 5))
+13:30:41, [HOST] Sequence Complete
+13:30:41, [HOST] >> G0 Z195.00 F1500
+13:30:41, [HOST] Send error: WriteFile failed (PermissionError(13, 'Access is denied.', None, 5))
+13:30:41, [HOST] Sequence Complete
+13:30:41, [HOST] >> G0 Z180.00 F1500
+13:30:41, [HOST] Send error: WriteFile failed (PermissionError(13, 'Access is denied.', None, 5))
+13:30:41, [HOST] Sequence Complete
+13:30:41, [WASH] Cycle complete. Ejecting wash tip...
+13:30:41, [COMBINE] Line 1: Wash Cycle 2/2 (400.0uL)...
+13:30:41, [HOST] >> G90
+13:30:41, [HOST] Send error: WriteFile failed (PermissionError(13, 'Access is denied.', None, 5))
+13:30:41, [HOST] Sequence Complete
+13:30:41, [WASH] Tip already ejected, skipping redundant eject.
+13:30:41, [WASH] Picking Tip B1...
+13:30:41, [WASH] Mixing in source vial...
+13:30:41, [WASH] Transferring mixed wash liquid to destination...
+13:30:41, [HOST] >> G90
+13:30:41, [HOST] Send error: WriteFile failed (PermissionError(13, 'Access is denied.', None, 5))
+13:30:41, [HOST] Sequence Complete
+13:30:41, [HOST] >> G1 E-60.380 F1000
+13:30:41, [HOST] Send error: WriteFile failed (PermissionError(13, 'Access is denied.', None, 5))
+13:30:41, [HOST] Sequence Complete
+13:30:41, [HOST] >> G90
+13:30:41, [HOST] Send error: WriteFile failed (PermissionError(13, 'Access is denied.', None, 5))
+13:30:41, [HOST] Sequence Complete
+13:30:41, [HOST] >> G90
+13:30:41, [HOST] Send error: WriteFile failed (PermissionError(13, 'Access is denied.', None, 5))
+13:30:41, [HOST] Sequence Complete
+13:30:41, [HOST] >> G1 E-60.380 F1000
+13:30:41, [HOST] Send error: WriteFile failed (PermissionError(13, 'Access is denied.', None, 5))
+13:30:41, [HOST] Sequence Complete
+13:30:41, [WASH] Cycle complete. Ejecting wash tip...
+13:30:41, [COMBINE] Line 1 Complete. Ejecting...
+13:30:41, [COMBINE] Processing Line 2: 2 wells -> A2
+13:30:41, [COMBINE] Line 2: Ejecting old tip...
+13:30:41, [HOST] >> G0 Z195.00 F1500
+13:30:41, [HOST] Send error: WriteFile failed (PermissionError(13, 'Access is denied.', None, 5))
+13:30:41, [HOST] Sequence Complete
+13:30:41, [HOST] >> G0 Z180.00 F1500
+13:30:41, [HOST] Send error: WriteFile failed (PermissionError(13, 'Access is denied.', None, 5))
+13:30:41, [HOST] Sequence Complete
+13:30:41, [HOST] >> G90
+13:30:41, [HOST] Send error: WriteFile failed (PermissionError(13, 'Access is denied.', None, 5))
+13:30:41, [HOST] Sequence Complete
+13:30:41, [HOST] >> G90
+13:30:41, [HOST] Send error: WriteFile failed (PermissionError(13, 'Access is denied.', None, 5))
+13:30:41, [HOST] Sequence Complete
+13:30:41, [HOST] >> G90
+13:30:41, [HOST] Send error: WriteFile failed (PermissionError(13, 'Access is denied.', None, 5))
+13:30:41, [HOST] Sequence Complete
+13:30:41, [COMBINE] Line 2: Picking Tip B2...
+13:30:41, [HOST] >> G90
+13:30:42, [HOST] Send error: WriteFile failed (PermissionError(13, 'Access is denied.', None, 5))
+13:30:42, [HOST] Sequence Complete
+13:30:42, [HOST] >> G1 E-60.380 F1000
+13:30:42, [HOST] Send error: WriteFile failed (PermissionError(13, 'Access is denied.', None, 5))
+13:30:42, [HOST] Sequence Complete
+13:30:42, [HOST] >> G1 E-60.380 F1000
+13:30:42, [HOST] Send error: WriteFile failed (PermissionError(13, 'Access is denied.', None, 5))
+13:30:42, [HOST] Sequence Complete
+13:30:42, [COMBINE] Line 2: Wash Cycle 1/1 (800.0uL)...
+13:30:42, [WASH] Ejecting dirty tip...
+13:30:42, [WASH] Picking Tip B3...
+13:30:42, [WASH] Mixing in source vial...
+13:30:42, [HOST] >> G90
+13:30:42, [HOST] Send error: WriteFile failed (PermissionError(13, 'Access is denied.', None, 5))
+13:30:42, [HOST] Sequence Complete
+13:30:42, [HOST] >> G90
+13:30:42, [HOST] Send error: WriteFile failed (PermissionError(13, 'Access is denied.', None, 5))
+13:30:42, [HOST] Sequence Complete
+13:30:42, [HOST] >> G1 E-60.380 F1000
+13:30:42, [HOST] Send error: WriteFile failed (PermissionError(13, 'Access is denied.', None, 5))
+13:30:42, [HOST] Sequence Complete
+13:30:42, [HOST] >> G90
+13:30:42, [HOST] Send error: WriteFile failed (PermissionError(13, 'Access is denied.', None, 5))
+13:30:42, [HOST] Sequence Complete
+13:30:42, [HOST] >> G90
+13:30:42, [HOST] Send error: WriteFile failed (PermissionError(13, 'Access is denied.', None, 5))
+13:30:42, [HOST] Sequence Complete
+13:30:42, [WASH] Transferring mixed wash liquid to destination...
+13:30:42, [WASH] Cycle complete. Ejecting wash tip...
+13:30:42, [COMBINE] Line 2 Complete. Ejecting...
+13:30:42, [COMBINE] Processing Line 3: 2 wells -> A3
+13:30:42, [COMBINE] Line 3: Ejecting old tip...
+13:30:42, [HOST] >> G1 E-60.380 F1000
+13:30:42, [HOST] Send error: WriteFile failed (PermissionError(13, 'Access is denied.', None, 5))
+13:30:42, [HOST] Sequence Complete
+13:30:42, [HOST] >> G0 Z195.00 F1500
+13:30:42, [HOST] Send error: WriteFile failed (PermissionError(13, 'Access is denied.', None, 5))
+13:30:42, [HOST] Sequence Complete
+13:30:42, [HOST] >> G0 Z180.00 F1500
+13:30:42, [HOST] Send error: WriteFile failed (PermissionError(13, 'Access is denied.', None, 5))
+13:30:42, [HOST] Sequence Complete
+13:30:42, [HOST] >> G90
+13:30:42, [HOST] Send error: WriteFile failed (PermissionError(13, 'Access is denied.', None, 5))
+13:30:42, [HOST] Sequence Complete
+13:30:42, [HOST] >> G90
+13:30:42, [HOST] Send error: WriteFile failed (PermissionError(13, 'Access is denied.', None, 5))
+13:30:42, [HOST] Sequence Complete
+13:30:42, [HOST] >> G90
+13:30:42, [HOST] Send error: WriteFile failed (PermissionError(13, 'Access is denied.', None, 5))
+13:30:42, [HOST] Sequence Complete
+13:30:42, [COMBINE] Line 3: Picking Tip B4...
+13:30:42, [COMBINE] Line 3: Wash Cycle 1/3 (200.0uL)...
+13:30:42, [HOST] >> G90
+13:30:42, [HOST] Send error: WriteFile failed (PermissionError(13, 'Access is denied.', None, 5))
+13:30:42, [HOST] Sequence Complete
+13:30:42, [HOST] >> G1 E-60.380 F1000
+13:30:42, [HOST] Send error: WriteFile failed (PermissionError(13, 'Access is denied.', None, 5))
+13:30:42, [HOST] Sequence Complete
+13:30:42, [HOST] >> G1 E-60.380 F1000
+13:30:42, [HOST] Send error: WriteFile failed (PermissionError(13, 'Access is denied.', None, 5))
+13:30:42, [HOST] Sequence Complete
+13:30:42, [WASH] Ejecting dirty tip...
+13:30:42, [WASH] Picking Tip C1...
+13:30:42, [WASH] Mixing in source vial...
+13:30:42, [WASH] Transferring mixed wash liquid to destination...
+13:30:42, [HOST] >> G90
+13:30:42, [HOST] Send error: WriteFile failed (PermissionError(13, 'Access is denied.', None, 5))
+13:30:42, [HOST] Sequence Complete
+13:30:42, [HOST] >> G90
+13:30:42, [HOST] Send error: WriteFile failed (PermissionError(13, 'Access is denied.', None, 5))
+13:30:42, [HOST] Sequence Complete
+13:30:42, [HOST] >> G1 E-60.380 F1000
+13:30:42, [HOST] Send error: WriteFile failed (PermissionError(13, 'Access is denied.', None, 5))
+13:30:42, [HOST] Sequence Complete
+13:30:42, [HOST] >> G90
+13:30:42, [HOST] Send error: WriteFile failed (PermissionError(13, 'Access is denied.', None, 5))
+13:30:42, [HOST] Sequence Complete
+13:30:42, [HOST] >> G90
+13:30:42, [HOST] Send error: WriteFile failed (PermissionError(13, 'Access is denied.', None, 5))
+13:30:42, [HOST] Sequence Complete
+13:30:42, [HOST] >> G1 E-60.380 F1000
+13:30:42, [HOST] Send error: WriteFile failed (PermissionError(13, 'Access is denied.', None, 5))
+13:30:42, [HOST] Sequence Complete
+13:30:42, [HOST] >> G0 Z195.00 F1500
+13:30:42, [HOST] Send error: WriteFile failed (PermissionError(13, 'Access is denied.', None, 5))
+13:30:42, [HOST] Sequence Complete
+13:30:42, [HOST] >> G0 Z180.00 F1500
+13:30:43, [HOST] Send error: WriteFile failed (PermissionError(13, 'Access is denied.', None, 5))
+13:30:43, [HOST] Sequence Complete
+13:30:43, [WASH] Cycle complete. Ejecting wash tip...
+13:30:43, [COMBINE] Line 3: Wash Cycle 2/3 (200.0uL)...
+13:30:43, [WASH] Tip already ejected, skipping redundant eject.
+13:30:43, [WASH] Picking Tip C2...
+13:30:43, [HOST] >> G90
+13:30:43, [HOST] Send error: WriteFile failed (PermissionError(13, 'Access is denied.', None, 5))
+13:30:43, [HOST] Sequence Complete
+13:30:43, [HOST] >> G90
+13:30:43, [HOST] Send error: WriteFile failed (PermissionError(13, 'Access is denied.', None, 5))
+13:30:43, [HOST] Sequence Complete
+13:30:43, [HOST] >> G1 E-60.380 F1000
+13:30:43, [HOST] Send error: WriteFile failed (PermissionError(13, 'Access is denied.', None, 5))
+13:30:43, [HOST] Sequence Complete
+13:30:43, [HOST] >> G90
+13:30:43, [HOST] Send error: WriteFile failed (PermissionError(13, 'Access is denied.', None, 5))
+13:30:43, [HOST] Sequence Complete
+13:30:43, [WASH] Mixing in source vial...
+13:30:43, [WASH] Transferring mixed wash liquid to destination...
+13:30:43, [WASH] Cycle complete. Ejecting wash tip...
+13:30:43, [HOST] >> G90
+13:30:43, [HOST] Send error: WriteFile failed (PermissionError(13, 'Access is denied.', None, 5))
+13:30:43, [HOST] Sequence Complete
+13:30:43, [HOST] >> G1 E-60.380 F1000
+13:30:43, [HOST] Send error: WriteFile failed (PermissionError(13, 'Access is denied.', None, 5))
+13:30:43, [HOST] Sequence Complete
+13:30:43, [HOST] >> G0 Z195.00 F1500
+13:30:43, [HOST] Send error: WriteFile failed (PermissionError(13, 'Access is denied.', None, 5))
+13:30:43, [HOST] Sequence Complete
+13:30:43, [HOST] >> G0 Z180.00 F1500
+13:30:43, [HOST] Send error: WriteFile failed (PermissionError(13, 'Access is denied.', None, 5))
+13:30:43, [HOST] Sequence Complete
+13:30:43, [HOST] >> G90
+13:30:43, [HOST] Send error: WriteFile failed (PermissionError(13, 'Access is denied.', None, 5))
+13:30:43, [HOST] Sequence Complete
+13:30:43, [COMBINE] Line 3: Wash Cycle 3/3 (200.0uL)...
+13:30:43, [WASH] Tip already ejected, skipping redundant eject.
+13:30:43, [WASH] Picking Tip C3...
+13:30:43, [HOST] >> G90
+13:30:43, [HOST] Send error: WriteFile failed (PermissionError(13, 'Access is denied.', None, 5))
+13:30:43, [HOST] Sequence Complete
+13:30:43, [HOST] >> G1 E-60.380 F1000
+13:30:43, [HOST] Send error: WriteFile failed (PermissionError(13, 'Access is denied.', None, 5))
+13:30:43, [HOST] Sequence Complete
+13:30:43, [HOST] >> G90
+13:30:43, [HOST] Send error: WriteFile failed (PermissionError(13, 'Access is denied.', None, 5))
+13:30:43, [HOST] Sequence Complete
+13:30:43, [WASH] Mixing in source vial...
+13:30:43, [WASH] Transferring mixed wash liquid to destination...
+13:30:43, [WASH] Cycle complete. Ejecting wash tip...
+13:30:43, [COMBINE] Line 3 Complete. Ejecting...
+13:30:43, [HOST] >> G90
+13:30:43, [HOST] Send error: WriteFile failed (PermissionError(13, 'Access is denied.', None, 5))
+13:30:43, [HOST] Sequence Complete
+13:30:43, [HOST] >> G1 E-60.380 F1000
+13:30:43, [HOST] Send error: WriteFile failed (PermissionError(13, 'Access is denied.', None, 5))
+13:30:43, [HOST] Sequence Complete
+13:30:43, [HOST] >> G0 Z195.00 F1500
+13:30:43, [HOST] Send error: WriteFile failed (PermissionError(13, 'Access is denied.', None, 5))
+13:30:43, [HOST] Sequence Complete
+13:30:43, [HOST] >> G0 Z180.00 F1500
+13:30:43, [HOST] Send error: WriteFile failed (PermissionError(13, 'Access is denied.', None, 5))
+13:30:43, [HOST] Sequence Complete
+13:30:43, [HOST] >> G90
+13:30:43, [HOST] Send error: WriteFile failed (PermissionError(13, 'Access is denied.', None, 5))
+13:30:43, [HOST] Sequence Complete
+13:30:43, [HOST] >> G90
+13:30:43, [HOST] Send error: WriteFile failed (PermissionError(13, 'Access is denied.', None, 5))
+13:30:43, [HOST] Sequence Complete
+13:30:43, [CMD] [COMBINE] Sequence Finished. Parking.
+13:30:43, [SYSTEM] Parking Head...
+13:30:43, [CMD] Park Head (Center + Lower)
+13:30:43, [HOST] >> G90
+13:30:43, [HOST] Send error: WriteFile failed (PermissionError(13, 'Access is denied.', None, 5))
+13:30:43, [HOST] Sequence Complete
+13:30:43, [HOST] >> M400
+13:30:43, [HOST] Send error: WriteFile failed (PermissionError(13, 'Access is denied.', None, 5))
+13:30:43, [HOST] Sequence Complete
+13:30:46, [HOST] Disconnected
+13:30:52, [HOST] Connected to COM5 @ 115200
+13:30:52, [INIT] Waiting for printer boot...
+13:30:54, [INIT] Sending Setup G-Code...
+13:30:54, [HOST] >> M107
+13:30:54, [HOST] >> M104 S0
+13:30:54, [HOST] >> M140 S0
+13:30:54, [HOST] >> G90
+13:30:54, [HOST] >> G21
+13:30:54, [HOST] >> M302 S0
+13:30:54, [HOST] >> M82
+13:30:54, [HOST] >> M906 E150
+13:30:55, [HOST] >> M84 E S3
+13:30:55, [INIT] Setup Complete.
+13:30:55, [HOST] Sequence Complete
+13:30:55, [PRINTER] FIRMWARE_NAME:Marlin V1.0.9_F401 (Nov 15 2024 16:32:26) SOURCE_CODE_URL:github.com/MarlinFirmware/Marlin PROTOCOL_VERSION:1.0 MACHINE_TYPE:Ender-3 V3 SE EXTRUDER_COUNT:1 UUID:cede2a2f-41a2-4748-9b12-c55c62f367ff
+13:30:55, [PRINTER] Cap:SERIAL_XON_XOFF:0
+13:30:55, [PRINTER] Cap:BINARY_FILE_TRANSFER:0
+13:30:55, [PRINTER] Cap:EEPROM:1
+13:30:55, [PRINTER] Cap:VOLUMETRIC:1
+13:30:55, [PRINTER] Cap:AUTOREPORT_POS:0
+13:30:55, [PRINTER] Cap:AUTOREPORT_TEMP:1
+13:30:55, [PRINTER] Cap:PROGRESS:0
+13:30:55, [PRINTER] Cap:PRINT_JOB:1
+13:30:55, [PRINTER] Cap:AUTOLEVEL:1
+13:30:55, [PRINTER] Cap:RUNOUT:0
+13:30:55, [PRINTER] Cap:Z_PROBE:1
+13:30:55, [PRINTER] Cap:LEVELING_DATA:1
+13:30:55, [PRINTER] Cap:BUILD_PERCENT:0
+13:30:55, [PRINTER] Cap:SOFTWARE_POWER:0
+13:30:55, [PRINTER] Cap:TOGGLE_LIGHTS:0
+13:30:55, [PRINTER] Cap:CASE_LIGHT_BRIGHTNESS:0
+13:30:55, [PRINTER] Cap:EMERGENCY_PARSER:1
+13:30:55, [PRINTER] Cap:HOST_ACTION_COMMANDS:0
+13:30:55, [PRINTER] Cap:PROMPT_SUPPORT:0
+13:30:55, [PRINTER] Cap:SDCARD:1
+13:30:55, [PRINTER] Cap:REPEAT:0
+13:30:55, [PRINTER] Cap:SD_WRITE:1
+13:30:55, [PRINTER] Cap:AUTOREPORT_SD_STATUS:0
+13:30:55, [PRINTER] Cap:LONG_FILENAME:1
+13:30:55, [PRINTER] Cap:THERMAL_PROTECTION:1
+13:30:55, [PRINTER] Cap:MOTION_MODES:0
+13:30:55, [PRINTER] Cap:ARCS:1
+13:30:55, [PRINTER] Cap:BABYSTEPPING:1
+13:30:55, [PRINTER] Cap:CHAMBER_TEMPERATURE:0
+13:30:55, [PRINTER] Cap:COOLER_TEMPERATURE:0
+13:30:55, [PRINTER] Cap:MEATPACK:0
+13:30:59, [CMD] [COMBINE] Starting sequence with 3 lines.
+13:30:59, [COMBINE] Processing Line 1: 2 wells -> A1
+13:30:59, [COMBINE] Line 1: Ejecting old tip...
+13:30:59, [HOST] >> G90
+13:31:00, [HOST] >> G0 Z195.00 F1500
+13:31:00, [HOST] >> G0 X109.20 Y109.90 F1500
+13:31:00, [HOST] >> G0 X187.90 Y185.30 F1500
+13:31:00, [HOST] >> G0 Z190.00 F1500
+13:31:00, [HOST] >> G0 Z160.20 F1500
+13:31:00, [HOST] >> G0 Y220.90 F250
+13:31:00, [HOST] >> G0 Z190.00 F250
+13:31:00, [HOST] >> G0 Z195.00 F1500
+13:31:08, [HOST] Serial read error: GetOverlappedResult failed (PermissionError(13, 'Access is denied.', None, 5))
+13:31:22, [HOST] Disconnected
+13:31:44, [SYSTEM] Auto-connecting to COM5...
+13:31:45, [HOST] Connected to COM5 @ 115200
+13:31:45, [INIT] Waiting for printer boot...
+13:31:47, [INIT] Sending Setup G-Code...
+13:31:47, [HOST] >> M107
+13:31:47, [HOST] >> M104 S0
+13:31:47, [HOST] >> M140 S0
+13:31:48, [HOST] >> G90
+13:31:48, [HOST] >> G21
+13:31:48, [SYSTEM] Calibration: 200.0uL -> 200.0uL
+13:31:48, [CMD] Calibrate Pipette: 200.0 -> 200.0uL
+13:31:48, [HOST] >> M302 S0
+13:31:48, [HOST] >> G92 E-60.380
+13:31:48, [HOST] >> M82
+13:31:48, [HOST] >> G1 E-60.380 F1000
+13:31:48, [HOST] >> M906 E150
+13:31:48, [HOST] >> M107
+13:31:48, [HOST] >> M84 E S3
+13:31:48, [HOST] >> M104 S0
+13:31:48, [INIT] Setup Complete.
+13:31:48, [HOST] Sequence Complete
+13:31:48, [HOST] >> M140 S0
+13:31:48, [PRINTER] FIRMWARE_NAME:Marlin V1.0.9_F401 (Nov 15 2024 16:32:26) SOURCE_CODE_URL:github.com/MarlinFirmware/Marlin PROTOCOL_VERSION:1.0 MACHINE_TYPE:Ender-3 V3 SE EXTRUDER_COUNT:1 UUID:cede2a2f-41a2-4748-9b12-c55c62f367ff
+13:31:48, [PRINTER] Cap:SERIAL_XON_XOFF:0
+13:31:48, [PRINTER] Cap:BINARY_FILE_TRANSFER:0
+13:31:48, [PRINTER] Cap:EEPROM:1
+13:31:48, [PRINTER] Cap:VOLUMETRIC:1
+13:31:48, [PRINTER] Cap:AUTOREPORT_POS:0
+13:31:48, [PRINTER] Cap:AUTOREPORT_TEMP:1
+13:31:48, [PRINTER] Cap:PROGRESS:0
+13:31:48, [PRINTER] Cap:PRINT_JOB:1
+13:31:48, [PRINTER] Cap:AUTOLEVEL:1
+13:31:48, [PRINTER] Cap:RUNOUT:0
+13:31:48, [PRINTER] Cap:Z_PROBE:1
+13:31:48, [PRINTER] Cap:LEVELING_DATA:1
+13:31:48, [PRINTER] Cap:BUILD_PERCENT:0
+13:31:48, [PRINTER] Cap:SOFTWARE_POWER:0
+13:31:48, [PRINTER] Cap:TOGGLE_LIGHTS:0
+13:31:48, [PRINTER] Cap:CASE_LIGHT_BRIGHTNESS:0
+13:31:48, [PRINTER] Cap:EMERGENCY_PARSER:1
+13:31:48, [PRINTER] Cap:HOST_ACTION_COMMANDS:0
+13:31:48, [PRINTER] Cap:PROMPT_SUPPORT:0
+13:31:48, [PRINTER] Cap:SDCARD:1
+13:31:48, [PRINTER] Cap:REPEAT:0
+13:31:48, [PRINTER] Cap:SD_WRITE:1
+13:31:48, [PRINTER] Cap:AUTOREPORT_SD_STATUS:0
+13:31:48, [PRINTER] Cap:LONG_FILENAME:1
+13:31:48, [PRINTER] Cap:THERMAL_PROTECTION:1
+13:31:48, [PRINTER] Cap:MOTION_MODES:0
+13:31:48, [PRINTER] Cap:ARCS:1
+13:31:48, [PRINTER] Cap:BABYSTEPPING:1
+13:31:48, [PRINTER] Cap:CHAMBER_TEMPERATURE:0
+13:31:48, [PRINTER] Cap:COOLER_TEMPERATURE:0
+13:31:48, [PRINTER] Cap:MEATPACK:0
+13:31:48, [HOST] >> G90
+13:31:49, [HOST] >> G21
+13:31:49, [HOST] >> M302 S0
+13:31:49, [HOST] >> M82
+13:31:49, [HOST] >> M906 E150
+13:31:49, [HOST] >> M84 E S3
+13:31:49, [HOST] Sequence Complete
+13:31:49, [HOST] >> M400
+13:31:49, [HOST] Sequence Complete
+13:31:52, [MANUAL] Homing ALL...
+13:31:52, [HOST] >> G28
+13:32:49, [PRINTER] echo:Bed Leveling ON
+13:32:49, [PRINTER] echo:Fade Height 10.00
+13:32:50, [HOST] >> M18 E
+13:32:50, [HOST] >> G0 Z185.00
+13:32:50, [HOST] Sequence Complete
+13:32:50, [HOST] >> M400
+13:33:25, [HOST] Sequence Complete
+13:35:13, [CMD] [COMBINE] Starting sequence with 3 lines.
+13:35:13, [COMBINE] Processing Line 1: 2 wells -> A1
+13:35:13, [COMBINE] Line 1: Ejecting old tip...
+13:35:13, [HOST] >> G90
+13:35:13, [HOST] >> G0 Z195.00 F1500
+13:35:13, [HOST] >> G0 X109.20 Y109.90 F1500
+13:35:13, [HOST] >> G0 X187.90 Y185.30 F1500
+13:35:13, [HOST] >> G0 Z190.00 F1500
+13:35:13, [HOST] >> G0 Z160.20 F1500
+13:35:14, [HOST] >> G0 Y220.90 F250
+13:35:14, [HOST] >> G0 Z190.00 F250
+13:35:14, [HOST] >> G0 Z195.00 F1500
+13:35:15, [HOST] Sequence Complete
+13:35:15, [COMBINE] Line 1: Picking Tip A3...
+13:35:15, [HOST] >> G90
+13:35:15, [HOST] >> G0 Z195.00 F1500
+13:35:16, [HOST] >> G0 X197.30 Y144.10 F1500
+13:35:17, [HOST] >> G0 Z185.00 F1500
+13:35:21, [HOST] >> G0 Z95.00 F500
+13:35:22, [HOST] >> G0 Z185.00 F1500
+13:35:28, [HOST] Sequence Complete
+13:35:28, [HOST] >> G1 E-60.380 F1000
+13:35:36, [HOST] >> G90
+13:35:36, [HOST] >> G0 Z195.00 F1500
+13:35:37, [HOST] >> G0 X3.60 Y226.90 F1500
+13:35:44, [HOST] >> G0 Z110.00 F1500
+13:35:45, [HOST] >> G0 Z77.30 F1500
+13:35:48, [HOST] >> G1 E-181.140 F1000
+13:35:51, [HOST] >> G0 Z110.00 F1500
+13:36:09, [HOST] >> G90
+13:36:11, [HOST] >> G0 Z195.00 F1500
+13:36:35, [HOST] >> G0 X14.80 Y130.00 F1500
+13:36:37, [HOST] >> G0 Z195.00 F1500
+13:36:39, [HOST] >> G0 Z180.00 F1500
+13:36:45, [HOST] >> G1 E-30.190 F1000
+13:36:54, [HOST] >> G0 Z195.00 F1500
+13:37:00, [HOST] Sequence Complete
+13:37:00, [HOST] >> G1 E-60.380 F1000
+13:37:07, [HOST] >> G90
+13:37:08, [HOST] >> G0 Z195.00 F1500
+13:37:14, [HOST] >> G0 X12.61 Y226.90 F1500
+13:37:14, [HOST] >> G0 Z110.00 F1500
+13:37:31, [HOST] >> G0 Z77.30 F1500
+13:37:35, [HOST] >> G1 E-181.140 F1000
+13:37:38, [HOST] >> G0 Z110.00 F1500
+13:37:47, [HOST] >> G90
+13:37:47, [HOST] >> G0 Z195.00 F1500
+13:37:50, [HOST] >> G0 X14.80 Y130.00 F1500
+13:37:52, [HOST] >> G0 Z195.00 F1500
+13:37:56, [HOST] >> G0 Z180.00 F1500
+13:37:56, [HOST] >> G1 E-30.190 F1000
+13:38:13, [HOST] >> G0 Z195.00 F1500
+13:38:20, [HOST] Sequence Complete
+13:38:20, [COMBINE] Line 1: Wash Cycle 1/1 (800.0uL)...
+13:38:20, [WASH] Ejecting dirty tip...
+13:38:20, [HOST] >> G90
+13:38:20, [HOST] >> G0 Z195.00 F1500
+13:38:27, [HOST] >> G0 X109.20 Y109.90 F1500
+13:38:27, [HOST] >> G0 X187.90 Y185.30 F1500
+13:38:34, [HOST] >> G0 Z190.00 F1500
+13:38:51, [HOST] >> G0 Z160.20 F1500
+13:38:55, [HOST] >> G0 Y220.90 F250
+13:38:58, [HOST] >> G0 Z190.00 F250
+13:39:07, [HOST] >> G0 Z195.00 F1500
+13:39:13, [HOST] Sequence Complete
+13:39:14, [WASH] Picking Tip A4...
+13:39:14, [HOST] >> G90
+13:39:14, [HOST] >> G0 Z195.00 F1500
+13:39:16, [HOST] >> G0 X207.40 Y144.10 F1500
+13:39:16, [HOST] >> G0 Z185.00 F1500
+13:39:18, [HOST] >> G0 Z95.00 F500
+13:39:19, [HOST] >> G0 Z185.00 F1500
+13:39:25, [HOST] Sequence Complete
+13:39:25, [HOST] >> G1 E-60.380 F1000
+13:39:35, [HOST] >> G90
+13:39:35, [HOST] >> G0 Z195.00 F1500
+13:39:41, [HOST] >> G0 X159.90 Y62.70 F1500
+13:39:42, [HOST] >> G0 Z195.00 F1500
+13:39:45, [HOST] >> G0 Z105.00 F1500
+13:39:45, [HOST] >> G1 E-301.900 F1000
+13:39:47, [HOST] >> G0 Z195.00 F1500
+13:40:05, [HOST] Sequence Complete
+13:40:06, [HOST] >> G90
+13:40:06, [HOST] >> G0 Z195.00 F1500
+13:40:23, [HOST] >> G0 X3.60 Y226.90 F1500
+13:40:23, [HOST] >> G0 Z110.00 F1500
+13:40:28, [HOST] >> G0 Z97.30 F1500
+13:40:30, [HOST] >> G1 E-30.190 F1000
+13:40:31, [HOST] >> G0 Z110.00 F1500
+13:40:49, [WASH] Mixing in source vial...
+13:40:49, [HOST] Sequence Complete
+13:40:49, [HOST] >> G90
+13:40:49, [HOST] >> G1 E-60.380 F1000
+13:41:04, [HOST] >> G0 Z77.30 F1500
+13:41:22, [HOST] >> G1 E-301.900 F1000
+13:41:33, [HOST] >> G0 Z97.30 F1500
+13:41:48, [HOST] >> G1 E-30.190 F1000
+13:41:51, [HOST] >> G0 Z110.00 F1500
+13:42:07, [HOST] >> M18 E
+13:42:56, [HOST] Sequence Complete
+13:42:56, [WASH] Transferring mixed wash liquid to destination...
+13:42:56, [HOST] >> G1 E-60.380 F1000
+13:42:56, [HOST] >> G0 Z110.00 F1500
+13:42:56, [HOST] >> G0 X3.60 Y226.90 F1500
+13:42:56, [HOST] >> G0 Z77.30 F1500
+13:42:56, [HOST] >> G1 E-301.900 F1000
+13:42:56, [HOST] >> G0 Z110.00 F1500
+13:42:56, [HOST] Sequence Complete
+13:42:56, [HOST] >> G0 Z195.00 F1500
+13:42:56, [HOST] >> G0 X14.80 Y130.00 F1500
+13:42:57, [HOST] >> G0 Z195.00 F1500
+13:42:57, [HOST] Sequence Complete
+13:42:57, [HOST] >> G0 Z180.00 F1500
+13:42:57, [HOST] >> G1 E-30.190 F1000
+13:42:58, [HOST] >> G0 Z195.00 F1500
+13:43:04, [HOST] >> G1 E-60.380 F1000
+13:43:19, [WASH] Cycle complete. Ejecting wash tip...
+13:43:19, [HOST] Sequence Complete
+13:43:19, [HOST] >> G90
+13:43:19, [HOST] >> G0 Z195.00 F1500
+13:43:26, [HOST] >> G0 X109.20 Y109.90 F1500
+13:43:26, [HOST] >> G0 X187.90 Y185.30 F1500
+13:43:43, [HOST] >> G0 Z190.00 F1500
+13:43:47, [HOST] >> G0 Z160.20 F1500
+13:43:50, [HOST] >> G0 Y220.90 F250
+13:44:06, [HOST] >> G0 Z190.00 F250
+13:44:09, [HOST] >> G0 Z195.00 F1500
+13:44:11, [COMBINE] Line 1 Complete. Ejecting...
+13:44:11, [HOST] Sequence Complete
+13:44:11, [HOST] >> G90
+13:44:11, [HOST] >> G0 Z195.00 F1500
+13:44:15, [HOST] >> G0 X109.20 Y109.90 F1500
+13:44:15, [HOST] >> G0 X187.90 Y185.30 F1500
+13:44:19, [HOST] >> G0 Z190.00 F1500
+13:44:20, [HOST] >> G0 Z160.20 F1500
+13:44:26, [HOST] >> G0 Y220.90 F250
+13:44:35, [HOST] >> G0 Z190.00 F250
+13:44:42, [HOST] >> G0 Z195.00 F1500
+13:44:43, [HOST] Sequence Complete
+13:44:43, [COMBINE] Processing Line 2: 2 wells -> A2
+13:44:43, [COMBINE] Line 2: Ejecting old tip...
+13:44:43, [HOST] >> G90
+13:44:43, [HOST] >> G0 Z195.00 F1500
+13:44:48, [HOST] >> G0 X109.20 Y109.90 F1500
+13:44:48, [HOST] >> G0 X187.90 Y185.30 F1500
+13:44:53, [HOST] >> G0 Z190.00 F1500
+13:44:54, [HOST] >> G0 Z160.20 F1500
+13:45:00, [HOST] >> G0 Y220.90 F250
+13:45:08, [HOST] >> G0 Z190.00 F250
+13:45:15, [HOST] >> G0 Z195.00 F1500
+13:45:16, [COMBINE] Line 2: Picking Tip B1...
+13:45:16, [HOST] Sequence Complete
+13:45:16, [HOST] >> G90
+13:45:17, [HOST] >> G0 Z195.00 F1500
+13:45:22, [HOST] >> G0 X177.10 Y134.14 F1500
+13:45:22, [HOST] >> G0 Z185.00 F1500
+13:45:26, [HOST] >> G0 Z95.00 F500
+13:45:27, [HOST] >> G0 Z185.00 F1500
+13:45:33, [HOST] Sequence Complete
+13:45:33, [HOST] >> G1 E-60.380 F1000
+13:45:42, [HOST] >> G90
+13:45:42, [HOST] >> G0 Z195.00 F1500
+13:45:42, [HOST] >> G0 X48.65 Y190.96 F1500
+13:45:50, [HOST] >> G0 Z110.00 F1500
+13:45:50, [HOST] >> G0 Z77.30 F1500
+13:45:54, [HOST] >> G1 E-181.140 F1000
+13:45:56, [HOST] >> G0 Z110.00 F1500
+13:46:14, [HOST] >> G90
+13:46:14, [HOST] >> G0 Z195.00 F1500
+13:46:32, [HOST] >> G0 X33.90 Y130.00 F1500
+13:46:34, [HOST] >> G0 Z195.00 F1500
+13:46:41, [HOST] >> G0 Z180.00 F1500
+13:46:42, [HOST] >> G1 E-30.190 F1000
+13:46:57, [HOST] >> G0 Z195.00 F1500
+13:47:03, [HOST] Sequence Complete
+13:47:03, [HOST] >> G1 E-60.380 F1000
+13:47:16, [HOST] >> G90
+13:47:16, [HOST] >> G0 Z195.00 F1500
+13:47:17, [HOST] >> G0 X57.65 Y190.96 F1500
+13:47:18, [HOST] >> G0 Z110.00 F1500
+13:47:49, [HOST] >> G0 Z77.30 F1500
+13:47:49, [HOST] >> G1 E-181.140 F1000
+13:47:49, [HOST] >> G0 Z110.00 F1500
+13:47:49, [HOST] >> G90
+13:47:49, [HOST] >> G0 Z195.00 F1500
+13:47:52, [HOST] >> G0 X33.90 Y130.00 F1500
+13:47:54, [HOST] >> G0 Z195.00 F1500
+13:47:57, [HOST] >> G0 Z180.00 F1500
+13:47:57, [HOST] >> G1 E-30.190 F1000
+13:48:15, [HOST] >> G0 Z195.00 F1500
+13:48:20, [HOST] Sequence Complete
+13:48:20, [COMBINE] Line 2: Wash Cycle 1/2 (400.0uL)...
+13:48:20, [WASH] Ejecting dirty tip...
+13:48:20, [HOST] >> G90
+13:48:20, [HOST] >> G0 Z195.00 F1500
+13:48:28, [HOST] >> G0 X109.20 Y109.90 F1500
+13:48:28, [HOST] >> G0 X187.90 Y185.30 F1500
+13:48:35, [HOST] >> G0 Z190.00 F1500
+13:48:51, [HOST] >> G0 Z160.20 F1500
+13:48:54, [HOST] >> G0 Y220.90 F250
+13:48:58, [HOST] >> G0 Z190.00 F250
+13:49:06, [HOST] >> G0 Z195.00 F1500
+13:49:09, [HOST] Sequence Complete
+13:49:09, [WASH] Picking Tip B2...
+13:49:09, [HOST] >> G90
+13:49:09, [HOST] >> G0 Z195.00 F1500
+13:49:12, [HOST] >> G0 X187.20 Y134.14 F1500
+13:49:12, [HOST] >> G0 Z185.00 F1500
+13:49:17, [HOST] >> G0 Z95.00 F500
+13:49:18, [HOST] >> G0 Z185.00 F1500
+13:49:24, [HOST] Sequence Complete
+13:49:25, [HOST] >> G1 E-60.380 F1000
+13:49:35, [HOST] >> G90
+13:49:37, [HOST] >> G0 Z195.00 F1500
+13:49:40, [HOST] >> G0 X159.90 Y62.70 F1500
+13:49:40, [HOST] >> G0 Z195.00 F1500
+13:49:45, [HOST] >> G0 Z105.00 F1500
+13:49:45, [HOST] >> G1 E-181.140 F1000
+13:49:48, [HOST] >> G0 Z195.00 F1500
+13:50:04, [HOST] Sequence Complete
+13:50:10, [HOST] >> G90
+13:50:11, [HOST] >> G0 Z195.00 F1500
+13:50:24, [HOST] >> G0 X48.65 Y190.96 F1500
+13:50:26, [HOST] >> G0 Z110.00 F1500
+13:50:26, [HOST] >> G0 Z97.30 F1500
+13:50:26, [HOST] >> G1 E-30.190 F1000
+13:50:32, [HOST] >> G0 Z110.00 F1500
+13:50:48, [HOST] Sequence Complete
+13:50:49, [WASH] Mixing in source vial...
+13:50:51, [HOST] >> G90
+13:50:51, [HOST] >> G1 E-60.380 F1000
+13:50:55, [HOST] >> G0 Z77.30 F1500
+13:51:13, [HOST] >> G1 E-301.900 F1000
+13:51:22, [HOST] >> G0 Z97.30 F1500
+13:51:37, [HOST] >> G1 E-30.190 F1000
+13:51:40, [HOST] >> G0 Z110.00 F1500
+13:51:48, [HOST] >> M18 E
+13:52:37, [HOST] Sequence Complete
+13:52:37, [WASH] Transferring mixed wash liquid to destination...
+13:52:37, [HOST] >> G1 E-60.380 F1000
+13:52:37, [HOST] >> G0 Z110.00 F1500
+13:52:38, [HOST] >> G0 X48.65 Y190.96 F1500
+13:52:40, [HOST] >> G0 Z77.30 F1500
+13:52:40, [HOST] >> G1 E-211.330 F1000
+13:52:40, [HOST] >> G0 Z110.00 F1500
+13:52:40, [HOST] Sequence Complete
+13:52:40, [HOST] >> G0 Z195.00 F1500
+13:52:40, [HOST] >> G0 X33.90 Y130.00 F1500
+13:52:40, [HOST] >> G0 Z195.00 F1500
+13:52:40, [HOST] Sequence Complete
+13:52:40, [HOST] >> G0 Z180.00 F1500
+13:52:41, [HOST] >> G1 E-30.190 F1000
+13:52:41, [HOST] >> G0 Z195.00 F1500
+13:52:48, [HOST] >> G1 E-60.380 F1000
+13:52:55, [HOST] Sequence Complete
+13:52:55, [WASH] Cycle complete. Ejecting wash tip...
+13:52:55, [HOST] >> G90
+13:52:56, [HOST] >> G0 Z195.00 F1500
+13:53:03, [HOST] >> G0 X109.20 Y109.90 F1500
+13:53:03, [HOST] >> G0 X187.90 Y185.30 F1500
+13:53:20, [HOST] >> G0 Z190.00 F1500
+13:53:25, [HOST] >> G0 Z160.20 F1500
+13:53:25, [HOST] >> G0 Y220.90 F250
+13:53:35, [HOST] >> G0 Z190.00 F250
+13:53:38, [HOST] >> G0 Z195.00 F1500
+13:53:40, [HOST] Sequence Complete
+13:53:40, [COMBINE] Line 2: Wash Cycle 2/2 (400.0uL)...
+13:53:40, [WASH] Tip already ejected, skipping redundant eject.
+13:53:40, [WASH] Picking Tip B3...
+13:53:40, [HOST] >> G90
+13:53:40, [HOST] >> G0 Z195.00 F1500
+13:53:43, [HOST] >> G0 X197.30 Y134.14 F1500
+13:53:45, [HOST] >> G0 Z185.00 F1500
+13:53:48, [HOST] >> G0 Z95.00 F500
+13:53:51, [HOST] >> G0 Z185.00 F1500
+13:53:55, [HOST] Sequence Complete
+13:53:55, [HOST] >> G1 E-60.380 F1000
+13:54:06, [HOST] >> G90
+13:54:07, [HOST] >> G0 Z195.00 F1500
+13:54:07, [HOST] >> G0 X159.90 Y62.70 F1500
+13:54:10, [HOST] >> G0 Z195.00 F1500
+13:54:11, [HOST] >> G0 Z105.00 F1500
+13:54:12, [HOST] >> G1 E-181.140 F1000
+13:54:15, [HOST] >> G0 Z195.00 F1500
+13:54:18, [HOST] Sequence Complete
+13:54:19, [HOST] >> G90
+13:54:19, [HOST] >> G0 Z195.00 F1500
+13:54:35, [HOST] >> G0 X48.65 Y190.96 F1500
+13:54:35, [HOST] >> G0 Z110.00 F1500
+13:54:53, [HOST] >> G0 Z97.30 F1500
+13:54:55, [HOST] >> G1 E-30.190 F1000
+13:54:59, [HOST] >> G0 Z110.00 F1500
+13:55:25, [HOST] Sequence Complete
+13:55:25, [WASH] Mixing in source vial...
+13:55:25, [HOST] >> G90
+13:55:25, [HOST] >> G1 E-60.380 F1000
+13:55:25, [HOST] >> G0 Z77.30 F1500
+13:55:42, [HOST] >> G1 E-301.900 F1000
+13:55:53, [HOST] >> G0 Z97.30 F1500
+13:56:06, [HOST] >> G1 E-30.190 F1000
+13:56:09, [HOST] >> G0 Z110.00 F1500
+13:56:21, [HOST] >> M18 E
+13:57:08, [HOST] Sequence Complete
+13:57:10, [WASH] Transferring mixed wash liquid to destination...
+13:57:10, [HOST] >> G1 E-60.380 F1000
+13:57:10, [HOST] >> G0 Z110.00 F1500
+13:57:10, [HOST] >> G0 X48.65 Y190.96 F1500
+13:57:10, [HOST] >> G0 Z77.30 F1500
+13:57:10, [HOST] >> G1 E-211.330 F1000
+13:57:10, [HOST] >> G0 Z110.00 F1500
+13:57:10, [HOST] Sequence Complete
+13:57:10, [HOST] >> G0 Z195.00 F1500
+13:57:10, [HOST] >> G0 X33.90 Y130.00 F1500
+13:57:10, [HOST] >> G0 Z195.00 F1500
+13:57:11, [HOST] Sequence Complete
+13:57:11, [HOST] >> G0 Z180.00 F1500
+13:57:11, [HOST] >> G1 E-30.190 F1000
+13:57:15, [HOST] >> G0 Z195.00 F1500
+13:57:19, [HOST] >> G1 E-60.380 F1000
+13:57:28, [HOST] Sequence Complete
+13:57:28, [WASH] Cycle complete. Ejecting wash tip...
+13:57:28, [HOST] >> G90
+13:57:28, [HOST] >> G0 Z195.00 F1500
+13:57:35, [HOST] >> G0 X109.20 Y109.90 F1500
+13:57:36, [HOST] >> G0 X187.90 Y185.30 F1500
+13:57:51, [HOST] >> G0 Z190.00 F1500
+13:57:54, [HOST] >> G0 Z160.20 F1500
+13:57:57, [HOST] >> G0 Y220.90 F250
+13:58:08, [HOST] >> G0 Z190.00 F250
+13:58:11, [HOST] >> G0 Z195.00 F1500
+13:58:13, [HOST] Sequence Complete
+13:58:13, [COMBINE] Line 2 Complete. Ejecting...
+13:58:13, [HOST] >> G90
+13:58:13, [HOST] >> G0 Z195.00 F1500
+13:58:16, [HOST] >> G0 X109.20 Y109.90 F1500
+13:58:16, [HOST] >> G0 X187.90 Y185.30 F1500
+13:58:20, [HOST] >> G0 Z190.00 F1500
+13:58:21, [HOST] >> G0 Z160.20 F1500
+13:58:27, [HOST] >> G0 Y220.90 F250
+13:58:36, [HOST] >> G0 Z190.00 F250
+13:58:43, [HOST] >> G0 Z195.00 F1500
+13:58:44, [HOST] Sequence Complete
+13:58:44, [COMBINE] Processing Line 3: 2 wells -> A3
+13:58:44, [COMBINE] Line 3: Ejecting old tip...
+13:58:44, [HOST] >> G90
+13:58:44, [HOST] >> G0 Z195.00 F1500
+13:58:49, [HOST] >> G0 X109.20 Y109.90 F1500
+13:58:49, [HOST] >> G0 X187.90 Y185.30 F1500
+13:58:54, [HOST] >> G0 Z190.00 F1500
+13:58:55, [HOST] >> G0 Z160.20 F1500
+13:59:01, [HOST] >> G0 Y220.90 F250
+13:59:09, [HOST] >> G0 Z190.00 F250
+13:59:16, [HOST] >> G0 Z195.00 F1500
+13:59:17, [COMBINE] Line 3: Picking Tip B4...
+13:59:17, [HOST] Sequence Complete
+13:59:17, [HOST] >> G90
+13:59:18, [HOST] >> G0 Z195.00 F1500
+13:59:23, [HOST] >> G0 X207.40 Y134.14 F1500
+13:59:23, [HOST] >> G0 Z185.00 F1500
+13:59:27, [HOST] >> G0 Z95.00 F500
+13:59:28, [HOST] >> G0 Z185.00 F1500
+13:59:34, [HOST] Sequence Complete
+13:59:34, [HOST] >> G1 E-60.380 F1000
+13:59:43, [HOST] >> G90
+13:59:43, [HOST] >> G0 Z195.00 F1500
+13:59:43, [HOST] >> G0 X57.65 Y164.00 F1500
+13:59:50, [HOST] >> G0 Z110.00 F1500
+13:59:51, [HOST] >> G0 Z77.30 F1500
+13:59:55, [HOST] >> G1 E-181.140 F1000
+13:59:57, [HOST] >> G0 Z110.00 F1500
+14:00:15, [HOST] >> G90
+14:00:15, [HOST] >> G0 Z195.00 F1500
+14:00:33, [HOST] >> G0 X53.00 Y130.00 F1500
+14:00:35, [HOST] >> G0 Z195.00 F1500
+14:00:41, [HOST] >> G0 Z180.00 F1500
+14:00:41, [HOST] >> G1 E-30.190 F1000
+14:00:58, [HOST] >> G0 Z195.00 F1500
+14:01:05, [HOST] Sequence Complete
+14:01:05, [HOST] >> G1 E-60.380 F1000
+14:01:12, [HOST] >> G90
+14:01:12, [HOST] >> G0 Z195.00 F1500
+14:01:19, [HOST] >> G0 X66.66 Y164.00 F1500
+14:01:19, [HOST] >> G0 Z110.00 F1500
+14:01:36, [HOST] >> G0 Z77.30 F1500
+14:01:37, [HOST] >> G1 E-181.140 F1000
+14:01:40, [HOST] >> G0 Z110.00 F1500
+14:01:49, [HOST] >> G90
+14:01:49, [HOST] >> G0 Z195.00 F1500
+14:01:52, [HOST] >> G0 X53.00 Y130.00 F1500
+14:01:54, [HOST] >> G0 Z195.00 F1500
+14:01:56, [HOST] >> G0 Z180.00 F1500
+14:01:56, [HOST] >> G1 E-30.190 F1000
+14:02:13, [HOST] >> G0 Z195.00 F1500
+14:02:19, [COMBINE] Line 3: Wash Cycle 1/3 (200.0uL)...
+14:02:19, [WASH] Ejecting dirty tip...
+14:02:19, [HOST] Sequence Complete
+14:02:19, [HOST] >> G90
+14:02:20, [HOST] >> G0 Z195.00 F1500
+14:02:27, [HOST] >> G0 X109.20 Y109.90 F1500
+14:02:27, [HOST] >> G0 X187.90 Y185.30 F1500
+14:02:33, [HOST] >> G0 Z190.00 F1500
+14:02:51, [HOST] >> G0 Z160.20 F1500
+14:02:52, [HOST] >> G0 Y220.90 F250
+14:02:55, [HOST] >> G0 Z190.00 F250
+14:03:04, [HOST] >> G0 Z195.00 F1500
+14:03:07, [WASH] Picking Tip C1...
+14:03:07, [HOST] Sequence Complete
+14:03:07, [HOST] >> G90
+14:03:07, [HOST] >> G0 Z195.00 F1500
+14:03:10, [HOST] >> G0 X177.10 Y124.18 F1500
+14:03:10, [HOST] >> G0 Z185.00 F1500
+14:03:14, [HOST] >> G0 Z95.00 F500
+14:03:15, [HOST] >> G0 Z185.00 F1500
+14:03:21, [HOST] Sequence Complete
+14:03:21, [HOST] >> G1 E-60.380 F1000
+14:03:30, [HOST] >> G90
+14:03:30, [HOST] >> G0 Z195.00 F1500
+14:03:37, [HOST] >> G0 X159.90 Y62.70 F1500
+14:03:38, [HOST] >> G0 Z195.00 F1500
+14:03:42, [HOST] >> G0 Z105.00 F1500
+14:03:42, [HOST] >> G1 E-120.760 F1000
+14:03:44, [HOST] >> G0 Z195.00 F1500
+14:04:02, [HOST] Sequence Complete
+14:04:02, [HOST] >> G90
+14:04:02, [HOST] >> G0 Z195.00 F1500
+14:04:18, [HOST] Serial read error: ClearCommError failed (PermissionError(13, 'Access is denied.', None, 5))
+14:04:28, [HOST] Disconnected
+14:04:56, [SYSTEM] Auto-connecting to COM5...
+14:04:56, [HOST] Connected to COM5 @ 115200
+14:04:56, [INIT] Waiting for printer boot...
+14:04:58, [INIT] Sending Setup G-Code...
+14:04:58, [HOST] >> M107
+14:04:58, [HOST] >> M104 S0
+14:04:58, [HOST] >> M140 S0
+14:04:59, [HOST] >> G90
+14:04:59, [HOST] >> G21
+14:04:59, [HOST] >> M302 S0
+14:04:59, [HOST] >> M82
+14:04:59, [HOST] >> M906 E150
+14:04:59, [HOST] >> M84 E S3
+14:04:59, [INIT] Setup Complete.
+14:04:59, [HOST] Sequence Complete
+14:04:59, [PRINTER] FIRMWARE_NAME:Marlin V1.0.9_F401 (Nov 15 2024 16:32:26) SOURCE_CODE_URL:github.com/MarlinFirmware/Marlin PROTOCOL_VERSION:1.0 MACHINE_TYPE:Ender-3 V3 SE EXTRUDER_COUNT:1 UUID:cede2a2f-41a2-4748-9b12-c55c62f367ff
+14:04:59, [PRINTER] Cap:SERIAL_XON_XOFF:0
+14:04:59, [PRINTER] Cap:BINARY_FILE_TRANSFER:0
+14:04:59, [PRINTER] Cap:EEPROM:1
+14:04:59, [PRINTER] Cap:VOLUMETRIC:1
+14:04:59, [PRINTER] Cap:AUTOREPORT_POS:0
+14:04:59, [PRINTER] Cap:AUTOREPORT_TEMP:1
+14:04:59, [PRINTER] Cap:PROGRESS:0
+14:04:59, [PRINTER] Cap:PRINT_JOB:1
+14:04:59, [PRINTER] Cap:AUTOLEVEL:1
+14:04:59, [PRINTER] Cap:RUNOUT:0
+14:05:00, [PRINTER] Cap:Z_PROBE:1
+14:05:00, [PRINTER] Cap:LEVELING_DATA:1
+14:05:00, [PRINTER] Cap:BUILD_PERCENT:0
+14:05:00, [PRINTER] Cap:SOFTWARE_POWER:0
+14:05:00, [PRINTER] Cap:TOGGLE_LIGHTS:0
+14:05:00, [PRINTER] Cap:CASE_LIGHT_BRIGHTNESS:0
+14:05:00, [PRINTER] Cap:EMERGENCY_PARSER:1
+14:05:00, [PRINTER] Cap:HOST_ACTION_COMMANDS:0
+14:05:00, [PRINTER] Cap:PROMPT_SUPPORT:0
+14:05:00, [PRINTER] Cap:SDCARD:1
+14:05:00, [PRINTER] Cap:REPEAT:0
+14:05:00, [PRINTER] Cap:SD_WRITE:1
+14:05:00, [PRINTER] Cap:AUTOREPORT_SD_STATUS:0
+14:05:00, [PRINTER] Cap:LONG_FILENAME:1
+14:05:00, [PRINTER] Cap:THERMAL_PROTECTION:1
+14:05:00, [PRINTER] Cap:MOTION_MODES:0
+14:05:00, [PRINTER] Cap:ARCS:1
+14:05:00, [PRINTER] Cap:BABYSTEPPING:1
+14:05:00, [PRINTER] Cap:CHAMBER_TEMPERATURE:0
+14:05:00, [PRINTER] Cap:COOLER_TEMPERATURE:0
+14:05:00, [PRINTER] Cap:MEATPACK:0
+14:05:02, [SYSTEM] Calibration: 100.0uL -> 200.0uL
+14:05:02, [CMD] Calibrate Pipette: 100.0 -> 200.0uL
+14:05:03, [HOST] >> G92 E-30.190
+14:05:03, [HOST] >> G1 E-60.380 F1000
+14:05:03, [HOST] >> M107
+14:05:03, [HOST] >> M104 S0
+14:05:03, [HOST] >> M140 S0
+14:05:04, [HOST] >> G90
+14:05:04, [HOST] >> G21
+14:05:04, [HOST] >> M302 S0
+14:05:04, [HOST] >> M82
+14:05:04, [HOST] >> M906 E150
+14:05:04, [HOST] >> M84 E S3
+14:05:04, [HOST] Sequence Complete
+14:05:04, [HOST] >> M400
+14:05:05, [HOST] Sequence Complete
+14:05:06, [MANUAL] Homing ALL...
+14:05:07, [HOST] >> G28
+14:06:08, [PRINTER] echo:Bed Leveling ON
+14:06:08, [PRINTER] echo:Fade Height 10.00
+14:06:08, [HOST] >> M18 E
+14:06:11, [HOST] >> G0 Z185.00
+14:06:12, [HOST] Sequence Complete
+14:06:12, [HOST] >> M400
+14:06:46, [HOST] Sequence Complete
+14:07:51, [CMD] [COMBINE] Starting sequence with 1 lines.
+14:07:51, [COMBINE] Processing Line 1: 2 wells -> A1
+14:07:51, [COMBINE] Line 1: Ejecting old tip...
+14:07:51, [HOST] >> G90
+14:07:51, [HOST] >> G0 Z195.00 F1500
+14:07:51, [HOST] >> G0 X109.20 Y109.90 F1500
+14:07:51, [HOST] >> G0 X187.90 Y185.30 F1500
+14:07:52, [HOST] >> G0 Z190.00 F1500
+14:07:52, [HOST] >> G0 Z160.20 F1500
+14:07:52, [HOST] >> G0 Y220.90 F250
+14:07:52, [HOST] >> G0 Z190.00 F250
+14:07:52, [HOST] >> G0 Z195.00 F1500
+14:07:53, [HOST] Sequence Complete
+14:07:53, [COMBINE] Line 1: Picking Tip A1...
+14:07:53, [HOST] >> G90
+14:07:54, [HOST] >> G0 Z195.00 F1500
+14:07:57, [HOST] >> G0 X177.10 Y144.10 F1500
+14:07:57, [HOST] >> G0 Z185.00 F1500
+14:07:59, [HOST] >> G0 Z95.00 F500
+14:08:00, [HOST] >> G0 Z185.00 F1500
+14:08:06, [HOST] Sequence Complete
+14:08:07, [HOST] >> G1 E-60.380 F1000
+14:08:15, [HOST] >> G90
+14:08:15, [HOST] >> G0 Z195.00 F1500
+14:08:15, [HOST] >> G0 X3.60 Y226.90 F1500
+14:08:25, [HOST] >> G0 Z110.00 F1500
+14:08:26, [HOST] >> G0 Z77.30 F1500
+14:08:27, [HOST] >> G1 E-181.140 F1000
+14:08:30, [HOST] >> G0 Z110.00 F1500
+14:08:46, [HOST] >> G90
+14:08:46, [HOST] >> G0 Z195.00 F1500
+14:09:04, [HOST] >> G0 X14.80 Y130.00 F1500
+14:09:06, [HOST] >> G0 Z195.00 F1500
+14:09:14, [HOST] >> G0 Z180.00 F1500
+14:09:14, [HOST] >> G1 E-30.190 F1000
+14:09:31, [HOST] >> G0 Z195.00 F1500
+14:09:38, [HOST] Sequence Complete
+14:09:38, [HOST] >> G1 E-60.380 F1000
+14:09:45, [HOST] >> G90
+14:09:46, [HOST] >> G0 Z195.00 F1500
+14:09:52, [HOST] >> G0 X12.61 Y226.90 F1500
+14:09:52, [HOST] >> G0 Z110.00 F1500
+14:10:09, [HOST] >> G0 Z77.30 F1500
+14:10:13, [HOST] >> G1 E-181.140 F1000
+14:10:16, [HOST] >> G0 Z110.00 F1500
+14:10:25, [HOST] >> G90
+14:10:25, [HOST] >> G0 Z195.00 F1500
+14:10:30, [HOST] >> G0 X14.80 Y130.00 F1500
+14:10:31, [HOST] >> G0 Z195.00 F1500
+14:10:34, [HOST] >> G0 Z180.00 F1500
+14:10:34, [HOST] >> G1 E-30.190 F1000
+14:10:51, [HOST] >> G0 Z195.00 F1500
+14:10:57, [HOST] Sequence Complete
+14:10:58, [COMBINE] Line 1: Ejecting main transfer tip...
+14:10:58, [HOST] >> G90
+14:10:58, [HOST] >> G0 Z195.00 F1500
+14:11:05, [HOST] >> G0 X109.20 Y109.90 F1500
+14:11:05, [HOST] >> G0 X187.90 Y185.30 F1500
+14:11:14, [HOST] >> G0 Z190.00 F1500
+14:11:29, [HOST] >> G0 Z160.20 F1500
+14:11:33, [HOST] >> G0 Y220.90 F250
+14:11:35, [HOST] >> G0 Z190.00 F250
+14:11:45, [HOST] >> G0 Z195.00 F1500
+14:11:50, [HOST] Sequence Complete
+14:11:50, [COMBINE] Line 1: Picking Wash Tip A2...
+14:11:50, [HOST] >> G90
+14:11:51, [HOST] >> G0 Z195.00 F1500
+14:11:52, [HOST] >> G0 X187.20 Y144.10 F1500
+14:11:52, [HOST] >> G0 Z185.00 F1500
+14:11:56, [HOST] >> G0 Z95.00 F500
+14:11:57, [HOST] >> G0 Z185.00 F1500
+14:12:03, [HOST] Sequence Complete
+14:12:04, [COMBINE] Line 1: Wash Cycle 1/2 (Batch Mode)...
+14:12:04,   -> Distributing 200.0uL Wash to A1
+14:12:04, [HOST] >> G1 E-60.380 F1000
+14:12:12, [HOST] >> G90
+14:12:13, [HOST] >> G0 Z195.00 F1500
+14:12:18, [HOST] >> G0 X159.90 Y62.70 F1500
+14:12:19, [HOST] >> G0 Z195.00 F1500
+14:12:23, [HOST] >> G0 Z105.00 F1500
+14:12:23, [HOST] >> G1 E-120.760 F1000
+14:12:25, [HOST] >> G0 Z195.00 F1500
+14:12:44, [HOST] Sequence Complete
+14:12:44, [HOST] >> G90
+14:12:44, [HOST] >> G0 Z195.00 F1500
+14:13:01, [HOST] >> G0 X3.60 Y226.90 F1500
+14:13:01, [HOST] >> G0 Z110.00 F1500
+14:13:03, [HOST] >> G0 Z77.30 F1500
+14:13:05, [HOST] >> G1 E-60.380 F1000
+14:13:08, [HOST] >> G0 Z110.00 F1500
+14:13:29, [HOST] Sequence Complete
+14:13:29,   -> Distributing 200.0uL Wash to A2
+14:13:29, [HOST] >> G1 E-60.380 F1000
+14:13:29, [HOST] >> G90
+14:13:30, [HOST] >> G0 Z195.00 F1500
+14:13:30, [HOST] >> G0 X159.90 Y62.70 F1500
+14:13:48, [HOST] >> G0 Z195.00 F1500
+14:13:57, [HOST] >> G0 Z105.00 F1500
+14:13:57, [HOST] >> G1 E-120.760 F1000
+14:14:14, [HOST] >> G0 Z195.00 F1500
+14:14:21, [HOST] Sequence Complete
+14:14:21, [HOST] >> G90
+14:14:21, [HOST] >> G0 Z195.00 F1500
+14:14:25, [HOST] >> G0 X12.61 Y226.90 F1500
+14:14:25, [HOST] >> G0 Z110.00 F1500
+14:14:31, [HOST] >> G0 Z77.30 F1500
+14:14:48, [HOST] >> G1 E-60.380 F1000
+14:14:57, [HOST] >> G0 Z110.00 F1500
+14:15:16,   -> Collecting Wash from A1
+14:15:16, [HOST] Sequence Complete
+14:15:16, [HOST] >> G90
+14:15:16, [HOST] >> G0 Z110.00 F1500
+14:15:19, [HOST] >> G0 X3.60 Y226.90 F1500
+14:15:19, [HOST] >> G0 Z77.30 F1500
+14:15:38, [HOST] >> G1 E-120.760 F1000
+14:15:48, [HOST] >> G1 E-60.380 F1000
+14:16:03, [HOST] >> G1 E-120.760 F1000
+14:16:10, [HOST] >> G1 E-60.380 F1000
+14:16:14, [HOST] >> G1 E-120.760 F1000
+14:16:20, [HOST] >> G1 E-60.380 F1000
+14:16:21, [HOST] >> G1 E-135.855 F1000
+14:16:27, [HOST] >> G0 Z110.00 F1500
+14:16:31, [HOST] Sequence Complete
+14:16:31, [HOST] >> G90
+14:16:31, [HOST] >> G0 Z195.00 F1500
+14:16:35, [HOST] >> G0 X14.80 Y130.00 F1500
+14:16:43, [HOST] >> G0 Z195.00 F1500
+14:16:43, [HOST] >> G0 Z180.00 F1500
+14:16:43, [HOST] >> G1 E-30.190 F1000
+14:16:46, [HOST] >> G0 Z195.00 F1500
+14:16:49, [HOST] >> G1 E-60.380 F1000
+14:16:54, [HOST] Sequence Complete
+14:16:54,   -> Collecting Wash from A2
+14:16:54, [HOST] >> G90
+14:16:54, [HOST] >> G0 Z195.00 F1500
+14:17:00, [HOST] >> G0 X12.61 Y226.90 F1500
+14:17:00, [HOST] >> G0 Z110.00 F1500
+14:17:17, [HOST] >> G0 Z77.30 F1500
+14:17:21, [HOST] >> G1 E-120.760 F1000
+14:17:24, [HOST] >> G1 E-60.380 F1000
+14:17:33, [HOST] >> G1 E-120.760 F1000
+14:17:34, [HOST] >> G1 E-60.380 F1000
+14:17:36, [HOST] >> G1 E-120.760 F1000
+14:17:39, [HOST] >> G1 E-60.380 F1000
+14:17:57, [HOST] >> G1 E-135.855 F1000
+14:18:03, [HOST] >> G0 Z110.00 F1500
+14:18:07, [HOST] Sequence Complete
+14:18:07, [HOST] >> G90
+14:18:09, [HOST] >> G0 Z195.00 F1500
+14:18:11, [HOST] >> G0 X14.80 Y130.00 F1500
+14:18:14, [HOST] >> G0 Z195.00 F1500
+14:18:18, [HOST] >> G0 Z180.00 F1500
+14:18:18, [HOST] >> G1 E-30.190 F1000
+14:18:24, [HOST] >> G0 Z195.00 F1500
+14:18:25, [HOST] >> G1 E-60.380 F1000
+14:18:30, [HOST] Sequence Complete
+14:18:30, [COMBINE] Line 1: Wash Cycle 2/2 (Batch Mode)...
+14:18:30,   -> Distributing 200.0uL Wash to A1
+14:18:30, [HOST] >> G1 E-60.380 F1000
+14:18:36, [HOST] >> G90
+14:18:37, [HOST] >> G0 Z195.00 F1500
+14:18:39, [HOST] >> G0 X159.90 Y62.70 F1500
+14:18:39, [HOST] >> G0 Z195.00 F1500
+14:18:53, [HOST] >> G0 Z105.00 F1500
+14:18:54, [HOST] >> G1 E-120.760 F1000
+14:18:57, [HOST] >> G0 Z195.00 F1500
+14:19:00, [HOST] Sequence Complete
+14:19:00, [HOST] >> G90
+14:19:00, [HOST] >> G0 Z195.00 F1500
+14:19:09, [HOST] >> G0 X3.60 Y226.90 F1500
+14:19:09, [HOST] >> G0 Z110.00 F1500
+14:19:10, [HOST] >> G0 Z77.30 F1500
+14:19:12, [HOST] >> G1 E-60.380 F1000
+14:19:18, [HOST] >> G0 Z110.00 F1500
+14:19:36, [HOST] Sequence Complete
+14:19:37,   -> Distributing 200.0uL Wash to A2
+14:19:37, [HOST] >> G1 E-60.380 F1000
+14:19:41, [HOST] >> G90
+14:19:41, [HOST] >> G0 Z195.00 F1500
+14:19:44, [HOST] >> G0 X159.90 Y62.70 F1500
+14:20:02, [HOST] >> G0 Z195.00 F1500
+14:20:07, [HOST] >> G0 Z105.00 F1500
+14:20:07, [HOST] >> G1 E-120.760 F1000
+14:20:24, [HOST] >> G0 Z195.00 F1500
+14:20:34, [HOST] Sequence Complete
+14:20:35, [HOST] >> G90
+14:20:37, [HOST] >> G0 Z195.00 F1500
+14:20:37, [HOST] >> G0 X12.61 Y226.90 F1500
+14:20:37, [HOST] >> G0 Z110.00 F1500
+14:20:43, [HOST] >> G0 Z77.30 F1500
+14:21:02, [HOST] >> G1 E-60.380 F1000
+14:21:08, [HOST] >> G0 Z110.00 F1500
+14:21:29, [HOST] Sequence Complete
+14:21:29,   -> Collecting Wash from A1
+14:21:29, [HOST] >> G90
+14:21:29, [HOST] >> G0 Z110.00 F1500
+14:21:29, [HOST] >> G0 X3.60 Y226.90 F1500
+14:21:30, [HOST] >> G0 Z77.30 F1500
+14:21:50, [HOST] >> G1 E-120.760 F1000
+14:21:59, [HOST] >> G1 E-60.380 F1000
+14:22:17, [HOST] >> G1 E-120.760 F1000
+14:22:20, [HOST] >> G1 E-60.380 F1000
+14:22:25, [HOST] >> G1 E-120.760 F1000
+14:22:30, [HOST] >> G1 E-60.380 F1000
+14:22:30, [HOST] >> G1 E-135.855 F1000
+14:22:38, [HOST] >> G0 Z110.00 F1500
+14:22:41, [HOST] Sequence Complete
+14:22:41, [HOST] >> G90
+14:22:41, [HOST] >> G0 Z195.00 F1500
+14:22:46, [HOST] >> G0 X14.80 Y130.00 F1500
+14:22:48, [HOST] >> G0 Z195.00 F1500
+14:22:52, [HOST] >> G0 Z180.00 F1500
+14:22:52, [HOST] >> G1 E-30.190 F1000
+14:22:56, [HOST] >> G0 Z195.00 F1500
+14:22:59, [HOST] >> G1 E-60.380 F1000
+14:23:03, [HOST] Sequence Complete
+14:23:03,   -> Collecting Wash from A2
+14:23:04, [HOST] >> G90
+14:23:04, [HOST] >> G0 Z195.00 F1500
+14:23:10, [HOST] >> G0 X12.61 Y226.90 F1500
+14:23:11, [HOST] >> G0 Z110.00 F1500
+14:23:27, [HOST] >> G0 Z77.30 F1500
+14:23:31, [HOST] >> G1 E-120.760 F1000
+14:23:36, [HOST] >> G1 E-60.380 F1000
+14:23:40, [HOST] >> G1 E-120.760 F1000
+14:23:44, [HOST] >> G1 E-60.380 F1000
+14:23:47, [HOST] >> G1 E-120.760 F1000
+14:23:49, [HOST] >> G1 E-60.380 F1000
+14:24:06, [HOST] >> G1 E-135.855 F1000
+14:24:13, [HOST] >> G0 Z110.00 F1500
+14:24:17, [HOST] Sequence Complete
+14:24:17, [HOST] >> G90
+14:24:17, [HOST] >> G0 Z195.00 F1500
+14:24:22, [HOST] >> G0 X14.80 Y130.00 F1500
+14:24:24, [HOST] >> G0 Z195.00 F1500
+14:24:28, [HOST] >> G0 Z180.00 F1500
+14:24:28, [HOST] >> G1 E-30.190 F1000
+14:24:31, [HOST] >> G0 Z195.00 F1500
+14:24:36, [HOST] >> G1 E-60.380 F1000
+14:24:41, [HOST] Sequence Complete
+14:24:41, [COMBINE] Line 1: Ejecting wash tip...
+14:24:41, [HOST] >> G90
+14:24:44, [HOST] >> G0 Z195.00 F1500
+14:24:46, [HOST] >> G0 X109.20 Y109.90 F1500
+14:24:46, [HOST] >> G0 X187.90 Y185.30 F1500
+14:25:05, [HOST] >> G0 Z190.00 F1500
+14:25:07, [HOST] >> G0 Z160.20 F1500
+14:25:12, [HOST] >> G0 Y220.90 F250
+14:25:17, [HOST] >> G0 Z190.00 F250
+14:25:21, [HOST] >> G0 Z195.00 F1500
+14:25:21, [COMBINE] Line 1 Complete.
+14:25:21, [HOST] Sequence Complete
+14:25:21, [CMD] [COMBINE] Sequence Finished. Parking.
+14:25:21, [SYSTEM] Parking Head...
+14:25:21, [CMD] Park Head (Center + Lower)
+14:25:21, [HOST] >> G90
+14:25:21, [HOST] >> G0 Z195.00 F1500
+14:25:28, [HOST] >> G0 X109.20 Y109.90 F1500
+14:25:28, [HOST] >> G0 Z175.00 F1500
+14:25:30, [HOST] Sequence Complete
+14:25:30, [HOST] >> M400
+14:26:03, [HOST] Sequence Complete
+14:26:56, [HOST] Serial read error: ClearCommError failed (PermissionError(13, 'Access is denied.', None, 5))
+14:27:36, [HOST] Disconnected
+14:29:59, [HOST] Connected to COM5 @ 115200
+14:29:59, [INIT] Waiting for printer boot...
+14:30:01, [INIT] Sending Setup G-Code...
+14:30:01, [HOST] >> M107
+14:30:01, [HOST] >> M104 S0
+14:30:01, [HOST] >> M140 S0
+14:30:01, [HOST] >> G90
+14:30:02, [HOST] >> G21
+14:30:02, [HOST] >> M302 S0
+14:30:02, [HOST] >> M82
+14:30:02, [HOST] >> M906 E150
+14:30:02, [HOST] >> M84 E S3
+14:30:02, [HOST] Sequence Complete
+14:30:02, [INIT] Setup Complete.
+14:30:02, [PRINTER] FIRMWARE_NAME:Marlin V1.0.9_F401 (Nov 15 2024 16:32:26) SOURCE_CODE_URL:github.com/MarlinFirmware/Marlin PROTOCOL_VERSION:1.0 MACHINE_TYPE:Ender-3 V3 SE EXTRUDER_COUNT:1 UUID:cede2a2f-41a2-4748-9b12-c55c62f367ff
+14:30:02, [PRINTER] Cap:SERIAL_XON_XOFF:0
+14:30:02, [PRINTER] Cap:BINARY_FILE_TRANSFER:0
+14:30:02, [PRINTER] Cap:EEPROM:1
+14:30:02, [PRINTER] Cap:VOLUMETRIC:1
+14:30:02, [PRINTER] Cap:AUTOREPORT_POS:0
+14:30:02, [PRINTER] Cap:AUTOREPORT_TEMP:1
+14:30:02, [PRINTER] Cap:PROGRESS:0
+14:30:02, [PRINTER] Cap:PRINT_JOB:1
+14:30:02, [PRINTER] Cap:AUTOLEVEL:1
+14:30:02, [PRINTER] Cap:RUNOUT:0
+14:30:02, [PRINTER] Cap:Z_PROBE:1
+14:30:02, [PRINTER] Cap:LEVELING_DATA:1
+14:30:02, [PRINTER] Cap:BUILD_PERCENT:0
+14:30:02, [PRINTER] Cap:SOFTWARE_POWER:0
+14:30:02, [PRINTER] Cap:TOGGLE_LIGHTS:0
+14:30:02, [PRINTER] Cap:CASE_LIGHT_BRIGHTNESS:0
+14:30:02, [PRINTER] Cap:EMERGENCY_PARSER:1
+14:30:02, [PRINTER] Cap:HOST_ACTION_COMMANDS:0
+14:30:02, [PRINTER] Cap:PROMPT_SUPPORT:0
+14:30:02, [PRINTER] Cap:SDCARD:1
+14:30:02, [PRINTER] Cap:REPEAT:0
+14:30:02, [PRINTER] Cap:SD_WRITE:1
+14:30:02, [PRINTER] Cap:AUTOREPORT_SD_STATUS:0
+14:30:02, [PRINTER] Cap:LONG_FILENAME:1
+14:30:02, [PRINTER] Cap:THERMAL_PROTECTION:1
+14:30:02, [PRINTER] Cap:MOTION_MODES:0
+14:30:02, [PRINTER] Cap:ARCS:1
+14:30:02, [PRINTER] Cap:BABYSTEPPING:1
+14:30:02, [PRINTER] Cap:CHAMBER_TEMPERATURE:0
+14:30:02, [PRINTER] Cap:COOLER_TEMPERATURE:0
+14:30:02, [PRINTER] Cap:MEATPACK:0
+14:30:03, [SYSTEM] Calibration: 199.0uL -> 200.0uL
+14:30:03, [CMD] Calibrate Pipette: 199.0 -> 200.0uL
+14:30:03, [HOST] >> G92 E-60.078
+14:30:03, [HOST] >> G1 E-60.380 F1000
+14:30:03, [HOST] >> M107
+14:30:03, [HOST] >> M104 S0
+14:30:03, [HOST] >> M140 S0
+14:30:03, [HOST] >> G90
+14:30:03, [HOST] >> G21
+14:30:03, [HOST] >> M302 S0
+14:30:04, [HOST] >> M82
+14:30:04, [HOST] >> M906 E150
+14:30:04, [HOST] >> M84 E S3
+14:30:04, [HOST] Sequence Complete
+14:30:04, [HOST] >> M400
+14:30:04, [HOST] Sequence Complete
+14:30:05, [MANUAL] Homing ALL...
+14:30:05, [HOST] >> G28
+14:31:06, [CMD] [COMBINE] Starting sequence with 1 lines.
+14:31:06, [COMBINE] Processing Line 1: 2 wells -> A1
+14:31:06, [COMBINE] Line 1: Ejecting old tip...
+14:31:06, [HOST] >> G90
+14:31:07, [PRINTER] echo:Bed Leveling ON
+14:31:07, [PRINTER] echo:Fade Height 10.00
+14:31:07, [HOST] >> M18 E
+14:31:07, [HOST] >> G0 Z195.00 F1500
+14:31:07, [HOST] >> G0 Z185.00
+14:31:07, [HOST] >> G0 X109.20 Y109.90 F1500
+14:31:07, [HOST] Sequence Complete
+14:31:07, [HOST] >> M400
+14:31:07, [HOST] >> G0 X187.90 Y185.30 F1500
+14:31:47, [HOST] Sequence Complete
+14:31:47, [HOST] >> G0 Z190.00 F1500
+14:31:47, [HOST] >> G0 Z160.20 F1500
+14:31:47, [HOST] >> G0 Y220.90 F250
+14:31:48, [HOST] >> G0 Z190.00 F250
+14:31:48, [HOST] >> G0 Z195.00 F1500
+14:31:48, [COMBINE] Line 1: Picking Tip A1...
+14:31:48, [HOST] Sequence Complete
+14:31:48, [HOST] >> G90
+14:31:48, [HOST] >> G0 Z195.00 F1500
+14:31:48, [HOST] >> G0 X177.10 Y144.10 F1500
+14:31:48, [HOST] >> G0 Z185.00 F1500
+14:31:52, [HOST] >> G0 Z95.00 F500
+14:31:53, [HOST] >> G0 Z185.00 F1500
+14:31:59, [HOST] Sequence Complete
+14:31:59, [HOST] >> G1 E-60.380 F1000
+14:32:07, [HOST] >> G90
+14:32:08, [HOST] >> G0 Z195.00 F1500
+14:32:08, [HOST] >> G0 X3.60 Y226.90 F1500
+14:32:15, [HOST] >> G0 Z110.00 F1500
+14:32:16, [HOST] >> G0 Z77.30 F1500
+14:32:19, [HOST] >> G1 E-301.900 F1000
+14:32:21, [HOST] >> G0 Z110.00 F1500
+14:32:39, [HOST] >> G90
+14:32:39, [HOST] >> G0 Z195.00 F1500
+14:32:57, [HOST] >> G0 X14.80 Y130.00 F1500
+14:32:59, [HOST] >> G0 Z195.00 F1500
+14:33:07, [HOST] >> G0 Z180.00 F1500
+14:33:07, [HOST] >> G1 E-30.190 F1000
+14:33:24, [HOST] >> G0 Z195.00 F1500
+14:33:31, [HOST] Sequence Complete
+14:33:31, [HOST] >> G1 E-60.380 F1000
+14:33:45, [HOST] >> G90
+14:33:45, [HOST] >> G0 Z195.00 F1500
+14:33:52, [HOST] >> G0 X12.61 Y226.90 F1500
+14:33:52, [HOST] >> G0 Z110.00 F1500
+14:34:09, [HOST] >> G0 Z77.30 F1500
+14:34:13, [HOST] >> G1 E-301.900 F1000
+14:34:16, [HOST] >> G0 Z110.00 F1500
+14:34:32, [HOST] >> G90
+14:34:32, [HOST] >> G0 Z195.00 F1500
+14:34:35, [HOST] >> G0 X14.80 Y130.00 F1500
+14:34:37, [HOST] >> G0 Z195.00 F1500
+14:34:41, [HOST] >> G0 Z180.00 F1500
+14:34:41, [HOST] >> G1 E-30.190 F1000
+14:34:58, [HOST] >> G0 Z195.00 F1500
+14:35:05, [HOST] Sequence Complete
+14:35:05, [COMBINE] Line 1: Ejecting main transfer tip...
+14:35:05, [HOST] >> G90
+14:35:05, [HOST] >> G0 Z195.00 F1500
+14:35:19, [HOST] >> G0 X109.20 Y109.90 F1500
+14:35:19, [HOST] >> G0 X187.90 Y185.30 F1500
+14:35:26, [HOST] >> G0 Z190.00 F1500
+14:35:43, [HOST] >> G0 Z160.20 F1500
+14:35:47, [HOST] >> G0 Y220.90 F250
+14:35:50, [HOST] >> G0 Z190.00 F250
+14:36:06, [HOST] >> G0 Z195.00 F1500
+14:36:09, [COMBINE] Line 1: Picking Wash Tip A2 (Cycle 1)...
+14:36:09, [HOST] Sequence Complete
+14:36:09, [HOST] >> G90
+14:36:10, [HOST] >> G0 Z195.00 F1500
+14:36:13, [HOST] >> G0 X187.20 Y144.10 F1500
+14:36:13, [HOST] >> G0 Z185.00 F1500
+14:36:18, [HOST] >> G0 Z95.00 F500
+14:36:19, [HOST] >> G0 Z185.00 F1500
+14:36:25, [COMBINE] Line 1: Wash Cycle 1/2 (Batch Mode)...
+14:36:25, [HOST] Sequence Complete
+14:36:25,   -> Distributing 400.0uL Wash to A1
+14:36:25, [HOST] >> G1 E-60.380 F1000
+14:36:33, [HOST] >> G90
+14:36:33, [HOST] >> G0 Z195.00 F1500
+14:36:40, [HOST] >> G0 X159.90 Y62.70 F1500
+14:36:41, [HOST] >> G0 Z195.00 F1500
+14:36:45, [HOST] >> G0 Z105.00 F1500
+14:36:45, [HOST] >> G1 E-181.140 F1000
+14:36:47, [HOST] >> G0 Z195.00 F1500
+14:37:05, [HOST] Sequence Complete
+14:37:05, [HOST] >> G90
+14:37:05, [HOST] >> G0 Z195.00 F1500
+14:37:23, [HOST] >> G0 X3.60 Y226.90 F1500
+14:37:23, [HOST] >> G0 Z110.00 F1500
+14:37:25, [HOST] >> G0 Z97.30 F1500
+14:37:27, [HOST] >> G1 E-60.380 F1000
+14:37:30, [HOST] >> G0 Z110.00 F1500
+14:37:48, [HOST] Sequence Complete
+14:37:48,   -> Distributing 400.0uL Wash to A2
+14:37:48, [HOST] >> G1 E-60.380 F1000
+14:37:56, [HOST] >> G90
+14:37:56, [HOST] >> G0 Z195.00 F1500
+14:37:56, [HOST] >> G0 X159.90 Y62.70 F1500
+14:38:14, [HOST] >> G0 Z195.00 F1500
+14:38:23, [HOST] >> G0 Z105.00 F1500
+14:38:23, [HOST] >> G1 E-181.140 F1000
+14:38:40, [HOST] >> G0 Z195.00 F1500
+14:38:43, [HOST] Sequence Complete
+14:38:43, [HOST] >> G90
+14:38:43, [HOST] >> G0 Z195.00 F1500
+14:38:50, [HOST] >> G0 X12.61 Y226.90 F1500
+14:38:50, [HOST] >> G0 Z110.00 F1500
+14:38:52, [HOST] >> G0 Z97.30 F1500
+14:39:10, [HOST] >> G1 E-60.380 F1000
+14:39:19, [HOST] >> G0 Z110.00 F1500
+14:39:37,   -> Collecting Wash from A1
+14:39:37, [HOST] Sequence Complete
+14:39:37, [HOST] >> G90
+14:39:37, [HOST] >> G0 Z110.00 F1500
+14:39:44, [HOST] >> G0 X3.60 Y226.90 F1500
+14:39:44, [HOST] >> G0 Z77.30 F1500
+14:40:02, [HOST] >> G1 E-120.760 F1000
+14:40:11, [HOST] >> G1 E-60.380 F1000
+14:40:28, [HOST] >> G1 E-120.760 F1000
+14:40:31, [HOST] >> G1 E-60.380 F1000
+14:40:38, [HOST] >> G1 E-120.760 F1000
+14:40:41, [HOST] >> G1 E-60.380 F1000
+14:40:41, [HOST] >> G1 E-196.235 F1000
+14:40:48, [HOST] >> G0 Z110.00 F1500
+14:40:51, [HOST] Sequence Complete
+14:40:51, [HOST] >> G90
+14:40:51, [HOST] >> G0 Z195.00 F1500
+14:40:55, [HOST] >> G0 X14.80 Y130.00 F1500
+14:40:59, [HOST] >> G0 Z195.00 F1500
+14:41:02, [HOST] >> G0 Z180.00 F1500
+14:41:02, [HOST] >> G1 E-30.190 F1000
+14:41:06, [HOST] >> G0 Z195.00 F1500
+14:41:10, [HOST] >> G1 E-60.380 F1000
+14:41:18,   -> Collecting Wash from A2
+14:41:18, [HOST] Sequence Complete
+14:41:18, [HOST] >> G90
+14:41:18, [HOST] >> G0 Z195.00 F1500
+14:41:24, [HOST] >> G0 X12.61 Y226.90 F1500
+14:41:24, [HOST] >> G0 Z110.00 F1500
+14:41:41, [HOST] >> G0 Z77.30 F1500
+14:41:45, [HOST] >> G1 E-120.760 F1000
+14:41:48, [HOST] >> G1 E-60.380 F1000
+14:41:58, [HOST] >> G1 E-120.760 F1000
+14:42:01, [HOST] >> G1 E-60.380 F1000
+14:42:03, [HOST] >> G1 E-120.760 F1000
+14:42:07, [HOST] >> G1 E-60.380 F1000
+14:42:24, [HOST] >> G1 E-196.235 F1000
+14:42:31, [HOST] >> G0 Z110.00 F1500
+14:42:35, [HOST] Sequence Complete
+14:42:35, [HOST] >> G90
+14:42:35, [HOST] >> G0 Z195.00 F1500
+14:42:38, [HOST] >> G0 X14.80 Y130.00 F1500
+14:42:42, [HOST] >> G0 Z195.00 F1500
+14:42:45, [HOST] >> G0 Z180.00 F1500
+14:42:46, [HOST] >> G1 E-30.190 F1000
+14:42:49, [HOST] >> G0 Z195.00 F1500
+14:42:53, [HOST] >> G1 E-60.380 F1000
+14:43:01, [HOST] Sequence Complete
+14:43:01, [COMBINE] Line 1: Ejecting wash tip (End of Cycle 1)...
+14:43:01, [HOST] >> G90
+14:43:01, [HOST] >> G0 Z195.00 F1500
+14:43:08, [HOST] >> G0 X109.20 Y109.90 F1500
+14:43:08, [HOST] >> G0 X187.90 Y185.30 F1500
+14:43:25, [HOST] >> G0 Z190.00 F1500
+14:43:29, [HOST] >> G0 Z160.20 F1500
+14:43:32, [HOST] >> G0 Y220.90 F250
+14:43:42, [HOST] >> G0 Z190.00 F250
+14:43:45, [HOST] >> G0 Z195.00 F1500
+14:43:46, [HOST] Sequence Complete
+14:43:47, [COMBINE] Line 1: Picking Wash Tip A3 (Cycle 2)...
+14:43:47, [HOST] >> G90
+14:43:47, [HOST] >> G0 Z195.00 F1500
+14:43:50, [HOST] >> G0 X197.30 Y144.10 F1500
+14:43:50, [HOST] >> G0 Z185.00 F1500
+14:43:55, [HOST] >> G0 Z95.00 F500
+14:43:56, [HOST] >> G0 Z185.00 F1500
+14:44:02, [COMBINE] Line 1: Wash Cycle 2/2 (Batch Mode)...
+14:44:02,   -> Distributing 400.0uL Wash to A1
+14:44:02, [HOST] Sequence Complete
+14:44:02, [HOST] >> G1 E-60.380 F1000
+14:44:10, [HOST] >> G90
+14:44:10, [HOST] >> G0 Z195.00 F1500
+14:44:11, [HOST] >> G0 X159.90 Y62.70 F1500
+14:44:17, [HOST] >> G0 Z195.00 F1500
+14:44:18, [HOST] >> G0 Z105.00 F1500
+14:44:19, [HOST] >> G1 E-181.140 F1000
+14:44:22, [HOST] >> G0 Z195.00 F1500
+14:44:24, [HOST] Sequence Complete
+14:44:24, [HOST] >> G90
+14:44:24, [HOST] >> G0 Z195.00 F1500
+14:44:42, [HOST] >> G0 X3.60 Y226.90 F1500
+14:44:42, [HOST] >> G0 Z110.00 F1500
+14:45:00, [HOST] >> G0 Z97.30 F1500
+14:45:02, [HOST] >> G1 E-60.380 F1000
+14:45:06, [HOST] >> G0 Z110.00 F1500
+14:45:24, [HOST] Sequence Complete
+14:45:24,   -> Distributing 400.0uL Wash to A2
+14:45:24, [HOST] >> G1 E-60.380 F1000
+14:45:31, [HOST] >> G90
+14:45:31, [HOST] >> G0 Z195.00 F1500
+14:45:31, [HOST] >> G0 X159.90 Y62.70 F1500
+14:45:49, [HOST] >> G0 Z195.00 F1500
+14:45:58, [HOST] >> G0 Z105.00 F1500
+14:45:58, [HOST] >> G1 E-181.140 F1000
+14:46:15, [HOST] >> G0 Z195.00 F1500
+14:46:18, [HOST] Sequence Complete
+14:46:18, [HOST] >> G90
+14:46:18, [HOST] >> G0 Z195.00 F1500
+14:46:25, [HOST] >> G0 X12.61 Y226.90 F1500
+14:46:25, [HOST] >> G0 Z110.00 F1500
+14:46:28, [HOST] >> G0 Z97.30 F1500
+14:46:45, [HOST] >> G1 E-60.380 F1000
+14:46:54, [HOST] >> G0 Z110.00 F1500
+14:47:12,   -> Collecting Wash from A1
+14:47:12, [HOST] Sequence Complete
+14:47:12, [HOST] >> G90
+14:47:12, [HOST] >> G0 Z110.00 F1500
+14:47:20, [HOST] >> G0 X3.60 Y226.90 F1500
+14:47:20, [HOST] >> G0 Z77.30 F1500
+14:47:38, [HOST] >> G1 E-120.760 F1000
+14:47:47, [HOST] >> G1 E-60.380 F1000
+14:48:04, [HOST] >> G1 E-120.760 F1000
+14:48:06, [HOST] >> G1 E-60.380 F1000
+14:48:14, [HOST] >> G1 E-120.760 F1000
+14:48:16, [HOST] >> G1 E-60.380 F1000
+14:48:16, [HOST] >> G1 E-196.235 F1000
+14:48:23, [HOST] >> G0 Z110.00 F1500
+14:48:27, [HOST] Sequence Complete
+14:48:27, [HOST] >> G90
+14:48:27, [HOST] >> G0 Z195.00 F1500
+14:48:30, [HOST] >> G0 X14.80 Y130.00 F1500
+14:48:34, [HOST] >> G0 Z195.00 F1500
+14:48:38, [HOST] >> G0 Z180.00 F1500
+14:48:38, [HOST] >> G1 E-30.190 F1000
+14:48:41, [HOST] >> G0 Z195.00 F1500
+14:48:45, [HOST] >> G1 E-60.380 F1000
+14:48:53, [HOST] Sequence Complete
+14:48:53,   -> Collecting Wash from A2
+14:48:53, [HOST] >> G90
+14:48:53, [HOST] >> G0 Z195.00 F1500
+14:49:00, [HOST] >> G0 X12.61 Y226.90 F1500
+14:49:00, [HOST] >> G0 Z110.00 F1500
+14:49:17, [HOST] >> G0 Z77.30 F1500
+14:49:21, [HOST] >> G1 E-120.760 F1000
+14:49:24, [HOST] >> G1 E-60.380 F1000
+14:49:34, [HOST] >> G1 E-120.760 F1000
+14:49:37, [HOST] >> G1 E-60.380 F1000
+14:49:39, [HOST] >> G1 E-120.760 F1000
+14:49:43, [HOST] >> G1 E-60.380 F1000
+14:50:00, [HOST] >> G1 E-196.235 F1000
+14:50:06, [HOST] >> G0 Z110.00 F1500
+14:50:10, [HOST] Sequence Complete
+14:50:10, [HOST] >> G90
+14:50:10, [HOST] >> G0 Z195.00 F1500
+14:50:14, [HOST] >> G0 X14.80 Y130.00 F1500
+14:50:17, [HOST] >> G0 Z195.00 F1500
+14:50:21, [HOST] >> G0 Z180.00 F1500
+14:50:21, [HOST] >> G1 E-30.190 F1000
+14:50:25, [HOST] >> G0 Z195.00 F1500
+14:50:28, [HOST] >> G1 E-60.380 F1000
+14:50:36, [COMBINE] Line 1: Ejecting wash tip (End of Cycle 2)...
+14:50:36, [HOST] Sequence Complete
+14:50:36, [HOST] >> G90
+14:50:37, [HOST] >> G0 Z195.00 F1500
+14:50:43, [HOST] >> G0 X109.20 Y109.90 F1500
+14:50:43, [HOST] >> G0 X187.90 Y185.30 F1500
+14:51:00, [HOST] >> G0 Z190.00 F1500
+14:51:04, [HOST] >> G0 Z160.20 F1500
+14:51:07, [HOST] >> G0 Y220.90 F250
+14:51:17, [HOST] >> G0 Z190.00 F250
+14:51:20, [HOST] >> G0 Z195.00 F1500
+14:51:22, [HOST] Sequence Complete
+14:51:22, [COMBINE] Line 1 Complete.
+14:51:22, [CMD] [COMBINE] Sequence Finished. Parking.
+14:51:22, [SYSTEM] Parking Head...
+14:51:22, [CMD] Park Head (Center + Lower)
+14:51:22, [HOST] >> G90
+14:51:22, [HOST] >> G0 Z195.00 F1500
+14:51:26, [HOST] >> G0 X109.20 Y109.90 F1500
+14:51:26, [HOST] >> G0 Z175.00 F1500
+14:51:30, [HOST] Sequence Complete
+14:51:30, [HOST] >> M400
+14:52:03, [HOST] Sequence Complete
+15:17:16, [HOST] Serial read error: GetOverlappedResult failed (PermissionError(13, 'Access is denied.', None, 5))
+17:28:03, [MANUAL] Jog Z 50.0mm
+17:28:03, [HOST] >> G91
+17:28:03, [HOST] Send error: WriteFile failed (PermissionError(13, 'Access is denied.', None, 5))
+17:28:03, [HOST] Sequence Complete
+17:28:03, [HOST] >> M400
+17:28:03, [HOST] Send error: WriteFile failed (PermissionError(13, 'Access is denied.', None, 5))
+17:28:03, [HOST] Sequence Complete
+17:28:07, [HOST] Disconnected
+17:28:08, [HOST] Connected to COM5 @ 115200
+17:28:08, [INIT] Waiting for printer boot...
+17:28:11, [INIT] Sending Setup G-Code...
+17:28:11, [HOST] >> M107
+17:28:11, [HOST] >> M104 S0
+17:28:11, [HOST] >> M140 S0
+17:28:11, [HOST] >> G90
+17:28:11, [HOST] >> G21
+17:28:11, [HOST] >> M302 S0
+17:28:11, [HOST] >> M82
+17:28:11, [HOST] >> M906 E150
+17:28:11, [HOST] >> M84 E S3
+17:28:12, [INIT] Setup Complete.
+17:28:12, [HOST] Sequence Complete
+17:28:12, [PRINTER] FIRMWARE_NAME:Marlin V1.0.9_F401 (Nov 15 2024 16:32:26) SOURCE_CODE_URL:github.com/MarlinFirmware/Marlin PROTOCOL_VERSION:1.0 MACHINE_TYPE:Ender-3 V3 SE EXTRUDER_COUNT:1 UUID:cede2a2f-41a2-4748-9b12-c55c62f367ff
+17:28:12, [PRINTER] Cap:SERIAL_XON_XOFF:0
+17:28:12, [PRINTER] Cap:BINARY_FILE_TRANSFER:0
+17:28:12, [PRINTER] Cap:EEPROM:1
+17:28:12, [PRINTER] Cap:VOLUMETRIC:1
+17:28:12, [PRINTER] Cap:AUTOREPORT_POS:0
+17:28:12, [PRINTER] Cap:AUTOREPORT_TEMP:1
+17:28:12, [PRINTER] Cap:PROGRESS:0
+17:28:12, [PRINTER] Cap:PRINT_JOB:1
+17:28:12, [PRINTER] Cap:AUTOLEVEL:1
+17:28:12, [PRINTER] Cap:RUNOUT:0
+17:28:12, [PRINTER] Cap:Z_PROBE:1
+17:28:12, [PRINTER] Cap:LEVELING_DATA:1
+17:28:12, [PRINTER] Cap:BUILD_PERCENT:0
+17:28:12, [PRINTER] Cap:SOFTWARE_POWER:0
+17:28:12, [PRINTER] Cap:TOGGLE_LIGHTS:0
+17:28:12, [PRINTER] Cap:CASE_LIGHT_BRIGHTNESS:0
+17:28:12, [PRINTER] Cap:EMERGENCY_PARSER:1
+17:28:12, [PRINTER] Cap:HOST_ACTION_COMMANDS:0
+17:28:12, [PRINTER] Cap:PROMPT_SUPPORT:0
+17:28:12, [PRINTER] Cap:SDCARD:1
+17:28:12, [PRINTER] Cap:REPEAT:0
+17:28:12, [PRINTER] Cap:SD_WRITE:1
+17:28:12, [PRINTER] Cap:AUTOREPORT_SD_STATUS:0
+17:28:12, [PRINTER] Cap:LONG_FILENAME:1
+17:28:12, [PRINTER] Cap:THERMAL_PROTECTION:1
+17:28:12, [PRINTER] Cap:MOTION_MODES:0
+17:28:12, [PRINTER] Cap:ARCS:1
+17:28:12, [PRINTER] Cap:BABYSTEPPING:1
+17:28:12, [PRINTER] Cap:CHAMBER_TEMPERATURE:0
+17:28:12, [PRINTER] Cap:COOLER_TEMPERATURE:0
+17:28:12, [PRINTER] Cap:MEATPACK:0
+17:28:18, [MANUAL] Jog Z 50.0mm
+17:28:19, [HOST] >> G91
+17:28:19, [HOST] >> G0 Z50.0 F1500
+17:28:19, [HOST] >> G90
+17:28:19, [HOST] Sequence Complete
+17:28:19, [HOST] >> M400
+17:28:29, [HOST] Sequence Complete
+17:28:40, [SYSTEM] Calibration: 200.0uL -> 200.0uL
+17:28:40, [CMD] Calibrate Pipette: 200.0 -> 200.0uL
+17:28:40, [HOST] >> G92 E-60.380
+17:28:40, [HOST] >> G1 E-60.380 F1000
+17:28:40, [HOST] >> M107
+17:28:40, [HOST] >> M104 S0
+17:28:40, [HOST] >> M140 S0
+17:28:40, [HOST] >> G90
+17:28:40, [HOST] >> G21
+17:28:40, [HOST] >> M302 S0
+17:28:41, [HOST] >> M82
+17:28:41, [HOST] >> M906 E150
+17:28:41, [MANUAL] Homing ALL...
+17:28:41, [HOST] >> G28
+17:28:41, [HOST] >> M84 E S3
+17:28:41, [HOST] >> M18 E
+17:29:11, [PRINTER] echo:Bed Leveling ON
+17:29:11, [PRINTER] echo:Fade Height 10.00
+17:29:11, [HOST] Sequence Complete
+17:29:11, [HOST] >> M400
+17:29:11, [HOST] >> G0 Z185.00
+17:29:11, [HOST] Sequence Complete
+17:29:12, [HOST] Sequence Complete
+17:29:12, [HOST] >> M400
+17:29:47, [HOST] Sequence Complete
+17:31:07, [CMD] [COMBINE] Starting sequence with 1 lines.
+17:31:07, [COMBINE] Processing Line 1: 5 wells -> A1
+17:31:07, [COMBINE] Line 1: Ejecting old tip...
+17:31:07, [HOST] >> G90
+17:31:07, [HOST] >> G0 Z195.00 F1500
+17:31:07, [HOST] >> G0 X109.20 Y109.90 F1500
+17:31:07, [HOST] >> G0 X187.90 Y185.30 F1500
+17:31:07, [HOST] >> G0 Z190.00 F1500
+17:31:07, [HOST] >> G0 Z160.20 F1500
+17:31:08, [HOST] >> G0 Y220.90 F250
+17:31:08, [HOST] >> G0 Z190.00 F250
+17:31:08, [HOST] >> G0 Z195.00 F1500
+17:31:09, [HOST] Sequence Complete
+17:31:09, [COMBINE] Line 1: Picking Tip A1...
+17:31:09, [HOST] >> G90
+17:31:09, [HOST] >> G0 Z195.00 F1500
+17:31:10, [HOST] >> G0 X177.10 Y144.10 F1500
+17:31:11, [HOST] >> G0 Z185.00 F1500
+17:31:15, [HOST] >> G0 Z95.00 F500
+17:31:16, [HOST] >> G0 Z185.00 F1500
+17:31:22, [HOST] Sequence Complete
+17:31:22, [HOST] >> G1 E-60.380 F1000
+17:31:30, [HOST] >> G90
+17:31:31, [HOST] >> G0 Z195.00 F1500
+17:31:31, [HOST] >> G0 X39.64 Y190.96 F1500
+17:31:38, [HOST] >> G0 Z110.00 F1500
+17:31:39, [HOST] >> G0 Z77.30 F1500
+17:31:42, [HOST] >> G1 E-211.330 F1000
+17:31:44, [HOST] >> G0 Z110.00 F1500
+17:32:02, [HOST] >> G90
+17:32:02, [HOST] >> G0 Z195.00 F1500
+17:32:20, [HOST] >> G0 X14.80 Y130.00 F1500
+17:32:22, [HOST] >> G0 Z195.00 F1500
+17:32:28, [HOST] >> G0 Z180.00 F1500
+17:32:28, [HOST] >> G1 E-30.190 F1000
+17:32:45, [HOST] >> G0 Z195.00 F1500
+17:32:52, [HOST] Sequence Complete
+17:32:52, [HOST] >> G1 E-60.380 F1000
+17:33:01, [HOST] >> G90
+17:33:01, [HOST] >> G0 Z195.00 F1500
+17:33:07, [HOST] >> G0 X48.65 Y190.96 F1500
+17:33:07, [HOST] >> G0 Z110.00 F1500
+17:33:24, [HOST] >> G0 Z77.30 F1500
+17:33:27, [HOST] >> G1 E-211.330 F1000
+17:33:32, [HOST] >> G0 Z110.00 F1500
+17:33:43, [HOST] >> G90
+17:33:43, [HOST] >> G0 Z195.00 F1500
+17:33:44, [HOST] >> G0 X14.80 Y130.00 F1500
+17:33:46, [HOST] >> G0 Z195.00 F1500
+17:33:49, [HOST] >> G0 Z180.00 F1500
+17:33:49, [HOST] >> G1 E-30.190 F1000
+17:34:06, [HOST] >> G0 Z195.00 F1500
+17:34:12, [HOST] Sequence Complete
+17:34:13, [HOST] >> G1 E-60.380 F1000
+17:34:22, [HOST] >> G90
+17:34:22, [HOST] >> G0 Z195.00 F1500
+17:34:28, [HOST] >> G0 X57.65 Y190.96 F1500
+17:34:28, [HOST] >> G0 Z110.00 F1500
+17:34:45, [HOST] >> G0 Z77.30 F1500
+17:34:48, [HOST] >> G1 E-211.330 F1000
+17:34:51, [HOST] >> G0 Z110.00 F1500
+17:35:02, [HOST] >> G90
+17:35:02, [HOST] >> G0 Z195.00 F1500
+17:35:05, [HOST] >> G0 X14.80 Y130.00 F1500
+17:35:08, [HOST] >> G0 Z195.00 F1500
+17:35:10, [HOST] >> G0 Z180.00 F1500
+17:35:10, [HOST] >> G1 E-30.190 F1000
+17:35:27, [HOST] >> G0 Z195.00 F1500
+17:35:34, [HOST] Sequence Complete
+17:35:34, [HOST] >> G1 E-60.380 F1000
+17:35:43, [HOST] >> G90
+17:35:43, [HOST] >> G0 Z195.00 F1500
+17:35:49, [HOST] >> G0 X66.66 Y190.96 F1500
+17:35:50, [HOST] >> G0 Z110.00 F1500
+17:36:07, [HOST] >> G0 Z77.30 F1500
+17:36:10, [HOST] >> G1 E-211.330 F1000
+17:36:13, [HOST] >> G0 Z110.00 F1500
+17:36:24, [HOST] >> G90
+17:36:24, [HOST] >> G0 Z195.00 F1500
+17:36:27, [HOST] >> G0 X14.80 Y130.00 F1500
+17:36:28, [HOST] >> G0 Z195.00 F1500
+17:36:32, [HOST] >> G0 Z180.00 F1500
+17:36:33, [HOST] >> G1 E-30.190 F1000
+17:36:49, [HOST] >> G0 Z195.00 F1500
+17:36:55, [HOST] Sequence Complete
+17:36:55, [HOST] >> G1 E-60.380 F1000
+17:37:05, [HOST] >> G90
+17:37:05, [HOST] >> G0 Z195.00 F1500
+17:37:11, [HOST] >> G0 X75.67 Y190.96 F1500
+17:37:11, [HOST] >> G0 Z110.00 F1500
+17:37:28, [HOST] >> G0 Z77.30 F1500
+17:37:31, [HOST] >> G1 E-211.330 F1000
+17:37:35, [HOST] >> G0 Z110.00 F1500
+17:37:45, [HOST] >> G90
+17:37:45, [HOST] >> G0 Z195.00 F1500
+17:37:48, [HOST] >> G0 X14.80 Y130.00 F1500
+17:37:50, [HOST] >> G0 Z195.00 F1500
+17:37:54, [HOST] >> G0 Z180.00 F1500
+17:37:54, [HOST] >> G1 E-30.190 F1000
+17:38:11, [HOST] >> G0 Z195.00 F1500
+17:38:17, [HOST] Sequence Complete
+17:38:17, [COMBINE] Line 1: Ejecting main transfer tip...
+17:38:18, [HOST] >> G90
+17:38:18, [HOST] >> G0 Z195.00 F1500
+17:38:27, [HOST] >> G0 X109.20 Y109.90 F1500
+17:38:27, [HOST] >> G0 X187.90 Y185.30 F1500
+17:38:33, [HOST] >> G0 Z190.00 F1500
+17:38:50, [HOST] >> G0 Z160.20 F1500
+17:38:54, [HOST] >> G0 Y220.90 F250
+17:38:57, [HOST] >> G0 Z190.00 F250
+17:39:08, [HOST] >> G0 Z195.00 F1500
+17:39:12, [HOST] Sequence Complete
+17:39:12, [COMBINE] Line 1: Picking Wash Tip A2 (Cycle 1)...
+17:39:12, [HOST] >> G90
+17:39:12, [HOST] >> G0 Z195.00 F1500
+17:39:15, [HOST] >> G0 X187.20 Y144.10 F1500
+17:39:15, [HOST] >> G0 Z185.00 F1500
+17:39:19, [HOST] >> G0 Z95.00 F500
+17:39:20, [HOST] >> G0 Z185.00 F1500
+17:39:26, [HOST] Sequence Complete
+17:39:26, [COMBINE] Line 1: Wash Cycle 1/2 (Batch Mode)...
+17:39:26,   -> Distributing 100.0uL Wash to E5
+17:39:26, [HOST] >> G1 E-60.380 F1000
+17:39:35, [HOST] >> G90
+17:39:35, [HOST] >> G0 Z195.00 F1500
+17:39:42, [HOST] >> G0 X159.90 Y62.70 F1500
+17:39:43, [HOST] >> G0 Z195.00 F1500
+17:39:46, [HOST] >> G0 Z105.00 F1500
+17:39:46, [HOST] >> G1 E-90.570 F1000
+17:39:48, [HOST] >> G0 Z195.00 F1500
+17:40:06, [HOST] Sequence Complete
+17:40:06, [HOST] >> G90
+17:40:06, [HOST] >> G0 Z195.00 F1500
+17:40:25, [HOST] >> G0 X39.64 Y190.96 F1500
+17:40:25, [HOST] >> G0 Z110.00 F1500
+17:40:26, [HOST] >> G0 Z97.30 F1500
+17:40:28, [HOST] >> G1 E-60.380 F1000
+17:40:31, [HOST] >> G0 Z110.00 F1500
+17:40:50,   -> Distributing 100.0uL Wash to E6
+17:40:50, [HOST] Sequence Complete
+17:40:50, [HOST] >> G1 E-60.380 F1000
+17:40:51, [HOST] >> G90
+17:40:52, [HOST] >> G0 Z195.00 F1500
+17:40:52, [HOST] >> G0 X159.90 Y62.70 F1500
+17:41:10, [HOST] >> G0 Z195.00 F1500
+17:41:17, [HOST] >> G0 Z105.00 F1500
+17:41:17, [HOST] >> G1 E-90.570 F1000
+17:41:34, [HOST] >> G0 Z195.00 F1500
+17:41:36, [HOST] Sequence Complete
+17:41:36, [HOST] >> G90
+17:41:36, [HOST] >> G0 Z195.00 F1500
+17:41:38, [HOST] >> G0 X48.65 Y190.96 F1500
+17:41:38, [HOST] >> G0 Z110.00 F1500
+17:41:41, [HOST] >> G0 Z97.30 F1500
+17:41:58, [HOST] >> G1 E-60.380 F1000
+17:42:05, [HOST] >> G0 Z110.00 F1500
+17:42:23,   -> Distributing 100.0uL Wash to E7
+17:42:23, [HOST] Sequence Complete
+17:42:23, [HOST] >> G1 E-60.380 F1000
+17:42:25, [HOST] >> G90
+17:42:25, [HOST] >> G0 Z195.00 F1500
+17:42:25, [HOST] >> G0 X159.90 Y62.70 F1500
+17:42:43, [HOST] >> G0 Z195.00 F1500
+17:42:50, [HOST] >> G0 Z105.00 F1500
+17:42:50, [HOST] >> G1 E-90.570 F1000
+17:43:07, [HOST] >> G0 Z195.00 F1500
+17:43:09, [HOST] Sequence Complete
+17:43:09, [HOST] >> G90
+17:43:10, [HOST] >> G0 Z195.00 F1500
+17:43:11, [HOST] >> G0 X57.65 Y190.96 F1500
+17:43:11, [HOST] >> G0 Z110.00 F1500
+17:43:14, [HOST] >> G0 Z97.30 F1500
+17:43:31, [HOST] >> G1 E-60.380 F1000
+17:43:39, [HOST] >> G0 Z110.00 F1500
+17:43:57, [HOST] Sequence Complete
+17:43:57,   -> Distributing 100.0uL Wash to E8
+17:43:57, [HOST] >> G1 E-60.380 F1000
+17:43:58, [HOST] >> G90
+17:43:58, [HOST] >> G0 Z195.00 F1500
+17:43:58, [HOST] >> G0 X159.90 Y62.70 F1500
+17:44:16, [HOST] >> G0 Z195.00 F1500
+17:44:23, [HOST] >> G0 Z105.00 F1500
+17:44:23, [HOST] >> G1 E-90.570 F1000
+17:44:40, [HOST] >> G0 Z195.00 F1500
+17:44:42, [HOST] Sequence Complete
+17:44:42, [HOST] >> G90
+17:44:42, [HOST] >> G0 Z195.00 F1500
+17:44:44, [HOST] >> G0 X66.66 Y190.96 F1500
+17:44:44, [HOST] >> G0 Z110.00 F1500
+17:44:47, [HOST] >> G0 Z97.30 F1500
+17:45:04, [HOST] >> G1 E-60.380 F1000
+17:45:10, [HOST] >> G0 Z110.00 F1500
+17:45:28,   -> Distributing 100.0uL Wash to E9
+17:45:28, [HOST] Sequence Complete
+17:45:28, [HOST] >> G1 E-60.380 F1000
+17:45:30, [HOST] >> G90
+17:45:30, [HOST] >> G0 Z195.00 F1500
+17:45:31, [HOST] >> G0 X159.90 Y62.70 F1500
+17:45:48, [HOST] >> G0 Z195.00 F1500
+17:45:55, [HOST] >> G0 Z105.00 F1500
+17:45:55, [HOST] >> G1 E-90.570 F1000
+17:46:12, [HOST] >> G0 Z195.00 F1500
+17:46:15, [HOST] Sequence Complete
+17:46:15, [HOST] >> G90
+17:46:15, [HOST] >> G0 Z195.00 F1500
+17:46:16, [HOST] >> G0 X75.67 Y190.96 F1500
+17:46:17, [HOST] >> G0 Z110.00 F1500
+17:46:19, [HOST] >> G0 Z97.30 F1500
+17:46:36, [HOST] >> G1 E-60.380 F1000
+17:46:43, [HOST] >> G0 Z110.00 F1500
+17:47:01,   -> Collecting Wash from E5
+17:47:01, [HOST] Sequence Complete
+17:47:01, [HOST] >> G90
+17:47:01, [HOST] >> G0 Z110.00 F1500
+17:47:02, [HOST] >> G0 X39.64 Y190.96 F1500
+17:47:03, [HOST] >> G0 Z77.30 F1500
+17:47:21, [HOST] >> G1 E-120.760 F1000
+17:47:27, [HOST] >> G1 E-60.380 F1000
+17:47:44, [HOST] >> G1 E-120.760 F1000
+17:47:46, [HOST] >> G1 E-60.380 F1000
+17:47:48, [HOST] >> G1 E-120.760 F1000
+17:47:51, [HOST] >> G1 E-60.380 F1000
+17:47:52, [HOST] >> G1 E-105.665 F1000
+17:47:59, [HOST] >> G0 Z110.00 F1500
+17:48:03, [HOST] Sequence Complete
+17:48:03, [HOST] >> G90
+17:48:03, [HOST] >> G0 Z195.00 F1500
+17:48:06, [HOST] >> G0 X14.80 Y130.00 F1500
+17:48:10, [HOST] >> G0 Z195.00 F1500
+17:48:14, [HOST] >> G0 Z180.00 F1500
+17:48:14, [HOST] >> G1 E-30.190 F1000
+17:48:17, [HOST] >> G0 Z195.00 F1500
+17:48:21, [HOST] >> G1 E-60.380 F1000
+17:48:24, [HOST] Sequence Complete
+17:48:24,   -> Collecting Wash from E6
+17:48:24, [HOST] >> G90
+17:48:24, [HOST] >> G0 Z195.00 F1500
+17:48:30, [HOST] >> G0 X48.65 Y190.96 F1500
+17:48:30, [HOST] >> G0 Z110.00 F1500
+17:48:47, [HOST] >> G0 Z77.30 F1500
+17:48:50, [HOST] >> G1 E-120.760 F1000
+17:48:53, [HOST] >> G1 E-60.380 F1000
+17:48:58, [HOST] >> G1 E-120.760 F1000
+17:49:01, [HOST] >> G1 E-60.380 F1000
+17:49:02, [HOST] >> G1 E-120.760 F1000
+17:49:05, [HOST] >> G1 E-60.380 F1000
+17:49:22, [HOST] >> G1 E-105.665 F1000
+17:49:29, [HOST] >> G0 Z110.00 F1500
+17:49:33, [HOST] Sequence Complete
+17:49:33, [HOST] >> G90
+17:49:33, [HOST] >> G0 Z195.00 F1500
+17:49:36, [HOST] >> G0 X14.80 Y130.00 F1500
+17:49:40, [HOST] >> G0 Z195.00 F1500
+17:49:43, [HOST] >> G0 Z180.00 F1500
+17:49:44, [HOST] >> G1 E-30.190 F1000
+17:49:47, [HOST] >> G0 Z195.00 F1500
+17:49:51, [HOST] >> G1 E-60.380 F1000
+17:50:00, [HOST] Sequence Complete
+17:50:00,   -> Collecting Wash from E7
+17:50:00, [HOST] >> G90
+17:50:00, [HOST] >> G0 Z195.00 F1500
+17:50:00, [HOST] >> G0 X57.65 Y190.96 F1500
+17:50:00, [HOST] >> G0 Z110.00 F1500
+17:50:17, [HOST] >> G0 Z77.30 F1500
+17:50:20, [HOST] >> G1 E-120.760 F1000
+17:50:23, [HOST] >> G1 E-60.380 F1000
+17:50:28, [HOST] >> G1 E-120.760 F1000
+17:50:31, [HOST] >> G1 E-60.380 F1000
+17:50:34, [HOST] >> G1 E-120.760 F1000
+17:50:36, [HOST] >> G1 E-60.380 F1000
+17:51:01, [SYSTEM] Auto-connecting to COM5...
+17:51:02, [HOST] Connected to COM5 @ 115200
+17:51:02, [INIT] Waiting for printer boot...
+17:51:02, [PRINTER] Testing X connection... OK
+17:51:02, [PRINTER] Testing Y connection... OK
+17:51:02, [PRINTER] Testing Z connection... OK
+17:51:02, [PRINTER] Testing E connection... Error: All LOW
+17:51:02, [PRINTER] BL24CXX Check succeeded!
+17:51:03, [PRINTER] echo: HMI_Init: 7322: HMI_flag.boot_step:3HMI_flag.language:4
+17:51:03, [PRINTER] echo: HMI_Init: 7323: HMI_ValueStruct.Auto_PID_Value[1]:100HMI_ValueStruct.Auto_PID_Value[2]:260
+17:51:03, [PRINTER] HMI_flag.language=: 4
+17:51:04, [INIT] Sending Setup G-Code...
+17:51:04, [HOST] >> M107
+17:51:04, [HOST] >> M104 S0
+17:51:04, [HOST] >> M140 S0
+17:51:04, [HOST] >> G90
+17:51:04, [HOST] >> G21
+17:51:04, [HOST] >> M302 S0
+17:51:04, [HOST] >> M82
+17:51:04, [HOST] >> M906 E150
+17:51:05, [HOST] >> M84 E S3
+17:51:05, [INIT] Setup Complete.
+17:51:05, [HOST] Sequence Complete
+17:51:05, [PRINTER] FIRMWARE_NAME:Marlin V1.0.9_F401 (Nov 15 2024 16:32:26) SOURCE_CODE_URL:github.com/MarlinFirmware/Marlin PROTOCOL_VERSION:1.0 MACHINE_TYPE:Ender-3 V3 SE EXTRUDER_COUNT:1 UUID:cede2a2f-41a2-4748-9b12-c55c62f367ff
+17:51:05, [PRINTER] Cap:SERIAL_XON_XOFF:0
+17:51:05, [PRINTER] Cap:BINARY_FILE_TRANSFER:0
+17:51:05, [PRINTER] Cap:EEPROM:1
+17:51:05, [PRINTER] Cap:VOLUMETRIC:1
+17:51:05, [PRINTER] Cap:AUTOREPORT_POS:0
+17:51:05, [PRINTER] Cap:AUTOREPORT_TEMP:1
+17:51:05, [PRINTER] Cap:PROGRESS:0
+17:51:05, [PRINTER] Cap:PRINT_JOB:1
+17:51:05, [PRINTER] Cap:AUTOLEVEL:1
+17:51:05, [PRINTER] Cap:RUNOUT:0
+17:51:05, [PRINTER] Cap:Z_PROBE:1
+17:51:05, [PRINTER] Cap:LEVELING_DATA:1
+17:51:05, [PRINTER] Cap:BUILD_PERCENT:0
+17:51:05, [PRINTER] Cap:SOFTWARE_POWER:0
+17:51:05, [PRINTER] Cap:TOGGLE_LIGHTS:0
+17:51:05, [PRINTER] Cap:CASE_LIGHT_BRIGHTNESS:0
+17:51:05, [PRINTER] Cap:EMERGENCY_PARSER:1
+17:51:05, [PRINTER] Cap:HOST_ACTION_COMMANDS:0
+17:51:05, [PRINTER] Cap:PROMPT_SUPPORT:0
+17:51:05, [PRINTER] Cap:SDCARD:1
+17:51:05, [PRINTER] Cap:REPEAT:0
+17:51:05, [PRINTER] Cap:SD_WRITE:1
+17:51:05, [PRINTER] Cap:AUTOREPORT_SD_STATUS:0
+17:51:05, [PRINTER] Cap:LONG_FILENAME:1
+17:51:05, [PRINTER] Cap:THERMAL_PROTECTION:1
+17:51:05, [PRINTER] Cap:MOTION_MODES:0
+17:51:05, [PRINTER] Cap:ARCS:1
+17:51:05, [PRINTER] Cap:BABYSTEPPING:1
+17:51:05, [PRINTER] Cap:CHAMBER_TEMPERATURE:0
+17:51:05, [PRINTER] Cap:COOLER_TEMPERATURE:0
+17:51:05, [PRINTER] Cap:MEATPACK:0
+17:51:23, [SYSTEM] Calibration: 200.0uL -> 200.0uL
+17:51:23, [CMD] Calibrate Pipette: 200.0 -> 200.0uL
+17:51:23, [HOST] >> G92 E-60.380
+17:51:24, [HOST] >> G1 E-60.380 F1000
+17:51:24, [HOST] >> M107
+17:51:24, [HOST] >> M104 S0
+17:51:24, [HOST] >> M140 S0
+17:51:24, [HOST] >> G90
+17:51:24, [HOST] >> G21
+17:51:24, [HOST] >> M302 S0
+17:51:24, [HOST] >> M82
+17:51:24, [HOST] >> M906 E150
+17:51:25, [HOST] >> M84 E S3
+17:51:25, [HOST] Sequence Complete
+17:51:25, [HOST] >> M400
+17:51:25, [HOST] Sequence Complete
+17:51:26, [MANUAL] Homing ALL...
+17:51:28, [HOST] >> G28
+17:51:28, [HOST] >> M18 E
+17:52:18, [PRINTER] echo:Bed Leveling ON
+17:52:18, [PRINTER] echo:Fade Height 10.00
+17:52:18, [HOST] >> G0 Z185.00
+17:52:18, [HOST] Sequence Complete
+17:52:18, [HOST] >> M400
+17:52:54, [HOST] Sequence Complete
+17:54:02, [CMD] [TRANSFER] Starting sequence with 1 lines.
+17:54:02, --- Processing Line 1 ---
+17:54:02, [L1] Ejecting existing tip...
+17:54:02, [HOST] >> G90
+17:54:02, [HOST] >> G0 Z195.00 F1500
+17:54:02, [HOST] >> G0 X109.20 Y109.90 F1500
+17:54:02, [HOST] >> G0 X187.90 Y185.30 F1500
+17:54:02, [HOST] >> G0 Z190.00 F1500
+17:54:02, [HOST] >> G0 Z160.20 F1500
+17:54:02, [HOST] >> G0 Y220.90 F250
+17:54:03, [HOST] >> G0 Z190.00 F250
+17:54:03, [HOST] >> G0 Z195.00 F1500
+17:54:04, [HOST] Sequence Complete
+17:54:04, [L1] Picking Tip A1...
+17:54:04, [HOST] >> G90
+17:54:04, [HOST] >> G0 Z195.00 F1500
+17:54:05, [HOST] >> G0 X177.10 Y144.10 F1500
+17:54:06, [HOST] >> G0 Z185.00 F1500
+17:54:10, [HOST] >> G0 Z95.00 F500
+17:54:11, [HOST] >> G0 Z185.00 F1500
+17:54:17, [HOST] Sequence Complete
+17:54:17, [L1] Transferring 400.0uL (Volatile)
+17:54:17, [HOST] >> G1 E-60.380 F1000
+17:54:25, [HOST] >> G0 Z195.00 F1500
+17:54:25, [HOST] >> G0 X57.65 Y190.96 F1500
+17:54:33, [HOST] >> G0 Z110.00 F1500
+17:54:34, [HOST] >> G0 Z77.30 F1500
+17:54:37, [HOST] >> G1 E-181.140 F1000
+17:54:39, [HOST] >> G1 Z110.00 E-181.162 F1500
+17:54:57, [VOLATILE] Total Drift Steps: 0.1
+17:54:57, [HOST] Sequence Complete
+17:54:57, [HOST] >> G1 Z195.00 E-181.219 F1500
+17:55:15, [HOST] >> G1 X14.80 Y130.00 E-181.269 F1500
+17:55:17, [HOST] >> G1 Z195.00 E-181.269 F1500
+17:55:22, [HOST] Sequence Complete
+17:55:22, [HOST] >> G0 Z180.00 F1500
+17:55:23, [HOST] >> G1 E-30.190 F1000
+17:55:39, [HOST] >> G0 Z195.00 F1500
+17:55:46, [HOST] >> G1 E-60.380 F1000
+17:55:53, [L1] Transferring 100.0uL (Volatile)
+17:55:53, [HOST] Sequence Complete
+17:55:53, [HOST] >> G1 E-60.380 F1000
+17:56:00, [HOST] >> G0 Z195.00 F1500
+17:56:00, [HOST] >> G0 X57.65 Y190.96 F1500
+17:56:01, [HOST] >> G0 Z110.00 F1500
+17:56:17, [HOST] >> G0 Z77.30 F1500
+17:56:20, [HOST] >> G1 E-90.570 F1000
+17:56:23, [HOST] >> G1 Z110.00 E-90.592 F1500
+17:56:32, [HOST] Sequence Complete
+17:56:33, [VOLATILE] Total Drift Steps: 0.1
+17:56:33, [HOST] >> G1 Z195.00 E-90.649 F1500
+17:56:35, [HOST] >> G1 X14.80 Y130.00 E-90.699 F1500
+17:56:37, [HOST] >> G1 Z195.00 E-90.699 F1500
+17:56:40, [HOST] Sequence Complete
+17:56:40, [HOST] >> G0 Z180.00 F1500
+17:56:40, [HOST] >> G1 E-30.190 F1000
+17:56:57, [HOST] >> G0 Z195.00 F1500
+17:57:04, [HOST] >> G1 E-60.380 F1000
+17:57:06, [HOST] Sequence Complete
+17:57:06, [L1] Wash Cycle 1/2 (200.0uL)...
+17:57:06, [WASH] Ejecting dirty tip...
+17:57:06, [HOST] >> G90
+17:57:06, [HOST] >> G0 Z195.00 F1500
+17:57:12, [HOST] >> G0 X109.20 Y109.90 F1500
+17:57:12, [HOST] >> G0 X187.90 Y185.30 F1500
+17:57:29, [HOST] >> G0 Z190.00 F1500
+17:57:32, [HOST] >> G0 Z160.20 F1500
+17:57:35, [HOST] >> G0 Y220.90 F250
+17:57:39, [HOST] >> G0 Z190.00 F250
+17:57:42, [HOST] >> G0 Z195.00 F1500
+17:57:44, [HOST] Sequence Complete
+17:57:44, [WASH] Picking Tip A2...
+17:57:44, [HOST] >> G90
+17:57:44, [HOST] >> G0 Z195.00 F1500
+17:57:48, [HOST] >> G0 X187.20 Y144.10 F1500
+17:57:48, [HOST] >> G0 Z185.00 F1500
+17:57:52, [HOST] >> G0 Z95.00 F500
+17:57:53, [HOST] >> G0 Z185.00 F1500
+17:57:59, [HOST] Sequence Complete
+17:57:59, [HOST] >> G1 E-60.380 F1000
+17:58:08, [HOST] >> G90
+17:58:08, [HOST] >> G0 Z195.00 F1500
+17:58:08, [HOST] >> G0 X159.90 Y62.70 F1500
+17:58:15, [HOST] >> G0 Z195.00 F1500
+17:58:16, [HOST] >> G0 Z105.00 F1500
+17:58:16, [HOST] >> G1 E-120.760 F1000
+17:58:19, [HOST] >> G0 Z195.00 F1500
+17:58:21, [WASH] Performing robust mixing in source...
+17:58:21, [HOST] Sequence Complete
+17:58:21, [HOST] >> G90
+17:58:21, [HOST] >> G0 Z195.00 F1500
+17:58:39, [HOST] >> G0 X57.65 Y190.96 F1500
+17:58:39, [HOST] >> G0 Z110.00 F1500
+17:58:57, [HOST] >> G0 Z97.30 F1500
+17:58:59, [HOST] >> G1 E-60.380 F1000
+17:59:03, [HOST] >> G0 Z77.30 F1500
+17:59:21, [HOST] >> G1 E-120.760 F1000
+17:59:25, [HOST] >> G1 E-60.380 F1000
+17:59:43, [HOST] >> G1 E-120.760 F1000
+17:59:49, [HOST] >> G1 E-60.380 F1000
+18:00:06, [HOST] >> G1 E-120.760 F1000
+18:00:09, [HOST] >> G1 E-60.380 F1000
+18:00:13, [HOST] >> G1 E-135.855 F1000
+18:00:17, [HOST] >> G0 Z110.00 F1500
+18:00:20, [WASH] Transferring mixed wash liquid to destination...
+18:00:20, [HOST] Sequence Complete
+18:00:20, [HOST] >> G90
+18:00:20, [HOST] >> G0 Z195.00 F1500
+18:00:24, [HOST] >> G0 X14.80 Y130.00 F1500
+18:00:28, [HOST] >> G0 Z195.00 F1500
+18:00:31, [HOST] >> G0 Z180.00 F1500
+18:00:31, [HOST] >> G1 E-30.190 F1000
+18:00:35, [HOST] >> G0 Z195.00 F1500
+18:00:38, [HOST] >> G1 E-60.380 F1000
+18:00:43, [WASH] Cycle complete. Ejecting wash tip...
+18:00:43, [HOST] Sequence Complete
+18:00:43, [HOST] >> G90
+18:00:43, [HOST] >> G0 Z195.00 F1500
+18:00:50, [HOST] >> G0 X109.20 Y109.90 F1500
+18:00:50, [HOST] >> G0 X187.90 Y185.30 F1500
+18:01:07, [HOST] >> G0 Z190.00 F1500
+18:01:10, [HOST] >> G0 Z160.20 F1500
+18:01:13, [HOST] >> G0 Y220.90 F250
+18:01:19, [HOST] >> G0 Z190.00 F250
+18:01:22, [HOST] >> G0 Z195.00 F1500
+18:01:24, [L1] Wash Cycle 2/2 (200.0uL)...
+18:01:24, [WASH] Tip already ejected, skipping redundant eject.
+18:01:24, [WASH] Picking Tip A3...
+18:01:24, [HOST] Sequence Complete
+18:01:24, [HOST] >> G90
+18:01:24, [HOST] >> G0 Z195.00 F1500
+18:01:28, [HOST] >> G0 X197.30 Y144.10 F1500
+18:01:28, [HOST] >> G0 Z185.00 F1500
+18:01:32, [HOST] >> G0 Z95.00 F500
+18:01:33, [HOST] >> G0 Z185.00 F1500
+18:01:39, [HOST] Sequence Complete
+18:01:39, [HOST] >> G1 E-60.380 F1000
+18:01:48, [HOST] >> G90
+18:01:48, [HOST] >> G0 Z195.00 F1500
+18:01:48, [HOST] >> G0 X159.90 Y62.70 F1500
+18:01:55, [HOST] >> G0 Z195.00 F1500
+18:01:56, [HOST] >> G0 Z105.00 F1500
+18:01:56, [HOST] >> G1 E-120.760 F1000
+18:01:59, [HOST] >> G0 Z195.00 F1500
+18:02:01, [HOST] Sequence Complete
+18:02:01, [WASH] Performing robust mixing in source...
+18:02:01, [HOST] >> G90
+18:02:01, [HOST] >> G0 Z195.00 F1500
+18:02:20, [HOST] >> G0 X57.65 Y190.96 F1500
+18:02:20, [HOST] >> G0 Z110.00 F1500
+18:02:38, [HOST] >> G0 Z97.30 F1500
+18:02:39, [HOST] >> G1 E-60.380 F1000
+18:02:43, [HOST] >> G0 Z77.30 F1500
+18:03:01, [HOST] >> G1 E-120.760 F1000
+18:03:05, [HOST] >> G1 E-60.380 F1000
+18:03:23, [HOST] >> G1 E-120.760 F1000
+18:03:30, [HOST] >> G1 E-60.380 F1000
+18:03:47, [HOST] >> G1 E-120.760 F1000
+18:03:49, [HOST] >> G1 E-60.380 F1000
+18:03:53, [HOST] >> G1 E-135.855 F1000
+18:03:57, [HOST] >> G0 Z110.00 F1500
+18:04:01, [HOST] Sequence Complete
+18:04:01, [WASH] Transferring mixed wash liquid to destination...
+18:04:01, [HOST] >> G90
+18:04:01, [HOST] >> G0 Z195.00 F1500
+18:04:04, [HOST] >> G0 X14.80 Y130.00 F1500
+18:04:08, [HOST] >> G0 Z195.00 F1500
+18:04:12, [HOST] >> G0 Z180.00 F1500
+18:04:12, [HOST] >> G1 E-30.190 F1000
+18:04:15, [HOST] >> G0 Z195.00 F1500
+18:04:19, [HOST] >> G1 E-60.380 F1000
+18:04:23, [HOST] Sequence Complete
+18:04:23, [WASH] Cycle complete. Ejecting wash tip...
+18:04:23, [HOST] >> G90
+18:04:24, [HOST] >> G0 Z195.00 F1500
+18:04:30, [HOST] >> G0 X109.20 Y109.90 F1500
+18:04:30, [HOST] >> G0 X187.90 Y185.30 F1500
+18:04:47, [HOST] >> G0 Z190.00 F1500
+18:04:50, [HOST] >> G0 Z160.20 F1500
+18:04:53, [HOST] >> G0 Y220.90 F250
+18:05:00, [HOST] >> G0 Z190.00 F250
+18:05:03, [HOST] >> G0 Z195.00 F1500
+18:05:04, [CMD] [TRANSFER] All lines complete. Parking.
+18:05:04, [SYSTEM] Parking Head...
+18:05:04, [CMD] Park Head (Center + Lower)
+18:05:04, [HOST] Sequence Complete
+18:05:04, [HOST] >> G90
+18:05:05, [HOST] >> G0 Z195.00 F1500
+18:05:08, [HOST] >> G0 X109.20 Y109.90 F1500
+18:05:08, [HOST] >> G0 Z175.00 F1500
+18:05:13, [HOST] Sequence Complete
+18:05:13, [HOST] >> M400
+18:05:46, [HOST] Sequence Complete
+18:50:28, [HOST] Serial read error: GetOverlappedResult failed (PermissionError(13, 'Access is denied.', None, 5))
+19:08:26, [HOST] Disconnected
+19:46:45, [SYSTEM] Auto-connecting to COM5...
+19:46:46, [HOST] Connected to COM5 @ 115200
+19:46:46, [INIT] Waiting for printer boot...
+19:46:48, [INIT] Sending Setup G-Code...
+19:46:48, [HOST] >> M107
+19:46:48, [HOST] >> M104 S0
+19:46:48, [HOST] >> M140 S0
+19:46:48, [HOST] >> G90
+19:46:48, [HOST] >> G21
+19:46:49, [HOST] >> M302 S0
+19:46:49, [HOST] >> M82
+19:46:49, [HOST] >> M906 E150
+19:46:49, [HOST] >> M84 E S3
+19:46:49, [INIT] Setup Complete.
+19:46:49, [HOST] Sequence Complete
+19:46:49, [PRINTER] FIRMWARE_NAME:Marlin V1.0.9_F401 (Nov 15 2024 16:32:26) SOURCE_CODE_URL:github.com/MarlinFirmware/Marlin PROTOCOL_VERSION:1.0 MACHINE_TYPE:Ender-3 V3 SE EXTRUDER_COUNT:1 UUID:cede2a2f-41a2-4748-9b12-c55c62f367ff
+19:46:49, [PRINTER] Cap:SERIAL_XON_XOFF:0
+19:46:49, [PRINTER] Cap:BINARY_FILE_TRANSFER:0
+19:46:49, [PRINTER] Cap:EEPROM:1
+19:46:49, [PRINTER] Cap:VOLUMETRIC:1
+19:46:49, [PRINTER] Cap:AUTOREPORT_POS:0
+19:46:49, [PRINTER] Cap:AUTOREPORT_TEMP:1
+19:46:49, [PRINTER] Cap:PROGRESS:0
+19:46:49, [PRINTER] Cap:PRINT_JOB:1
+19:46:49, [PRINTER] Cap:AUTOLEVEL:1
+19:46:49, [PRINTER] Cap:RUNOUT:0
+19:46:49, [PRINTER] Cap:Z_PROBE:1
+19:46:49, [PRINTER] Cap:LEVELING_DATA:1
+19:46:49, [PRINTER] Cap:BUILD_PERCENT:0
+19:46:49, [PRINTER] Cap:SOFTWARE_POWER:0
+19:46:49, [PRINTER] Cap:TOGGLE_LIGHTS:0
+19:46:49, [PRINTER] Cap:CASE_LIGHT_BRIGHTNESS:0
+19:46:49, [PRINTER] Cap:EMERGENCY_PARSER:1
+19:46:49, [PRINTER] Cap:HOST_ACTION_COMMANDS:0
+19:46:49, [PRINTER] Cap:PROMPT_SUPPORT:0
+19:46:49, [PRINTER] Cap:SDCARD:1
+19:46:49, [PRINTER] Cap:REPEAT:0
+19:46:49, [PRINTER] Cap:SD_WRITE:1
+19:46:49, [PRINTER] Cap:AUTOREPORT_SD_STATUS:0
+19:46:49, [PRINTER] Cap:LONG_FILENAME:1
+19:46:49, [PRINTER] Cap:THERMAL_PROTECTION:1
+19:46:49, [PRINTER] Cap:MOTION_MODES:0
+19:46:49, [PRINTER] Cap:ARCS:1
+19:46:49, [PRINTER] Cap:BABYSTEPPING:1
+19:46:49, [PRINTER] Cap:CHAMBER_TEMPERATURE:0
+19:46:49, [PRINTER] Cap:COOLER_TEMPERATURE:0
+19:46:49, [PRINTER] Cap:MEATPACK:0
+19:49:31, [SYSTEM] Calibration: 200.0uL -> 200.0uL
+19:49:31, [CMD] Calibrate Pipette: 200.0 -> 200.0uL
+19:49:31, [HOST] >> G92 E-60.380
+19:49:31, [HOST] >> G1 E-60.380 F1000
+19:49:31, [HOST] >> M107
+19:49:31, [HOST] >> M104 S0
+19:49:31, [HOST] >> M140 S0
+19:49:32, [HOST] >> G90
+19:49:32, [HOST] >> G21
+19:49:32, [HOST] >> M302 S0
+19:49:32, [HOST] >> M82
+19:49:32, [HOST] >> M906 E150
+19:49:32, [HOST] >> M84 E S3
+19:49:32, [HOST] Sequence Complete
+19:49:32, [HOST] >> M400
+19:49:32, [HOST] Sequence Complete
+19:49:34, [MANUAL] Homing ALL...
+19:49:35, [HOST] >> G28
+19:49:35, [HOST] >> M18 E
+19:50:35, [HOST] Error: Timeout waiting for 'ok' on: M18 E
+19:50:35, [HOST] Stopping sequence to prevent crash.
+19:50:35, [HOST] Sequence Complete
+19:50:35, [HOST] >> M400
+19:50:42, [PRINTER] echo:Bed Leveling ON
+19:50:42, [PRINTER] echo:Fade Height 10.00
+19:50:42, [HOST] Sequence Complete
+19:52:52, [HOST] Disconnected
+20:05:26, [SYSTEM] Auto-connecting to COM5...
+20:05:27, [HOST] Connected to COM5 @ 115200
+20:05:27, [INIT] Waiting for printer boot...
+20:05:29, [INIT] Sending Setup G-Code...
+20:05:29, [HOST] >> M107
+20:05:29, [HOST] >> M104 S0
+20:05:29, [HOST] >> M140 S0
+20:05:29, [HOST] >> G90
+20:05:29, [HOST] >> G21
+20:05:29, [HOST] >> M302 S0
+20:05:29, [HOST] >> M82
+20:05:29, [HOST] >> M906 E150
+20:05:30, [HOST] >> M84 E S3
+20:05:30, [INIT] Setup Complete.
+20:05:30, [HOST] Sequence Complete
+20:05:30, [PRINTER] FIRMWARE_NAME:Marlin V1.0.9_F401 (Nov 15 2024 16:32:26) SOURCE_CODE_URL:github.com/MarlinFirmware/Marlin PROTOCOL_VERSION:1.0 MACHINE_TYPE:Ender-3 V3 SE EXTRUDER_COUNT:1 UUID:cede2a2f-41a2-4748-9b12-c55c62f367ff
+20:05:30, [PRINTER] Cap:SERIAL_XON_XOFF:0
+20:05:30, [PRINTER] Cap:BINARY_FILE_TRANSFER:0
+20:05:30, [PRINTER] Cap:EEPROM:1
+20:05:30, [PRINTER] Cap:VOLUMETRIC:1
+20:05:30, [PRINTER] Cap:AUTOREPORT_POS:0
+20:05:30, [PRINTER] Cap:AUTOREPORT_TEMP:1
+20:05:30, [PRINTER] Cap:PROGRESS:0
+20:05:30, [PRINTER] Cap:PRINT_JOB:1
+20:05:30, [PRINTER] Cap:AUTOLEVEL:1
+20:05:30, [PRINTER] Cap:RUNOUT:0
+20:05:30, [PRINTER] Cap:Z_PROBE:1
+20:05:30, [PRINTER] Cap:LEVELING_DATA:1
+20:05:30, [PRINTER] Cap:BUILD_PERCENT:0
+20:05:30, [PRINTER] Cap:SOFTWARE_POWER:0
+20:05:30, [PRINTER] Cap:TOGGLE_LIGHTS:0
+20:05:30, [PRINTER] Cap:CASE_LIGHT_BRIGHTNESS:0
+20:05:30, [PRINTER] Cap:EMERGENCY_PARSER:1
+20:05:30, [PRINTER] Cap:HOST_ACTION_COMMANDS:0
+20:05:30, [PRINTER] Cap:PROMPT_SUPPORT:0
+20:05:30, [PRINTER] Cap:SDCARD:1
+20:05:30, [PRINTER] Cap:REPEAT:0
+20:05:30, [PRINTER] Cap:SD_WRITE:1
+20:05:30, [PRINTER] Cap:AUTOREPORT_SD_STATUS:0
+20:05:30, [PRINTER] Cap:LONG_FILENAME:1
+20:05:30, [PRINTER] Cap:THERMAL_PROTECTION:1
+20:05:30, [PRINTER] Cap:MOTION_MODES:0
+20:05:30, [PRINTER] Cap:ARCS:1
+20:05:30, [PRINTER] Cap:BABYSTEPPING:1
+20:05:30, [PRINTER] Cap:CHAMBER_TEMPERATURE:0
+20:05:30, [PRINTER] Cap:COOLER_TEMPERATURE:0
+20:05:30, [PRINTER] Cap:MEATPACK:0
+20:06:33, [SYSTEM] Calibration: 200.0uL -> 200.0uL
+20:06:33, [CMD] Calibrate Pipette: 200.0 -> 200.0uL
+20:06:33, [HOST] >> G92 E-60.380
+20:06:33, [HOST] >> G1 E-60.380 F1000
+20:06:33, [HOST] >> M107
+20:06:33, [HOST] >> M104 S0
+20:06:33, [HOST] >> M140 S0
+20:06:33, [HOST] >> G90
+20:06:34, [HOST] >> G21
+20:06:34, [HOST] >> M302 S0
+20:06:34, [HOST] >> M82
+20:06:34, [HOST] >> M906 E150
+20:06:34, [HOST] >> M84 E S3
+20:06:34, [HOST] Sequence Complete
+20:06:34, [HOST] >> M400
+20:06:34, [HOST] Sequence Complete
+20:06:55, [MANUAL] Jog Z 50.0mm
+20:06:55, [HOST] >> G91
+20:06:55, [HOST] >> G0 Z50.0 F1500
+20:06:55, [HOST] >> G90
+20:06:55, [HOST] Sequence Complete
+20:06:55, [HOST] >> M400
+20:07:05, [HOST] Sequence Complete
+20:07:06, [MANUAL] Jog Y -10.0mm
+20:07:06, [HOST] >> G91
+20:07:06, [HOST] >> G0 Y-10.0 F1500
+20:07:06, [HOST] >> G90
+20:07:06, [HOST] Sequence Complete
+20:07:06, [HOST] >> M400
+20:07:06, [HOST] Sequence Complete
+20:07:07, [MANUAL] Homing ALL...
+20:07:07, [HOST] >> G28
+20:07:39, [PRINTER] echo:Bed Leveling ON
+20:07:39, [PRINTER] echo:Fade Height 10.00
+20:07:39, [HOST] >> M18 E
+20:07:39, [HOST] >> G0 Z185.00
+20:07:39, [HOST] Sequence Complete
+20:07:39, [HOST] >> M400
+20:08:15, [HOST] Sequence Complete
+20:10:35, [CMD] [TRANSFER] Starting sequence with 1 lines.
+20:10:35, --- Processing Line 1 ---
+20:10:35, [L1] Ejecting existing tip...
+20:10:35, [HOST] >> G90
+20:10:35, [HOST] >> G0 Z195.00 F1500
+20:10:35, [HOST] >> G0 X109.20 Y109.90 F1500
+20:10:35, [HOST] >> G0 X187.90 Y185.30 F1500
+20:10:35, [HOST] >> G0 Z190.00 F1500
+20:10:35, [HOST] >> G0 Z160.20 F1500
+20:10:36, [HOST] >> G0 Y220.90 F250
+20:10:36, [HOST] >> G0 Z190.00 F250
+20:10:36, [HOST] >> G0 Z195.00 F1500
+20:10:37, [HOST] Sequence Complete
+20:10:37, [L1] Picking Tip A1...
+20:10:37, [HOST] >> G90
+20:10:38, [HOST] >> G0 Z195.00 F1500
+20:10:39, [HOST] >> G0 X177.10 Y144.10 F1500
+20:10:39, [HOST] >> G0 Z185.00 F1500
+20:10:43, [HOST] >> G0 Z95.00 F500
+20:10:44, [HOST] >> G0 Z185.00 F1500
+20:10:50, [HOST] Sequence Complete
+20:10:50, [L1] Transferring 100.0uL (Standard)
+20:10:50, [HOST] >> G1 E-60.380 F1000
+20:10:58, [HOST] >> G0 Z195.00 F1500
+20:10:59, [HOST] >> G0 X-4.80 Y1.40 F1500
+20:11:06, [HOST] >> G0 Z121.60 F1500
+20:11:07, [HOST] >> G0 Z73.90 F1500
+20:11:10, [HOST] >> G1 E-90.570 F1000
+20:11:12, [HOST] >> G0 Z121.60 F1500
+20:11:30, [HOST] Sequence Complete
+20:11:30, [HOST] >> G0 Z121.60 F1500
+20:11:48, [HOST] >> G0 X-4.70 Y16.90 F1500
+20:11:48, [HOST] >> G0 Z121.60 F1500
+20:11:50, [HOST] Sequence Complete
+20:11:50, [HOST] >> G0 Z110.00 F1500
+20:11:50, [HOST] >> G1 E-30.190 F1000
+20:11:59, [HOST] >> G0 Z121.60 F1500
+20:12:14, [HOST] >> G1 E-60.380 F1000
+20:12:24, [CMD] [TRANSFER] All lines complete. Parking.
+20:12:24, [SYSTEM] Parking Head...
+20:12:24, [HOST] Sequence Complete
+20:12:24, [CMD] Park Head (Defined Coordinates)
+20:12:24, [HOST] >> G90
+20:12:24, [HOST] >> G0 Z195.00 F1500
+20:12:26, [HOST] >> G0 X187.90 Y185.30 F1500
+20:12:35, [HOST] >> G0 Z190.00 F1500
+20:12:36, [HOST] Sequence Complete
+20:12:36, [HOST] >> M400
+20:13:12, [HOST] Sequence Complete
+20:13:25, [SYSTEM] Ejecting Tip...
+20:13:25, [CMD] Ejecting Tip
+20:13:25, [HOST] >> G90
+20:13:25, [HOST] >> G0 Z195.00 F1500
+20:13:25, [HOST] >> G0 X109.20 Y109.90 F1500
+20:13:26, [HOST] >> G0 X187.90 Y185.30 F1500
+20:13:26, [HOST] >> G0 Z190.00 F1500
+20:13:26, [HOST] >> G0 Z160.20 F1500
+20:13:26, [HOST] >> G0 Y220.90 F250
+20:13:26, [HOST] >> G0 Z190.00 F250
+20:13:26, [HOST] >> G0 Z195.00 F1500
+20:13:27, [HOST] Sequence Complete
+20:13:27, [HOST] >> M400
+20:13:59, [HOST] Sequence Complete
+20:14:36, [HOST] Disconnected
+20:24:48, [SYSTEM] Auto-connecting to COM5...
+20:24:48, [HOST] Connected to COM5 @ 115200
+20:24:49, [INIT] Waiting for printer boot...
+20:24:51, [INIT] Sending Setup G-Code...
+20:24:51, [HOST] >> M107
+20:24:51, [HOST] >> M104 S0
+20:24:51, [HOST] >> M140 S0
+20:24:51, [HOST] >> G90
+20:24:51, [HOST] >> G21
+20:24:51, [HOST] >> M302 S0
+20:24:51, [HOST] >> M82
+20:24:51, [HOST] >> M906 E150
+20:24:52, [HOST] >> M84 E S3
+20:24:52, [INIT] Setup Complete.
+20:24:52, [HOST] Sequence Complete
+20:24:52, [PRINTER] FIRMWARE_NAME:Marlin V1.0.9_F401 (Nov 15 2024 16:32:26) SOURCE_CODE_URL:github.com/MarlinFirmware/Marlin PROTOCOL_VERSION:1.0 MACHINE_TYPE:Ender-3 V3 SE EXTRUDER_COUNT:1 UUID:cede2a2f-41a2-4748-9b12-c55c62f367ff
+20:24:52, [PRINTER] Cap:SERIAL_XON_XOFF:0
+20:24:52, [PRINTER] Cap:BINARY_FILE_TRANSFER:0
+20:24:52, [PRINTER] Cap:EEPROM:1
+20:24:52, [PRINTER] Cap:VOLUMETRIC:1
+20:24:52, [PRINTER] Cap:AUTOREPORT_POS:0
+20:24:52, [PRINTER] Cap:AUTOREPORT_TEMP:1
+20:24:52, [PRINTER] Cap:PROGRESS:0
+20:24:52, [PRINTER] Cap:PRINT_JOB:1
+20:24:52, [PRINTER] Cap:AUTOLEVEL:1
+20:24:52, [PRINTER] Cap:RUNOUT:0
+20:24:52, [PRINTER] Cap:Z_PROBE:1
+20:24:52, [PRINTER] Cap:LEVELING_DATA:1
+20:24:52, [PRINTER] Cap:BUILD_PERCENT:0
+20:24:52, [PRINTER] Cap:SOFTWARE_POWER:0
+20:24:52, [PRINTER] Cap:TOGGLE_LIGHTS:0
+20:24:52, [PRINTER] Cap:CASE_LIGHT_BRIGHTNESS:0
+20:24:52, [PRINTER] Cap:EMERGENCY_PARSER:1
+20:24:52, [PRINTER] Cap:HOST_ACTION_COMMANDS:0
+20:24:52, [PRINTER] Cap:PROMPT_SUPPORT:0
+20:24:52, [PRINTER] Cap:SDCARD:1
+20:24:52, [PRINTER] Cap:REPEAT:0
+20:24:52, [PRINTER] Cap:SD_WRITE:1
+20:24:52, [PRINTER] Cap:AUTOREPORT_SD_STATUS:0
+20:24:52, [PRINTER] Cap:LONG_FILENAME:1
+20:24:52, [PRINTER] Cap:THERMAL_PROTECTION:1
+20:24:52, [PRINTER] Cap:MOTION_MODES:0
+20:24:52, [PRINTER] Cap:ARCS:1
+20:24:52, [PRINTER] Cap:BABYSTEPPING:1
+20:24:52, [PRINTER] Cap:CHAMBER_TEMPERATURE:0
+20:24:52, [PRINTER] Cap:COOLER_TEMPERATURE:0
+20:24:52, [PRINTER] Cap:MEATPACK:0
+20:25:23, [MANUAL] Homing ALL and Parking...
+20:25:23, [HOST] >> G28
+20:26:33, [PRINTER] echo:Bed Leveling ON
+20:26:33, [PRINTER] echo:Fade Height 10.00
+20:26:33, [HOST] >> M18 E
+20:26:33, [HOST] >> G90
+20:26:33, [HOST] >> G0 Z195.00 F1500
+20:26:33, [HOST] >> G0 X187.90 Y185.30 F1500
+20:26:33, [HOST] >> G0 Z190.00 F1500
+20:26:33, [HOST] Sequence Complete
+20:26:33, [HOST] >> M400
+20:27:15, [HOST] Sequence Complete
+20:27:52, [SYSTEM] Auto-connecting to COM5...
+20:27:53, [HOST] Connected to COM5 @ 115200
+20:27:54, [INIT] Waiting for printer boot...
+20:27:56, [INIT] Sending Setup G-Code...
+20:27:56, [HOST] >> M107
+20:27:57, [HOST] >> M104 S0
+20:27:57, [HOST] >> M140 S0
+20:27:57, [HOST] >> G90
+20:27:57, [HOST] >> G21
+20:27:57, [HOST] >> M302 S0
+20:27:57, [HOST] >> M82
+20:27:57, [HOST] >> M906 E150
+20:27:57, [HOST] >> M84 E S3
+20:27:57, [HOST] Sequence Complete
+20:27:57, [INIT] Setup Complete.
+20:27:58, [PRINTER] FIRMWARE_NAME:Marlin V1.0.9_F401 (Nov 15 2024 16:32:26) SOURCE_CODE_URL:github.com/MarlinFirmware/Marlin PROTOCOL_VERSION:1.0 MACHINE_TYPE:Ender-3 V3 SE EXTRUDER_COUNT:1 UUID:cede2a2f-41a2-4748-9b12-c55c62f367ff
+20:27:58, [PRINTER] Cap:SERIAL_XON_XOFF:0
+20:27:58, [PRINTER] Cap:BINARY_FILE_TRANSFER:0
+20:27:58, [PRINTER] Cap:EEPROM:1
+20:27:58, [PRINTER] Cap:VOLUMETRIC:1
+20:27:58, [PRINTER] Cap:AUTOREPORT_POS:0
+20:27:58, [PRINTER] Cap:AUTOREPORT_TEMP:1
+20:27:58, [PRINTER] Cap:PROGRESS:0
+20:27:58, [PRINTER] Cap:PRINT_JOB:1
+20:27:58, [PRINTER] Cap:AUTOLEVEL:1
+20:27:58, [PRINTER] Cap:RUNOUT:0
+20:27:58, [PRINTER] Cap:Z_PROBE:1
+20:27:58, [PRINTER] Cap:LEVELING_DATA:1
+20:27:58, [PRINTER] Cap:BUILD_PERCENT:0
+20:27:58, [PRINTER] Cap:SOFTWARE_POWER:0
+20:27:58, [PRINTER] Cap:TOGGLE_LIGHTS:0
+20:27:58, [PRINTER] Cap:CASE_LIGHT_BRIGHTNESS:0
+20:27:58, [PRINTER] Cap:EMERGENCY_PARSER:1
+20:27:58, [PRINTER] Cap:HOST_ACTION_COMMANDS:0
+20:27:58, [PRINTER] Cap:PROMPT_SUPPORT:0
+20:27:58, [PRINTER] Cap:SDCARD:1
+20:27:58, [PRINTER] Cap:REPEAT:0
+20:27:58, [PRINTER] Cap:SD_WRITE:1
+20:27:58, [PRINTER] Cap:AUTOREPORT_SD_STATUS:0
+20:27:58, [PRINTER] Cap:LONG_FILENAME:1
+20:27:58, [PRINTER] Cap:THERMAL_PROTECTION:1
+20:27:58, [PRINTER] Cap:MOTION_MODES:0
+20:27:58, [PRINTER] Cap:ARCS:1
+20:27:58, [PRINTER] Cap:BABYSTEPPING:1
+20:27:58, [PRINTER] Cap:CHAMBER_TEMPERATURE:0
+20:27:58, [PRINTER] Cap:COOLER_TEMPERATURE:0
+20:27:58, [PRINTER] Cap:MEATPACK:0
+20:27:59, [MANUAL] Jog Z -10.0mm
+20:27:59, [HOST] >> G91
+20:27:59, [HOST] >> G0 Z-10.0 F1500
+20:27:59, [HOST] >> G90
+20:27:59, [HOST] Sequence Complete
+20:27:59, [HOST] >> M400
+20:28:01, [HOST] Sequence Complete
+20:28:02, [MANUAL] Homing ALL and Parking...
+20:28:02, [HOST] >> G28
+20:29:08, [PRINTER] echo:Bed Leveling ON
+20:29:08, [PRINTER] echo:Fade Height 10.00
+20:29:08, [HOST] >> M18 E
+20:29:08, [HOST] >> G90
+20:29:08, [HOST] >> G0 Z195.00 F1500
+20:29:08, [HOST] >> G0 X187.90 Y185.30 F1500
+20:29:08, [HOST] >> G0 Z160.20 F1500
+20:29:09, [HOST] Sequence Complete
+20:29:09, [HOST] >> M400
+20:29:55, [HOST] Sequence Complete
+20:33:52, [CMD] [COMBINE] Starting sequence with 2 lines.
+20:33:53, [COMBINE] Processing Line 1: 2 wells -> A1
+20:33:53, [COMBINE] Line 1: Ejecting old tip...
+20:33:53, [HOST] >> G90
+20:33:53, [HOST] >> G0 Z195.00 F1500
+20:33:53, [HOST] >> G0 X109.20 Y109.90 F1500
+20:33:53, [HOST] >> G0 X187.90 Y185.30 F1500
+20:33:53, [HOST] >> G0 Z190.00 F1500
+20:33:53, [HOST] >> G0 Z160.20 F1500
+20:33:53, [HOST] >> G0 Y220.90 F250
+20:33:53, [HOST] >> G0 Z190.00 F250
+20:33:54, [HOST] >> G0 Z195.00 F1500
+20:34:00, [COMBINE] Line 1: Picking Tip A1...
+20:34:00, [HOST] Sequence Complete
+20:34:00, [HOST] >> G90
+20:34:00, [HOST] >> G0 Z195.00 F1500
+20:34:04, [HOST] >> G0 X177.10 Y144.10 F1500
+20:34:05, [HOST] >> G0 Z185.00 F1500
+20:34:09, [HOST] >> G0 Z95.00 F500
+20:34:10, [HOST] >> G0 Z185.00 F1500
+20:34:16, [HOST] Sequence Complete
+20:34:17, [HOST] >> G1 E-60.380 F1000
+20:34:26, [HOST] >> G90
+20:34:26, [HOST] >> G0 Z195.00 F1500
+20:34:26, [HOST] >> G0 X3.60 Y226.90 F1500
+20:34:32, [HOST] >> G0 Z110.00 F1500
+20:34:33, [HOST] >> G0 Z77.30 F1500
+20:34:36, [HOST] >> G1 E-211.330 F1000
+20:34:38, [HOST] >> G0 Z110.00 F1500
+20:34:56, [HOST] >> G90
+20:34:57, [HOST] >> G0 Z195.00 F1500
+20:35:14, [HOST] >> G0 X14.80 Y130.00 F1500
+20:35:16, [HOST] >> G0 Z195.00 F1500
+20:35:24, [HOST] >> G0 Z180.00 F1500
+20:35:24, [HOST] >> G1 E-30.190 F1000
+20:35:41, [HOST] >> G0 Z195.00 F1500
+20:35:48, [HOST] Sequence Complete
+20:35:48, [HOST] >> G1 E-60.380 F1000
+20:35:57, [HOST] >> G90
+20:35:57, [HOST] >> G0 Z195.00 F1500
+20:36:03, [HOST] >> G0 X12.61 Y226.90 F1500
+20:36:03, [HOST] >> G0 Z110.00 F1500
+20:36:20, [HOST] >> G0 Z77.30 F1500
+20:36:24, [HOST] >> G1 E-211.330 F1000
+20:36:27, [HOST] >> G0 Z110.00 F1500
+20:36:38, [HOST] >> G90
+20:36:38, [HOST] >> G0 Z195.00 F1500
+20:36:41, [HOST] >> G0 X14.80 Y130.00 F1500
+20:36:43, [HOST] >> G0 Z195.00 F1500
+20:36:47, [HOST] >> G0 Z180.00 F1500
+20:36:47, [HOST] >> G1 E-30.190 F1000
+20:37:04, [HOST] >> G0 Z195.00 F1500
+20:37:11, [COMBINE] Line 1: Ejecting main transfer tip...
+20:37:11, [HOST] Sequence Complete
+20:37:11, [HOST] >> G90
+20:37:11, [HOST] >> G0 Z195.00 F1500
+20:37:20, [HOST] >> G0 X109.20 Y109.90 F1500
+20:37:20, [HOST] >> G0 X187.90 Y185.30 F1500
+20:37:27, [HOST] >> G0 Z190.00 F1500
+20:37:44, [HOST] >> G0 Z160.20 F1500
+20:37:47, [HOST] >> G0 Y220.90 F250
+20:37:51, [HOST] >> G0 Z190.00 F250
+20:38:01, [HOST] >> G0 Z195.00 F1500
+20:38:04, [COMBINE] Line 1: Picking Wash Tip A2 (Cycle 1)...
+20:38:04, [HOST] Sequence Complete
+20:38:05, [HOST] >> G90
+20:38:05, [HOST] >> G0 Z195.00 F1500
+20:38:09, [HOST] >> G0 X187.20 Y144.10 F1500
+20:38:09, [HOST] >> G0 Z185.00 F1500
+20:38:13, [HOST] >> G0 Z95.00 F500
+20:38:14, [HOST] >> G0 Z185.00 F1500
+20:38:20, [HOST] Sequence Complete
+20:38:20, [COMBINE] Line 1: Wash Cycle 1/2 (Batch Mode)...
+20:38:20,   -> Distributing 100.0uL Wash to A1
+20:38:20, [HOST] >> G1 E-60.380 F1000
+20:38:28, [HOST] >> G90
+20:38:28, [HOST] >> G0 Z195.00 F1500
+20:38:35, [HOST] >> G0 X159.90 Y62.70 F1500
+20:38:37, [HOST] >> G0 Z195.00 F1500
+20:38:40, [HOST] >> G0 Z105.00 F1500
+20:38:40, [HOST] >> G1 E-90.570 F1000
+20:38:42, [HOST] >> G0 Z195.00 F1500
+20:39:00, [HOST] Sequence Complete
+20:39:00, [HOST] >> G90
+20:39:00, [HOST] >> G0 Z195.00 F1500
+20:39:18, [HOST] >> G0 X3.60 Y226.90 F1500
+20:39:18, [HOST] >> G0 Z110.00 F1500
+20:39:20, [HOST] >> G0 Z97.30 F1500
+20:39:22, [HOST] >> G1 E-60.380 F1000
+20:39:25, [HOST] >> G0 Z110.00 F1500
+20:39:43,   -> Distributing 100.0uL Wash to A2
+20:39:43, [HOST] Sequence Complete
+20:39:43, [HOST] >> G1 E-60.380 F1000
+20:39:45, [HOST] >> G90
+20:39:45, [HOST] >> G0 Z195.00 F1500
+20:39:45, [HOST] >> G0 X159.90 Y62.70 F1500
+20:40:03, [HOST] >> G0 Z195.00 F1500
+20:40:12, [HOST] >> G0 Z105.00 F1500
+20:40:13, [HOST] >> G1 E-90.570 F1000
+20:40:30, [HOST] >> G0 Z195.00 F1500
+20:40:32, [HOST] Sequence Complete
+20:40:32, [HOST] >> G90
+20:40:32, [HOST] >> G0 Z195.00 F1500
+20:40:34, [HOST] >> G0 X12.61 Y226.90 F1500
+20:40:34, [HOST] >> G0 Z110.00 F1500
+20:40:37, [HOST] >> G0 Z97.30 F1500
+20:40:54, [HOST] >> G1 E-60.380 F1000
+20:41:04, [HOST] >> G0 Z110.00 F1500
+20:41:21,   -> Collecting Wash from A1
+20:41:21, [HOST] Sequence Complete
+20:41:21, [HOST] >> G90
+20:41:21, [HOST] >> G0 Z110.00 F1500
+20:41:23, [HOST] >> G0 X3.60 Y226.90 F1500
+20:41:23, [HOST] >> G0 Z77.30 F1500
+20:41:41, [HOST] >> G1 E-120.760 F1000
+20:41:50, [HOST] >> G1 E-60.380 F1000
+20:42:07, [HOST] >> G1 E-120.760 F1000
+20:42:10, [HOST] >> G1 E-60.380 F1000
+20:42:11, [HOST] >> G1 E-120.760 F1000
+20:42:14, [HOST] >> G1 E-60.380 F1000
+20:42:16, [HOST] >> G1 E-105.665 F1000
+20:42:21, [HOST] >> G0 Z110.00 F1500
+20:42:25, [HOST] Sequence Complete
+20:42:25, [HOST] >> G90
+20:42:25, [HOST] >> G0 Z195.00 F1500
+20:42:28, [HOST] >> G0 X14.80 Y130.00 F1500
+20:42:32, [HOST] >> G0 Z195.00 F1500
+20:42:35, [HOST] >> G0 Z180.00 F1500
+20:42:36, [HOST] >> G1 E-30.190 F1000
+20:42:39, [HOST] >> G0 Z195.00 F1500
+20:42:43, [HOST] >> G1 E-60.380 F1000
+20:42:45, [HOST] Sequence Complete
+20:42:46,   -> Collecting Wash from A2
+20:42:47, [HOST] >> G90
+20:42:47, [HOST] >> G0 Z195.00 F1500
+20:42:52, [HOST] >> G0 X12.61 Y226.90 F1500
+20:42:52, [HOST] >> G0 Z110.00 F1500
+20:43:09, [HOST] >> G0 Z77.30 F1500
+20:43:13, [HOST] >> G1 E-120.760 F1000
+20:43:16, [HOST] >> G1 E-60.380 F1000
+20:43:21, [HOST] >> G1 E-120.760 F1000
+20:43:24, [HOST] >> G1 E-60.380 F1000
+20:43:26, [HOST] >> G1 E-120.760 F1000
+20:43:29, [HOST] >> G1 E-60.380 F1000
+20:43:47, [HOST] >> G1 E-105.665 F1000
+20:43:53, [HOST] >> G0 Z110.00 F1500
+20:43:57, [HOST] Sequence Complete
+20:43:57, [HOST] >> G90
+20:43:57, [HOST] >> G0 Z195.00 F1500
+20:44:00, [HOST] >> G0 X14.80 Y130.00 F1500
+20:44:04, [HOST] >> G0 Z195.00 F1500
+20:44:08, [HOST] >> G0 Z180.00 F1500
+20:44:08, [HOST] >> G1 E-30.190 F1000
+20:44:11, [HOST] >> G0 Z195.00 F1500
+20:44:15, [HOST] >> G1 E-60.380 F1000
+20:44:18, [COMBINE] Line 1: Ejecting wash tip (End of Cycle 1)...
+20:44:18, [HOST] Sequence Complete
+20:44:18, [HOST] >> G90
+20:44:18, [HOST] >> G0 Z195.00 F1500
+20:44:25, [HOST] >> G0 X109.20 Y109.90 F1500
+20:44:26, [HOST] >> G0 X187.90 Y185.30 F1500
+20:44:42, [HOST] >> G0 Z190.00 F1500
+20:44:45, [HOST] >> G0 Z160.20 F1500
+20:44:48, [HOST] >> G0 Y220.90 F250
+20:44:53, [HOST] >> G0 Z190.00 F250
+20:44:56, [HOST] >> G0 Z195.00 F1500
+20:44:58, [HOST] Sequence Complete
+20:44:58, [COMBINE] Line 1: Picking Wash Tip A3 (Cycle 2)...
+20:44:58, [HOST] >> G90
+20:44:58, [HOST] >> G0 Z195.00 F1500
+20:45:02, [HOST] >> G0 X197.30 Y144.10 F1500
+20:45:02, [HOST] >> G0 Z185.00 F1500
+20:45:06, [HOST] >> G0 Z95.00 F500
+20:45:07, [HOST] >> G0 Z185.00 F1500
+20:45:13, [COMBINE] Line 1: Wash Cycle 2/2 (Batch Mode)...
+20:45:13,   -> Distributing 100.0uL Wash to A1
+20:45:13, [HOST] Sequence Complete
+20:45:13, [HOST] >> G1 E-60.380 F1000
+20:45:22, [HOST] >> G90
+20:45:22, [HOST] >> G0 Z195.00 F1500
+20:45:22, [HOST] >> G0 X159.90 Y62.70 F1500
+20:45:29, [HOST] >> G0 Z195.00 F1500
+20:45:30, [HOST] >> G0 Z105.00 F1500
+20:45:30, [HOST] >> G1 E-90.570 F1000
+20:45:33, [HOST] >> G0 Z195.00 F1500
+20:45:35, [HOST] Sequence Complete
+20:45:35, [HOST] >> G90
+20:45:35, [HOST] >> G0 Z195.00 F1500
+20:45:53, [HOST] >> G0 X3.60 Y226.90 F1500
+20:45:53, [HOST] >> G0 Z110.00 F1500
+20:46:12, [HOST] >> G0 Z97.30 F1500
+20:46:13, [HOST] >> G1 E-60.380 F1000
+20:46:17, [HOST] >> G0 Z110.00 F1500
+20:46:35,   -> Distributing 100.0uL Wash to A2
+20:46:35, [HOST] Sequence Complete
+20:46:35, [HOST] >> G1 E-60.380 F1000
+20:46:37, [HOST] >> G90
+20:46:37, [HOST] >> G0 Z195.00 F1500
+20:46:37, [HOST] >> G0 X159.90 Y62.70 F1500
+20:46:55, [HOST] >> G0 Z195.00 F1500
+20:47:04, [HOST] >> G0 Z105.00 F1500
+20:47:04, [HOST] >> G1 E-90.570 F1000
+20:47:21, [HOST] >> G0 Z195.00 F1500
+20:47:24, [HOST] Sequence Complete
+20:47:24, [HOST] >> G90
+20:47:24, [HOST] >> G0 Z195.00 F1500
+20:47:26, [HOST] >> G0 X12.61 Y226.90 F1500
+20:47:26, [HOST] >> G0 Z110.00 F1500
+20:47:28, [HOST] >> G0 Z97.30 F1500
+20:47:45, [HOST] >> G1 E-60.380 F1000
+20:47:55, [HOST] >> G0 Z110.00 F1500
+20:48:13,   -> Collecting Wash from A1
+20:48:13, [HOST] Sequence Complete
+20:48:13, [HOST] >> G90
+20:48:13, [HOST] >> G0 Z110.00 F1500
+20:48:15, [HOST] >> G0 X3.60 Y226.90 F1500
+20:48:15, [HOST] >> G0 Z77.30 F1500
+20:48:33, [HOST] >> G1 E-120.760 F1000
+20:48:42, [HOST] >> G1 E-60.380 F1000
+20:48:59, [HOST] >> G1 E-120.760 F1000
+20:49:01, [HOST] >> G1 E-60.380 F1000
+20:49:03, [HOST] >> G1 E-120.760 F1000
+20:49:06, [HOST] >> G1 E-60.380 F1000
+20:49:06, [HOST] >> G1 E-105.665 F1000
+20:49:13, [HOST] >> G0 Z110.00 F1500
+20:49:16, [HOST] Sequence Complete
+20:49:16, [HOST] >> G90
+20:49:16, [HOST] >> G0 Z195.00 F1500
+20:49:20, [HOST] >> G0 X14.80 Y130.00 F1500
+20:49:24, [HOST] >> G0 Z195.00 F1500
+20:49:27, [HOST] >> G0 Z180.00 F1500
+20:49:27, [HOST] >> G1 E-30.190 F1000
+20:49:31, [HOST] >> G0 Z195.00 F1500
+20:49:34, [HOST] >> G1 E-60.380 F1000
+20:49:37,   -> Collecting Wash from A2
+20:49:37, [HOST] Sequence Complete
+20:49:37, [HOST] >> G90
+20:49:37, [HOST] >> G0 Z195.00 F1500
+20:49:44, [HOST] >> G0 X12.61 Y226.90 F1500
+20:49:44, [HOST] >> G0 Z110.00 F1500
+20:50:01, [HOST] >> G0 Z77.30 F1500
+20:50:05, [HOST] >> G1 E-120.760 F1000
+20:50:08, [HOST] >> G1 E-60.380 F1000
+20:50:12, [HOST] >> G1 E-120.760 F1000
+20:50:15, [HOST] >> G1 E-60.380 F1000
+20:50:17, [HOST] >> G1 E-120.760 F1000
+20:50:21, [HOST] >> G1 E-60.380 F1000
+20:50:38, [HOST] >> G1 E-105.665 F1000
+20:50:45, [HOST] >> G0 Z110.00 F1500
+20:50:49, [HOST] Sequence Complete
+20:50:49, [HOST] >> G90
+20:50:49, [HOST] >> G0 Z195.00 F1500
+20:50:52, [HOST] >> G0 X14.80 Y130.00 F1500
+20:50:56, [HOST] >> G0 Z195.00 F1500
+20:50:59, [HOST] >> G0 Z180.00 F1500
+20:51:00, [HOST] >> G1 E-30.190 F1000
+20:51:03, [HOST] >> G0 Z195.00 F1500
+20:51:07, [HOST] >> G1 E-60.380 F1000
+20:51:10, [COMBINE] Line 1: Ejecting wash tip (End of Cycle 2)...
+20:51:10, [HOST] Sequence Complete
+20:51:10, [HOST] >> G90
+20:51:10, [HOST] >> G0 Z195.00 F1500
+20:51:16, [HOST] >> G0 X109.20 Y109.90 F1500
+20:51:16, [HOST] >> G0 X187.90 Y185.30 F1500
+20:51:33, [HOST] >> G0 Z190.00 F1500
+20:51:37, [HOST] >> G0 Z160.20 F1500
+20:51:40, [HOST] >> G0 Y220.90 F250
+20:51:45, [HOST] >> G0 Z190.00 F250
+20:51:48, [HOST] >> G0 Z195.00 F1500
+20:51:50, [HOST] Sequence Complete
+20:51:50, [COMBINE] Line 1 Complete.
+20:51:50, [COMBINE] Processing Line 2: 2 wells -> A2
+20:51:50, [COMBINE] Line 2: Ejecting old tip...
+20:51:50, [HOST] >> G90
+20:51:50, [HOST] >> G0 Z195.00 F1500
+20:51:53, [HOST] >> G0 X109.20 Y109.90 F1500
+20:51:54, [HOST] >> G0 X187.90 Y185.30 F1500
+20:51:58, [HOST] >> G0 Z190.00 F1500
+20:51:59, [HOST] >> G0 Z160.20 F1500
+20:52:05, [HOST] >> G0 Y220.90 F250
+20:52:13, [HOST] >> G0 Z190.00 F250
+20:52:21, [HOST] >> G0 Z195.00 F1500
+20:52:22, [COMBINE] Line 2: Picking Tip A4...
+20:52:22, [HOST] Sequence Complete
+20:52:22, [HOST] >> G90
+20:52:22, [HOST] >> G0 Z195.00 F1500
+20:52:27, [HOST] >> G0 X207.40 Y144.10 F1500
+20:52:27, [HOST] >> G0 Z185.00 F1500
+20:52:31, [HOST] >> G0 Z95.00 F500
+20:52:33, [HOST] >> G0 Z185.00 F1500
+20:52:39, [HOST] Sequence Complete
+20:52:39, [HOST] >> G1 E-60.380 F1000
+20:52:47, [HOST] >> G90
+20:52:47, [HOST] >> G0 Z195.00 F1500
+20:52:48, [HOST] >> G0 X21.62 Y226.90 F1500
+20:52:55, [HOST] >> G0 Z110.00 F1500
+20:52:55, [HOST] >> G0 Z77.30 F1500
+20:52:58, [HOST] >> G1 E-211.330 F1000
+20:53:00, [HOST] >> G0 Z110.00 F1500
+20:53:19, [HOST] >> G90
+20:53:19, [HOST] >> G0 Z195.00 F1500
+20:53:37, [HOST] >> G0 X33.90 Y130.00 F1500
+20:53:39, [HOST] >> G0 Z195.00 F1500
+20:53:47, [HOST] >> G0 Z180.00 F1500
+20:53:47, [HOST] >> G1 E-30.190 F1000
+20:54:04, [HOST] >> G0 Z195.00 F1500
+20:54:11, [HOST] Sequence Complete
+20:54:11, [HOST] >> G1 E-60.380 F1000
+20:54:20, [HOST] >> G90
+20:54:20, [HOST] >> G0 Z195.00 F1500
+20:54:26, [HOST] >> G0 X30.63 Y226.90 F1500
+20:54:27, [HOST] >> G0 Z110.00 F1500
+20:54:44, [HOST] >> G0 Z77.30 F1500
+20:54:47, [HOST] >> G1 E-211.330 F1000
+20:54:52, [HOST] >> G0 Z110.00 F1500
+20:55:01, [HOST] >> G90
+20:55:02, [HOST] >> G0 Z195.00 F1500
+20:55:04, [HOST] >> G0 X33.90 Y130.00 F1500
+20:55:06, [HOST] >> G0 Z195.00 F1500
+20:55:10, [HOST] >> G0 Z180.00 F1500
+20:55:10, [HOST] >> G1 E-30.190 F1000
+20:55:27, [HOST] >> G0 Z195.00 F1500
+20:55:34, [HOST] Sequence Complete
+20:55:34, [COMBINE] Line 2: Ejecting main transfer tip...
+20:55:34, [HOST] >> G90
+20:55:34, [HOST] >> G0 Z195.00 F1500
+20:55:43, [HOST] >> G0 X109.20 Y109.90 F1500
+20:55:43, [HOST] >> G0 X187.90 Y185.30 F1500
+20:55:50, [HOST] >> G0 Z190.00 F1500
+20:56:07, [HOST] >> G0 Z160.20 F1500
+20:56:11, [HOST] >> G0 Y220.90 F250
+20:56:14, [HOST] >> G0 Z190.00 F250
+20:56:25, [HOST] >> G0 Z195.00 F1500
+20:56:28, [COMBINE] Line 2: Picking Wash Tip B1 (Cycle 1)...
+20:56:28, [HOST] Sequence Complete
+20:56:28, [HOST] >> G90
+20:56:28, [HOST] >> G0 Z195.00 F1500
+20:56:31, [HOST] >> G0 X177.10 Y134.14 F1500
+20:56:31, [HOST] >> G0 Z185.00 F1500
+20:56:35, [HOST] >> G0 Z95.00 F500
+20:56:37, [HOST] >> G0 Z185.00 F1500
+20:56:42, [HOST] Sequence Complete
+20:56:42, [COMBINE] Line 2: Wash Cycle 1/2 (Batch Mode)...
+20:56:42,   -> Distributing 100.0uL Wash to A3
+20:56:42, [HOST] >> G1 E-60.380 F1000
+20:56:51, [HOST] >> G90
+20:56:51, [HOST] >> G0 Z195.00 F1500
+20:56:58, [HOST] >> G0 X159.90 Y62.70 F1500
+20:56:59, [HOST] >> G0 Z195.00 F1500
+20:57:02, [HOST] >> G0 Z105.00 F1500
+20:57:03, [HOST] >> G1 E-90.570 F1000
+20:57:04, [HOST] >> G0 Z195.00 F1500
+20:57:23, [HOST] Sequence Complete
+20:57:23, [HOST] >> G90
+20:57:23, [HOST] >> G0 Z195.00 F1500
+20:57:41, [HOST] >> G0 X21.62 Y226.90 F1500
+20:57:43, [HOST] >> G0 Z110.00 F1500
+20:57:43, [HOST] >> G0 Z97.30 F1500
+20:57:45, [HOST] >> G1 E-60.380 F1000
+20:57:48, [HOST] >> G0 Z110.00 F1500
+20:58:06, [HOST] Sequence Complete
+20:58:06,   -> Distributing 100.0uL Wash to A4
+20:58:06, [HOST] >> G1 E-60.380 F1000
+20:58:08, [HOST] >> G90
+20:58:08, [HOST] >> G0 Z195.00 F1500
+20:58:08, [HOST] >> G0 X159.90 Y62.70 F1500
+20:58:26, [HOST] >> G0 Z195.00 F1500
+20:58:34, [HOST] >> G0 Z105.00 F1500
+20:58:34, [HOST] >> G1 E-90.570 F1000
+20:58:51, [HOST] >> G0 Z195.00 F1500
+20:58:55, [HOST] Sequence Complete
+20:58:55, [HOST] >> G90
+20:58:55, [HOST] >> G0 Z195.00 F1500
+20:58:56, [HOST] >> G0 X30.63 Y226.90 F1500
+20:58:56, [HOST] >> G0 Z110.00 F1500
+20:58:58, [HOST] >> G0 Z97.30 F1500
+20:59:16, [HOST] >> G1 E-60.380 F1000
+20:59:24, [HOST] >> G0 Z110.00 F1500
+20:59:42, [HOST] Sequence Complete
+20:59:42,   -> Collecting Wash from A3
+20:59:42, [HOST] >> G90
+20:59:42, [HOST] >> G0 Z110.00 F1500
+20:59:44, [HOST] >> G0 X21.62 Y226.90 F1500
+20:59:44, [HOST] >> G0 Z77.30 F1500
+21:00:02, [HOST] >> G1 E-120.760 F1000
+21:00:11, [HOST] >> G1 E-60.380 F1000
+21:00:28, [HOST] >> G1 E-120.760 F1000
+21:00:30, [HOST] >> G1 E-60.380 F1000
+21:00:32, [HOST] >> G1 E-120.760 F1000
+21:00:35, [HOST] >> G1 E-60.380 F1000
+21:00:35, [HOST] >> G1 E-105.665 F1000
+21:00:42, [HOST] >> G0 Z110.00 F1500
+21:00:45, [HOST] Sequence Complete
+21:00:45, [HOST] >> G90
+21:00:46, [HOST] >> G0 Z195.00 F1500
+21:00:49, [HOST] >> G0 X33.90 Y130.00 F1500
+21:00:53, [HOST] >> G0 Z195.00 F1500
+21:00:56, [HOST] >> G0 Z180.00 F1500
+21:00:56, [HOST] >> G1 E-30.190 F1000
+21:01:00, [HOST] >> G0 Z195.00 F1500
+21:01:04, [HOST] >> G1 E-60.380 F1000
+21:01:06, [HOST] Sequence Complete
+21:01:06,   -> Collecting Wash from A4
+21:01:06, [HOST] >> G90
+21:01:07, [HOST] >> G0 Z195.00 F1500
+21:01:14, [HOST] >> G0 X30.63 Y226.90 F1500
+21:01:14, [HOST] >> G0 Z110.00 F1500
+21:01:31, [HOST] >> G0 Z77.30 F1500
+21:01:34, [HOST] >> G1 E-120.760 F1000
+21:01:37, [HOST] >> G1 E-60.380 F1000
+21:01:42, [HOST] >> G1 E-120.760 F1000
+21:01:45, [HOST] >> G1 E-60.380 F1000
+21:01:46, [HOST] >> G1 E-120.760 F1000
+21:01:50, [HOST] >> G1 E-60.380 F1000
+21:02:08, [HOST] >> G1 E-105.665 F1000
+21:02:14, [HOST] >> G0 Z110.00 F1500
+21:02:18, [HOST] Sequence Complete
+21:02:18, [HOST] >> G90
+21:02:18, [HOST] >> G0 Z195.00 F1500
+21:02:21, [HOST] >> G0 X33.90 Y130.00 F1500
+21:02:25, [HOST] >> G0 Z195.00 F1500
+21:02:29, [HOST] >> G0 Z180.00 F1500
+21:02:29, [HOST] >> G1 E-30.190 F1000
+21:02:32, [HOST] >> G0 Z195.00 F1500
+21:02:36, [HOST] >> G1 E-60.380 F1000
+21:02:39, [COMBINE] Line 2: Ejecting wash tip (End of Cycle 1)...
+21:02:39, [HOST] Sequence Complete
+21:02:39, [HOST] >> G90
+21:02:39, [HOST] >> G0 Z195.00 F1500
+21:02:45, [HOST] >> G0 X109.20 Y109.90 F1500
+21:02:45, [HOST] >> G0 X187.90 Y185.30 F1500
+21:03:02, [HOST] >> G0 Z190.00 F1500
+21:03:06, [HOST] >> G0 Z160.20 F1500
+21:03:09, [HOST] >> G0 Y220.90 F250
+21:03:14, [HOST] >> G0 Z190.00 F250
+21:03:17, [HOST] >> G0 Z195.00 F1500
+21:03:19, [HOST] Sequence Complete
+21:03:19, [COMBINE] Line 2: Picking Wash Tip B2 (Cycle 2)...
+21:03:19, [HOST] >> G90
+21:03:19, [HOST] >> G0 Z195.00 F1500
+21:03:22, [HOST] >> G0 X187.20 Y134.14 F1500
+21:03:22, [HOST] >> G0 Z185.00 F1500
+21:03:26, [HOST] >> G0 Z95.00 F500
+21:03:27, [HOST] >> G0 Z185.00 F1500
+21:03:33, [HOST] Sequence Complete
+21:03:33, [COMBINE] Line 2: Wash Cycle 2/2 (Batch Mode)...
+21:03:33,   -> Distributing 100.0uL Wash to A3
+21:03:33, [HOST] >> G1 E-60.380 F1000
+21:03:42, [HOST] >> G90
+21:03:42, [HOST] >> G0 Z195.00 F1500
+21:03:42, [HOST] >> G0 X159.90 Y62.70 F1500
+21:03:49, [HOST] >> G0 Z195.00 F1500
+21:03:50, [HOST] >> G0 Z105.00 F1500
+21:03:50, [HOST] >> G1 E-90.570 F1000
+21:03:54, [HOST] >> G0 Z195.00 F1500
+21:03:56, [HOST] Sequence Complete
+21:03:56, [HOST] >> G90
+21:03:56, [HOST] >> G0 Z195.00 F1500
+21:04:14, [HOST] >> G0 X21.62 Y226.90 F1500
+21:04:14, [HOST] >> G0 Z110.00 F1500
+21:04:32, [HOST] >> G0 Z97.30 F1500
+21:04:34, [HOST] >> G1 E-60.380 F1000
+21:04:37, [HOST] >> G0 Z110.00 F1500
+21:04:55, [HOST] Sequence Complete
+21:04:57,   -> Distributing 100.0uL Wash to A4
+21:04:57, [HOST] >> G1 E-60.380 F1000
+21:04:57, [HOST] >> G90
+21:04:57, [HOST] >> G0 Z195.00 F1500
+21:04:57, [HOST] >> G0 X159.90 Y62.70 F1500
+21:05:15, [HOST] >> G0 Z195.00 F1500
+21:05:24, [HOST] >> G0 Z105.00 F1500
+21:05:24, [HOST] >> G1 E-90.570 F1000
+21:05:41, [HOST] >> G0 Z195.00 F1500
+21:05:43, [HOST] Sequence Complete
+21:05:43, [HOST] >> G90
+21:05:44, [HOST] >> G0 Z195.00 F1500
+21:05:45, [HOST] >> G0 X30.63 Y226.90 F1500
+21:05:45, [HOST] >> G0 Z110.00 F1500
+21:05:49, [HOST] >> G0 Z97.30 F1500
+21:06:05, [HOST] >> G1 E-60.380 F1000
+21:06:14, [HOST] >> G0 Z110.00 F1500
+21:06:32, [HOST] Sequence Complete
+21:06:32,   -> Collecting Wash from A3
+21:06:32, [HOST] >> G90
+21:06:32, [HOST] >> G0 Z110.00 F1500
+21:06:34, [HOST] >> G0 X21.62 Y226.90 F1500
+21:06:34, [HOST] >> G0 Z77.30 F1500
+21:06:52, [HOST] >> G1 E-120.760 F1000
+21:07:00, [HOST] >> G1 E-60.380 F1000
+21:07:17, [HOST] >> G1 E-120.760 F1000
+21:07:20, [HOST] >> G1 E-60.380 F1000
+21:07:22, [HOST] >> G1 E-120.760 F1000
+21:07:24, [HOST] >> G1 E-60.380 F1000
+21:07:25, [HOST] >> G1 E-105.665 F1000
+21:07:31, [HOST] >> G0 Z110.00 F1500
+21:07:35, [HOST] Sequence Complete
+21:07:35, [HOST] >> G90
+21:07:35, [HOST] >> G0 Z195.00 F1500
+21:07:40, [HOST] >> G0 X33.90 Y130.00 F1500
+21:07:42, [HOST] >> G0 Z195.00 F1500
+21:07:46, [HOST] >> G0 Z180.00 F1500
+21:07:46, [HOST] >> G1 E-30.190 F1000
+21:07:49, [HOST] >> G0 Z195.00 F1500
+21:07:53, [HOST] >> G1 E-60.380 F1000
+21:07:56, [HOST] Sequence Complete
+21:07:56,   -> Collecting Wash from A4
+21:07:56, [HOST] >> G90
+21:07:56, [HOST] >> G0 Z195.00 F1500
+21:08:02, [HOST] >> G0 X30.63 Y226.90 F1500
+21:08:02, [HOST] >> G0 Z110.00 F1500
+21:08:19, [HOST] >> G0 Z77.30 F1500
+21:08:23, [HOST] >> G1 E-120.760 F1000
+21:08:26, [HOST] >> G1 E-60.380 F1000
+21:08:32, [HOST] >> G1 E-120.760 F1000
+21:08:34, [HOST] >> G1 E-60.380 F1000
+21:08:36, [HOST] >> G1 E-120.760 F1000
+21:08:40, [HOST] >> G1 E-60.380 F1000
+21:08:57, [HOST] >> G1 E-105.665 F1000
+21:09:04, [HOST] >> G0 Z110.00 F1500
+21:09:08, [HOST] Sequence Complete
+21:09:08, [HOST] >> G90
+21:09:09, [HOST] >> G0 Z195.00 F1500
+21:09:11, [HOST] >> G0 X33.90 Y130.00 F1500
+21:09:15, [HOST] >> G0 Z195.00 F1500
+21:09:18, [HOST] >> G0 Z180.00 F1500
+21:09:18, [HOST] >> G1 E-30.190 F1000
+21:09:22, [HOST] >> G0 Z195.00 F1500
+21:09:25, [HOST] >> G1 E-60.380 F1000
+21:09:28, [HOST] Sequence Complete
+21:09:28, [COMBINE] Line 2: Ejecting wash tip (End of Cycle 2)...
+21:09:28, [HOST] >> G90
+21:09:28, [HOST] >> G0 Z195.00 F1500
+21:09:35, [HOST] >> G0 X109.20 Y109.90 F1500
+21:09:35, [HOST] >> G0 X187.90 Y185.30 F1500
+21:09:52, [HOST] >> G0 Z190.00 F1500
+21:09:56, [HOST] >> G0 Z160.20 F1500
+21:09:59, [HOST] >> G0 Y220.90 F250
+21:10:03, [HOST] >> G0 Z190.00 F250
+21:10:06, [HOST] >> G0 Z195.00 F1500
+21:10:08, [HOST] Sequence Complete
+21:10:08, [COMBINE] Line 2 Complete.
+21:10:08, [CMD] [COMBINE] Sequence Finished. Parking.
+21:10:08, [SYSTEM] Parking Head...
+21:10:08, [CMD] Park Head (Defined Coordinates)
+21:10:08, [HOST] >> G90
+21:10:09, [HOST] >> G0 Z195.00 F1500
+21:10:11, [HOST] >> G0 X187.90 Y185.30 F1500
+21:10:11, [HOST] >> G0 Z160.20 F1500
+21:10:16, [HOST] Sequence Complete
+21:10:16, [HOST] >> M400
+21:10:48, [HOST] Sequence Complete
+21:22:42, [HOST] Disconnected
+21:24:11, [SYSTEM] Auto-connecting to COM5...
+21:24:12, [HOST] Connected to COM5 @ 115200
+21:24:12, [INIT] Waiting for printer boot...
+21:24:14, [INIT] Sending Setup G-Code...
+21:24:14, [HOST] >> M107
+21:24:14, [HOST] >> M104 S0
+21:24:14, [HOST] >> M140 S0
+21:24:14, [HOST] >> G90
+21:24:14, [HOST] >> G21
+21:24:14, [HOST] >> M302 S0
+21:24:14, [HOST] >> M82
+21:24:15, [HOST] >> M906 E150
+21:24:15, [HOST] >> M84 E S3
+21:24:15, [HOST] Sequence Complete
+21:24:15, [INIT] Setup Complete.
+21:24:15, [PRINTER] FIRMWARE_NAME:Marlin V1.0.9_F401 (Nov 15 2024 16:32:26) SOURCE_CODE_URL:github.com/MarlinFirmware/Marlin PROTOCOL_VERSION:1.0 MACHINE_TYPE:Ender-3 V3 SE EXTRUDER_COUNT:1 UUID:cede2a2f-41a2-4748-9b12-c55c62f367ff
+21:24:15, [PRINTER] Cap:SERIAL_XON_XOFF:0
+21:24:15, [PRINTER] Cap:BINARY_FILE_TRANSFER:0
+21:24:15, [PRINTER] Cap:EEPROM:1
+21:24:15, [PRINTER] Cap:VOLUMETRIC:1
+21:24:15, [PRINTER] Cap:AUTOREPORT_POS:0
+21:24:15, [PRINTER] Cap:AUTOREPORT_TEMP:1
+21:24:15, [PRINTER] Cap:PROGRESS:0
+21:24:15, [PRINTER] Cap:PRINT_JOB:1
+21:24:15, [PRINTER] Cap:AUTOLEVEL:1
+21:24:15, [PRINTER] Cap:RUNOUT:0
+21:24:15, [PRINTER] Cap:Z_PROBE:1
+21:24:15, [PRINTER] Cap:LEVELING_DATA:1
+21:24:15, [PRINTER] Cap:BUILD_PERCENT:0
+21:24:15, [PRINTER] Cap:SOFTWARE_POWER:0
+21:24:15, [PRINTER] Cap:TOGGLE_LIGHTS:0
+21:24:15, [PRINTER] Cap:CASE_LIGHT_BRIGHTNESS:0
+21:24:15, [PRINTER] Cap:EMERGENCY_PARSER:1
+21:24:15, [PRINTER] Cap:HOST_ACTION_COMMANDS:0
+21:24:15, [PRINTER] Cap:PROMPT_SUPPORT:0
+21:24:15, [PRINTER] Cap:SDCARD:1
+21:24:15, [PRINTER] Cap:REPEAT:0
+21:24:15, [PRINTER] Cap:SD_WRITE:1
+21:24:15, [PRINTER] Cap:AUTOREPORT_SD_STATUS:0
+21:24:15, [PRINTER] Cap:LONG_FILENAME:1
+21:24:15, [PRINTER] Cap:THERMAL_PROTECTION:1
+21:24:15, [PRINTER] Cap:MOTION_MODES:0
+21:24:15, [PRINTER] Cap:ARCS:1
+21:24:15, [PRINTER] Cap:BABYSTEPPING:1
+21:24:15, [PRINTER] Cap:CHAMBER_TEMPERATURE:0
+21:24:15, [PRINTER] Cap:COOLER_TEMPERATURE:0
+21:24:15, [PRINTER] Cap:MEATPACK:0
+21:24:52, [CMD] [TRANSFER] Starting sequence with 1 lines.
+21:24:52, --- Processing Line 1 ---
+21:24:52, [L1] Ejecting existing tip...
+21:24:52, [HOST] >> G90
+21:24:52, [HOST] >> G0 Z195.00 F1500
+21:24:52, [HOST] >> G0 X109.20 Y109.90 F1500
+21:24:53, [HOST] >> G0 X187.90 Y185.30 F1500
+21:24:53, [HOST] >> G0 Z190.00 F1500
+21:24:53, [HOST] >> G0 Z160.20 F1500
+21:24:53, [HOST] >> G0 Y220.90 F250
+21:24:53, [HOST] >> G0 Z190.00 F250
+21:24:53, [HOST] >> G0 Z195.00 F1500
+21:25:00, [HOST] Sequence Complete
+21:25:00, [L1] Picking Tip A1...
+21:25:00, [HOST] >> G90
+21:25:00, [HOST] >> G0 Z195.00 F1500
+21:25:04, [HOST] >> G0 X177.10 Y144.10 F1500
+21:25:04, [HOST] >> G0 Z185.00 F1500
+21:25:08, [HOST] >> G0 Z95.00 F500
+21:25:09, [HOST] >> G0 Z185.00 F1500
+21:25:15, [HOST] Sequence Complete
+21:25:15, [L1] Transferring 400.0uL (Volatile)
+21:25:15, [HOST] >> G1 E-60.380 F1000
+21:25:24, [HOST] >> G0 Z195.00 F1500
+21:25:24, [HOST] >> G0 X13.14 Y79.60 F1500
+21:25:31, [HOST] >> G0 Z121.60 F1500
+21:25:32, [HOST] >> G0 Z76.30 F1500
+21:25:36, [HOST] >> G1 E-181.140 F1000
+21:25:37, [HOST] >> G1 Z121.60 E-181.170 F1500
+21:25:55, [VOLATILE] Drift (Up+XY+DownSafe): 0.0 steps
+21:25:55, [HOST] Sequence Complete
+21:25:55, [HOST] >> G1 Z121.60 E-181.170 F1500
+21:26:14, [HOST] >> G1 X13.14 Y63.00 E-181.182 F1500
+21:26:14, [HOST] >> G1 Z121.60 E-181.182 F1500
+21:26:16, [VOLATILE] Drift (Down to Disp): 0.0 steps
+21:26:16, [HOST] Sequence Complete
+21:26:16, [HOST] >> G1 Z110.00 E-181.189 F1500
+21:26:16, [HOST] >> G1 E-30.190 F1000
+21:26:23, [HOST] >> G0 Z121.60 F1500
+21:26:38, [HOST] >> G1 E-60.380 F1000
+21:26:47, [HOST] Sequence Complete
+21:26:47, [CMD] [TRANSFER] All lines complete. Parking.
+21:26:47, [SYSTEM] Parking Head...
+21:26:47, [CMD] Park Head (Defined Coordinates)
+21:26:48, [HOST] >> G90
+21:26:48, [HOST] >> G0 Z195.00 F1500
+21:26:54, [HOST] >> G0 X187.90 Y185.30 F1500
+21:27:04, [HOST] >> G0 Z160.20 F1500
+21:27:04, [HOST] Sequence Complete
+21:27:04, [HOST] >> M400
+21:27:50, [HOST] Sequence Complete
+21:28:04, [CMD] [TRANSFER] Starting sequence with 1 lines.
+21:28:04, --- Processing Line 1 ---
+21:28:04, [L1] Ejecting existing tip...
+21:28:04, [HOST] >> G90
+21:28:04, [HOST] >> G0 Z195.00 F1500
+21:28:04, [HOST] >> G0 X109.20 Y109.90 F1500
+21:28:04, [HOST] >> G0 X187.90 Y185.30 F1500
+21:28:05, [HOST] >> G0 Z190.00 F1500
+21:28:05, [HOST] >> G0 Z160.20 F1500
+21:28:05, [HOST] >> G0 Y220.90 F250
+21:28:05, [HOST] >> G0 Z190.00 F250
+21:28:05, [HOST] >> G0 Z195.00 F1500
+21:28:11, [L1] Picking Tip A2...
+21:28:12, [HOST] Sequence Complete
+21:28:12, [HOST] >> G90
+21:28:12, [HOST] >> G0 Z195.00 F1500
+21:28:16, [HOST] >> G0 X187.20 Y144.10 F1500
+21:28:16, [HOST] >> G0 Z185.00 F1500
+21:28:20, [HOST] >> G0 Z95.00 F500
+21:28:21, [HOST] >> G0 Z185.00 F1500
+21:28:27, [L1] Transferring 400.0uL (Volatile)
+21:28:27, [HOST] Sequence Complete
+21:28:27, [HOST] >> G1 E-60.380 F1000
+21:28:36, [HOST] >> G0 Z195.00 F1500
+21:28:36, [HOST] >> G0 X-4.80 Y63.00 F1500
+21:28:43, [HOST] >> G0 Z121.60 F1500
+21:28:44, [HOST] >> G0 Z93.60 F1500
+21:28:47, [HOST] >> G1 E-181.140 F1000
+21:28:49, [HOST] >> G1 Z121.60 E-181.159 F1500
+21:29:07, [HOST] Sequence Complete
+21:29:07, [VOLATILE] Drift (Up+XY+DownSafe): 0.0 steps
+21:29:07, [HOST] >> G1 Z121.60 E-181.159 F1500
+21:29:25, [HOST] >> G1 X13.14 Y63.00 E-181.171 F1500
+21:29:26, [HOST] >> G1 Z121.60 E-181.171 F1500
+21:29:27, [VOLATILE] Drift (Down to Disp): 0.0 steps
+21:29:27, [HOST] Sequence Complete
+21:29:27, [HOST] >> G1 Z110.00 E-181.179 F1500
+21:29:28, [HOST] >> G1 E-30.190 F1000
+21:29:36, [HOST] >> G0 Z121.60 F1500
+21:29:52, [HOST] >> G1 E-60.380 F1000
+21:29:56, [HOST] Sequence Complete
+21:29:56, [CMD] [TRANSFER] All lines complete. Parking.
+21:29:56, [SYSTEM] Parking Head...
+21:29:57, [CMD] Park Head (Defined Coordinates)
+21:29:57, [HOST] >> G90
+21:29:57, [HOST] >> G0 Z195.00 F1500
+21:30:04, [HOST] >> G0 X187.90 Y185.30 F1500
+21:30:09, [HOST] >> G0 Z160.20 F1500
+21:30:10, [HOST] Sequence Complete
+21:30:10, [HOST] >> M400
+21:30:56, [HOST] Sequence Complete
+21:31:04, [CMD] [TRANSFER] Starting sequence with 1 lines.
+21:31:04, --- Processing Line 1 ---
+21:31:04, [L1] Ejecting existing tip...
+21:31:04, [HOST] >> G90
+21:31:04, [HOST] >> G0 Z195.00 F1500
+21:31:05, [HOST] >> G0 X109.20 Y109.90 F1500
+21:31:05, [HOST] >> G0 X187.90 Y185.30 F1500
+21:31:05, [HOST] >> G0 Z190.00 F1500
+21:31:05, [HOST] >> G0 Z160.20 F1500
+21:31:05, [HOST] >> G0 Y220.90 F250
+21:31:05, [HOST] >> G0 Z190.00 F250
+21:31:05, [HOST] >> G0 Z195.00 F1500
+21:31:12, [HOST] Sequence Complete
+21:31:12, [L1] Picking Tip A3...
+21:31:12, [HOST] >> G90
+21:31:12, [HOST] >> G0 Z195.00 F1500
+21:31:16, [HOST] >> G0 X197.30 Y144.10 F1500
+21:31:16, [HOST] >> G0 Z185.00 F1500
+21:31:20, [HOST] >> G0 Z95.00 F500
+21:31:22, [HOST] >> G0 Z185.00 F1500
+21:31:27, [HOST] Sequence Complete
+21:31:27, [L1] Transferring 400.0uL (Volatile)
+21:31:28, [HOST] >> G1 E-60.380 F1000
+21:31:36, [HOST] >> G0 Z195.00 F1500
+21:31:36, [HOST] >> G0 X13.14 Y79.60 F1500
+21:31:43, [HOST] >> G0 Z121.60 F1500
+21:31:44, [HOST] >> G0 Z76.30 F1500
+21:31:47, [HOST] >> G1 E-181.140 F1000
+21:31:49, [HOST] >> G1 Z121.60 E-181.170 F1500
+21:32:07, [HOST] Sequence Complete
+21:32:08, [VOLATILE] Drift (Up+XY+DownSafe): 0.0 steps
+21:32:08, [HOST] >> G1 Z121.60 E-181.170 F1500
+21:32:26, [HOST] >> G1 X13.14 Y63.00 E-181.182 F1500
+21:32:26, [HOST] >> G1 Z121.60 E-181.182 F1500
+21:32:28, [HOST] Sequence Complete
+21:32:28, [VOLATILE] Drift (Down to Disp): 0.0 steps
+21:32:28, [HOST] >> G1 Z110.00 E-181.189 F1500
+21:32:28, [HOST] >> G1 E-30.190 F1000
+21:32:36, [HOST] >> G0 Z121.60 F1500
+21:32:50, [HOST] >> G1 E-60.380 F1000
+21:32:59, [CMD] [TRANSFER] All lines complete. Parking.
+21:33:00, [SYSTEM] Parking Head...
+21:33:00, [HOST] Sequence Complete
+21:33:00, [CMD] Park Head (Defined Coordinates)
+21:33:00, [HOST] >> G90
+21:33:00, [HOST] >> G0 Z195.00 F1500
+21:33:07, [HOST] >> G0 X187.90 Y185.30 F1500
+21:33:16, [HOST] >> G0 Z160.20 F1500
+21:33:17, [HOST] Sequence Complete
+21:33:17, [HOST] >> M400
+21:34:03, [HOST] Sequence Complete
+21:34:54, [HOST] Disconnected
+21:35:10, [SYSTEM] Auto-connecting to COM5...
+21:35:10, [HOST] Connected to COM5 @ 115200
+21:35:11, [INIT] Waiting for printer boot...
+21:35:13, [INIT] Sending Setup G-Code...
+21:35:13, [HOST] >> M107
+21:35:13, [HOST] >> M104 S0
+21:35:13, [HOST] >> M140 S0
+21:35:13, [HOST] >> G90
+21:35:13, [HOST] >> G21
+21:35:14, [HOST] >> M302 S0
+21:35:14, [HOST] >> M82
+21:35:14, [HOST] >> M906 E150
+21:35:15, [HOST] >> M84 E S3
+21:35:15, [HOST] Sequence Complete
+21:35:15, [PRINTER] FIRMWARE_NAME:Marlin V1.0.9_F401 (Nov 15 2024 16:32:26) SOURCE_CODE_URL:github.com/MarlinFirmware/Marlin PROTOCOL_VERSION:1.0 MACHINE_TYPE:Ender-3 V3 SE EXTRUDER_COUNT:1 UUID:cede2a2f-41a2-4748-9b12-c55c62f367ff
+21:35:15, [PRINTER] Cap:SERIAL_XON_XOFF:0
+21:35:15, [PRINTER] Cap:BINARY_FILE_TRANSFER:0
+21:35:15, [PRINTER] Cap:EEPROM:1
+21:35:15, [PRINTER] Cap:VOLUMETRIC:1
+21:35:15, [PRINTER] Cap:AUTOREPORT_POS:0
+21:35:15, [PRINTER] Cap:AUTOREPORT_TEMP:1
+21:35:15, [PRINTER] Cap:PROGRESS:0
+21:35:15, [PRINTER] Cap:PRINT_JOB:1
+21:35:15, [PRINTER] Cap:AUTOLEVEL:1
+21:35:15, [PRINTER] Cap:RUNOUT:0
+21:35:15, [PRINTER] Cap:Z_PROBE:1
+21:35:15, [PRINTER] Cap:LEVELING_DATA:1
+21:35:15, [PRINTER] Cap:BUILD_PERCENT:0
+21:35:15, [PRINTER] Cap:SOFTWARE_POWER:0
+21:35:15, [PRINTER] Cap:TOGGLE_LIGHTS:0
+21:35:15, [PRINTER] Cap:CASE_LIGHT_BRIGHTNESS:0
+21:35:15, [PRINTER] Cap:EMERGENCY_PARSER:1
+21:35:15, [PRINTER] Cap:HOST_ACTION_COMMANDS:0
+21:35:15, [PRINTER] Cap:PROMPT_SUPPORT:0
+21:35:15, [PRINTER] Cap:SDCARD:1
+21:35:15, [PRINTER] Cap:REPEAT:0
+21:35:15, [PRINTER] Cap:SD_WRITE:1
+21:35:15, [PRINTER] Cap:AUTOREPORT_SD_STATUS:0
+21:35:15, [PRINTER] Cap:LONG_FILENAME:1
+21:35:15, [PRINTER] Cap:THERMAL_PROTECTION:1
+21:35:15, [PRINTER] Cap:MOTION_MODES:0
+21:35:15, [PRINTER] Cap:ARCS:1
+21:35:15, [PRINTER] Cap:BABYSTEPPING:1
+21:35:15, [PRINTER] Cap:CHAMBER_TEMPERATURE:0
+21:35:15, [PRINTER] Cap:COOLER_TEMPERATURE:0
+21:35:15, [PRINTER] Cap:MEATPACK:0
+21:35:15, [INIT] Setup Complete.
+21:35:42, [CMD] [TRANSFER] Starting sequence with 1 lines.
+21:35:42, --- Processing Line 1 ---
+21:35:42, [L1] Ejecting existing tip...
+21:35:42, [HOST] >> G90
+21:35:42, [HOST] >> G0 Z195.00 F1500
+21:35:42, [HOST] >> G0 X109.20 Y109.90 F1500
+21:35:42, [HOST] >> G0 X187.90 Y185.30 F1500
+21:35:42, [HOST] >> G0 Z190.00 F1500
+21:35:42, [HOST] >> G0 Z160.20 F1500
+21:35:42, [HOST] >> G0 Y220.90 F250
+21:35:42, [HOST] >> G0 Z190.00 F250
+21:35:43, [HOST] >> G0 Z195.00 F1500
+21:35:49, [HOST] Sequence Complete
+21:35:49, [L1] Picking Tip A1...
+21:35:49, [HOST] >> G90
+21:35:49, [HOST] >> G0 Z195.00 F1500
+21:35:53, [HOST] >> G0 X177.10 Y144.10 F1500
+21:35:54, [HOST] >> G0 Z185.00 F1500
+21:35:58, [HOST] >> G0 Z95.00 F500
+21:35:59, [HOST] >> G0 Z185.00 F1500
+21:36:05, [L1] Transferring 10.0uL (Standard)
+21:36:05, [HOST] Sequence Complete
+21:36:05, [HOST] >> G1 E-60.380 F1000
+21:36:13, [HOST] >> G0 Z195.00 F1500
+21:36:13, [HOST] >> G0 X13.14 Y79.60 F1500
+21:36:21, [HOST] >> G0 Z121.60 F1500
+21:36:22, [HOST] >> G0 Z76.30 F1500
+21:36:25, [HOST] >> G1 E-63.399 F1000
+21:36:27, [HOST] >> G0 Z121.60 F1500
+21:36:45, [HOST] Sequence Complete
+21:36:45, [HOST] >> G0 Z121.60 F1500
+21:37:03, [HOST] >> G0 X13.14 Y63.00 F1500
+21:37:03, [HOST] >> G0 Z121.60 F1500
+21:37:05, [HOST] Sequence Complete
+21:37:05, [HOST] >> G0 Z110.00 F1500
+21:37:05, [HOST] >> G1 E-30.190 F1000
+21:37:12, [HOST] >> G0 Z121.60 F1500
+21:37:27, [HOST] >> G1 E-60.380 F1000
+21:37:36, [CMD] [TRANSFER] All lines complete. Parking.
+21:37:36, [HOST] Sequence Complete
+21:37:36, [SYSTEM] Parking Head...
+21:37:36, [CMD] Park Head (Defined Coordinates)
+21:37:36, [HOST] >> G90
+21:37:36, [HOST] >> G0 Z195.00 F1500
+21:37:36, [HOST] >> G0 X187.90 Y185.30 F1500
+21:37:45, [HOST] >> G0 Z160.20 F1500
+21:37:46, [HOST] Sequence Complete
+21:37:46, [HOST] >> M400
+21:38:26, [HOST] Sequence Complete
+21:38:45, [CALIB] Starting Pin Calibration Sequence...
+21:38:45, [HOST] >> G28
+21:39:45, [PRINTER] echo:Bed Leveling ON
+21:39:45, [PRINTER] echo:Fade Height 10.00
+21:39:45, [HOST] >> G0 Z195.00 F1500
+21:39:45, [HOST] >> G90
+21:39:45, [HOST] >> G0 Z195.00 F1500
+21:39:45, [HOST] >> G0 X187.20 Y144.10 F1500
+21:39:45, [HOST] >> G0 Z185.00 F1500
+21:39:45, [HOST] >> G0 Z95.00 F500
+21:39:45, [HOST] >> G0 Z185.00 F1500
+21:39:46, [HOST] >> G0 Z195.00 F1500
+21:39:46, [HOST] >> G0 X108.40 Y114.20 F1500
+21:39:46, [HOST] >> G0 Z132.80 F1500
+21:40:22, [HOST] Sequence Complete
+21:40:22, [HOST] >> M400
+21:41:21, [HOST] Sequence Complete
+21:41:37, [MANUAL] Jog X -0.1mm
+21:41:37, [HOST] >> G91
+21:41:37, [HOST] >> G0 X-0.1 F1500
+21:41:37, [HOST] >> G90
+21:41:37, [HOST] Sequence Complete
+21:41:37, [HOST] >> M400
+21:41:37, [HOST] Sequence Complete
+21:41:37, [MANUAL] Jog X -0.1mm
+21:41:37, [HOST] >> G91
+21:41:37, [HOST] >> G0 X-0.1 F1500
+21:41:37, [HOST] >> G90
+21:41:38, [HOST] Sequence Complete
+21:41:38, [HOST] >> M400
+21:41:38, [HOST] Sequence Complete
+21:41:38, [MANUAL] Jog X -0.1mm
+21:41:38, [HOST] >> G91
+21:41:38, [HOST] >> G0 X-0.1 F1500
+21:41:38, [HOST] >> G90
+21:41:38, [HOST] Sequence Complete
+21:41:38, [HOST] >> M400
+21:41:38, [HOST] Sequence Complete
+21:41:39, [MANUAL] Jog X -0.1mm
+21:41:39, [HOST] >> G91
+21:41:39, [HOST] >> G0 X-0.1 F1500
+21:41:39, [HOST] >> G90
+21:41:39, [HOST] Sequence Complete
+21:41:39, [HOST] >> M400
+21:41:39, [HOST] Sequence Complete
+21:41:40, [MANUAL] Jog Y -0.1mm
+21:41:40, [HOST] >> G91
+21:41:40, [HOST] >> G0 Y-0.1 F1500
+21:41:40, [HOST] >> G90
+21:41:40, [HOST] Sequence Complete
+21:41:41, [HOST] >> M400
+21:41:41, [HOST] Sequence Complete
+21:41:43, [CALIB] New Pin Config Saved: {'PIN_X': 108.4, 'PIN_Y': 114.2, 'PIN_Z': 132.8}
+21:46:55, [SYSTEM] Ejecting Tip...
+21:46:55, [CMD] Ejecting Tip
+21:46:55, [HOST] >> G90
+21:46:55, [HOST] >> G0 Z195.00 F1500
+21:46:55, [HOST] >> G0 X109.20 Y109.90 F1500
+21:46:55, [HOST] >> G0 X187.90 Y185.30 F1500
+21:46:55, [HOST] >> G0 Z190.00 F1500
+21:46:55, [HOST] >> G0 Z160.20 F1500
+21:46:56, [HOST] >> G0 Y220.90 F250
+21:46:56, [HOST] >> G0 Z190.00 F250
+21:46:56, [HOST] >> G0 Z195.00 F1500
+21:47:08, [HOST] >> G90
+21:47:08, [HOST] >> G0 Z195.00 F1500
+21:47:08, [HOST] >> G0 X187.90 Y185.30 F1500
+21:47:08, [HOST] >> G0 Z160.20 F1500
+21:47:12, [HOST] Sequence Complete
+21:47:12, [HOST] >> M400
+21:47:48, [HOST] Sequence Complete
+21:53:34, [HOST] Disconnected
+21:55:19, [SYSTEM] Auto-connecting to COM5...
+21:55:20, [HOST] Connected to COM5 @ 115200
+21:55:20, [INIT] Waiting for printer boot...
+21:55:22, [INIT] Sending Setup G-Code...
+21:55:22, [HOST] >> M107
+21:55:22, [HOST] >> M104 S0
+21:55:22, [HOST] >> M140 S0
+21:55:22, [HOST] >> G90
+21:55:22, [HOST] >> G21
+21:55:23, [HOST] >> M302 S0
+21:55:23, [HOST] >> M82
+21:55:23, [HOST] >> M906 E150
+21:55:23, [HOST] >> M84 E S3
+21:55:23, [HOST] Sequence Complete
+21:55:23, [INIT] Setup Complete.
+21:55:23, [PRINTER] FIRMWARE_NAME:Marlin V1.0.9_F401 (Nov 15 2024 16:32:26) SOURCE_CODE_URL:github.com/MarlinFirmware/Marlin PROTOCOL_VERSION:1.0 MACHINE_TYPE:Ender-3 V3 SE EXTRUDER_COUNT:1 UUID:cede2a2f-41a2-4748-9b12-c55c62f367ff
+21:55:23, [PRINTER] Cap:SERIAL_XON_XOFF:0
+21:55:23, [PRINTER] Cap:BINARY_FILE_TRANSFER:0
+21:55:23, [PRINTER] Cap:EEPROM:1
+21:55:23, [PRINTER] Cap:VOLUMETRIC:1
+21:55:23, [PRINTER] Cap:AUTOREPORT_POS:0
+21:55:23, [PRINTER] Cap:AUTOREPORT_TEMP:1
+21:55:23, [PRINTER] Cap:PROGRESS:0
+21:55:23, [PRINTER] Cap:PRINT_JOB:1
+21:55:23, [PRINTER] Cap:AUTOLEVEL:1
+21:55:23, [PRINTER] Cap:RUNOUT:0
+21:55:23, [PRINTER] Cap:Z_PROBE:1
+21:55:23, [PRINTER] Cap:LEVELING_DATA:1
+21:55:23, [PRINTER] Cap:BUILD_PERCENT:0
+21:55:23, [PRINTER] Cap:SOFTWARE_POWER:0
+21:55:23, [PRINTER] Cap:TOGGLE_LIGHTS:0
+21:55:23, [PRINTER] Cap:CASE_LIGHT_BRIGHTNESS:0
+21:55:23, [PRINTER] Cap:EMERGENCY_PARSER:1
+21:55:23, [PRINTER] Cap:HOST_ACTION_COMMANDS:0
+21:55:23, [PRINTER] Cap:PROMPT_SUPPORT:0
+21:55:23, [PRINTER] Cap:SDCARD:1
+21:55:23, [PRINTER] Cap:REPEAT:0
+21:55:23, [PRINTER] Cap:SD_WRITE:1
+21:55:23, [PRINTER] Cap:AUTOREPORT_SD_STATUS:0
+21:55:23, [PRINTER] Cap:LONG_FILENAME:1
+21:55:23, [PRINTER] Cap:THERMAL_PROTECTION:1
+21:55:23, [PRINTER] Cap:MOTION_MODES:0
+21:55:23, [PRINTER] Cap:ARCS:1
+21:55:23, [PRINTER] Cap:BABYSTEPPING:1
+21:55:23, [PRINTER] Cap:CHAMBER_TEMPERATURE:0
+21:55:23, [PRINTER] Cap:COOLER_TEMPERATURE:0
+21:55:23, [PRINTER] Cap:MEATPACK:0
+21:59:17, [SYSTEM] Auto-connecting to COM5...
+21:59:18, [HOST] Connected to COM5 @ 115200
+21:59:18, [INIT] Waiting for printer boot...
+21:59:20, [INIT] Sending Setup G-Code...
+21:59:20, [HOST] >> M107
+21:59:20, [HOST] >> M104 S0
+21:59:21, [HOST] >> M140 S0
+21:59:21, [HOST] >> G90
+21:59:21, [HOST] >> G21
+21:59:21, [HOST] >> M302 S0
+21:59:21, [HOST] >> M82
+21:59:21, [HOST] >> M906 E150
+21:59:22, [HOST] >> M84 E S3
+21:59:22, [HOST] Sequence Complete
+21:59:26, [PRINTER] FIRMWARE_NAME:Marlin V1.0.9_F401 (Nov 15 2024 16:32:26) SOURCE_CODE_URL:github.com/MarlinFirmware/Marlin PROTOCOL_VERSION:1.0 MACHINE_TYPE:Ender-3 V3 SE EXTRUDER_COUNT:1 UUID:cede2a2f-41a2-4748-9b12-c55c62f367ff
+21:59:28, [PRINTER] Cap:SERIAL_XON_XOFF:0
+21:59:28, [PRINTER] Cap:BINARY_FILE_TRANSFER:0
+21:59:28, [PRINTER] Cap:EEPROM:1
+21:59:28, [PRINTER] Cap:VOLUMETRIC:1
+21:59:28, [PRINTER] Cap:AUTOREPORT_POS:0
+21:59:28, [PRINTER] Cap:AUTOREPORT_TEMP:1
+21:59:30, [PRINTER] Cap:PROGRESS:0
+21:59:30, [PRINTER] Cap:PRINT_JOB:1
+21:59:30, [PRINTER] Cap:AUTOLEVEL:1
+21:59:30, [PRINTER] Cap:RUNOUT:0
+21:59:30, [PRINTER] Cap:Z_PROBE:1
+21:59:30, [PRINTER] Cap:LEVELING_DATA:1
+21:59:30, [PRINTER] Cap:BUILD_PERCENT:0
+21:59:30, [PRINTER] Cap:SOFTWARE_POWER:0
+21:59:30, [PRINTER] Cap:TOGGLE_LIGHTS:0
+21:59:30, [PRINTER] Cap:CASE_LIGHT_BRIGHTNESS:0
+21:59:30, [PRINTER] Cap:EMERGENCY_PARSER:1
+21:59:30, [PRINTER] Cap:HOST_ACTION_COMMANDS:0
+21:59:30, [PRINTER] Cap:PROMPT_SUPPORT:0
+21:59:30, [PRINTER] Cap:SDCARD:1
+21:59:30, [PRINTER] Cap:REPEAT:0
+21:59:30, [PRINTER] Cap:SD_WRITE:1
+21:59:30, [PRINTER] Cap:AUTOREPORT_SD_STATUS:0
+21:59:30, [PRINTER] Cap:LONG_FILENAME:1
+21:59:30, [PRINTER] Cap:THERMAL_PROTECTION:1
+21:59:30, [PRINTER] Cap:MOTION_MODES:0
+21:59:30, [PRINTER] Cap:ARCS:1
+21:59:30, [PRINTER] Cap:BABYSTEPPING:1
+21:59:30, [PRINTER] Cap:CHAMBER_TEMPERATURE:0
+21:59:30, [PRINTER] Cap:COOLER_TEMPERATURE:0
+21:59:30, [PRINTER] Cap:MEATPACK:0
+21:59:30, [INIT] Setup Complete.
+21:59:45, [UI] Transfer preset loaded: Preset 1
+21:59:47, [UI] Transfer preset loaded: Preset 3
+21:59:48, [UI] Transfer preset loaded: Preset 4
+21:59:49, [UI] Transfer preset loaded: Preset 5
+21:59:55, [UI] Transfer preset loaded: Preset 1
+21:59:56, [UI] Transfer preset loaded: Preset 2
+21:59:57, [UI] Transfer preset loaded: Preset 3
+21:59:59, [UI] Transfer preset loaded: Preset 4
+22:00:01, [UI] Transfer preset loaded: Preset 5
+22:00:03, [UI] Transfer preset loaded: Preset 4
+22:00:04, [UI] Transfer preset loaded: Preset 3
+22:00:05, [UI] Transfer preset loaded: Preset 2
+22:00:06, [UI] Transfer preset loaded: Preset 1
+22:00:25, [UI] Transfer preset loaded: Preset 1
+22:00:26, [UI] Transfer preset loaded: Preset 4
+22:00:27, [UI] Transfer preset loaded: Preset 5
+22:00:28, [UI] Transfer preset loaded: Preset 2
+22:00:34, [HOST] Disconnected

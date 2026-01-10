@@ -1,0 +1,19 @@
+10:42:34, [UI] Transfer preset loaded: Preset 2
+10:42:35, [UI] Transfer preset loaded: Preset 3
+10:42:36, [UI] Transfer preset loaded: Preset 4
+10:42:36, [UI] Transfer preset loaded: Preset 5
+10:42:38, [UI] Transfer preset loaded: Preset 4
+10:42:38, [UI] Transfer preset loaded: Preset 3
+10:42:39, [UI] Transfer preset loaded: Preset 2
+10:42:40, [UI] Transfer preset loaded: Preset 1
+10:42:43, [UI] Transfer preset loaded: Preset 2
+10:42:43, [UI] Transfer preset loaded: Preset 1
+10:42:51, [UI] Transfer preset loaded: Preset 2
+10:42:51, [UI] Transfer preset loaded: Preset 3
+10:42:52, [UI] Transfer preset loaded: Preset 4
+10:42:52, [UI] Transfer preset loaded: Preset 5
+10:42:53, [UI] Transfer preset loaded: Preset 4
+10:42:54, [UI] Transfer preset loaded: Preset 3
+10:42:54, [UI] Transfer preset loaded: Preset 3
+10:42:55, [UI] Transfer preset loaded: Preset 2
+10:43:01, [HOST] Disconnected
