@@ -185,7 +185,7 @@ CALIBRATION_SETUP_GCODE = [
 class LiquidHandlerApp:
     def __init__(self, root):
         self.root = root
-        self.root.title("Liquid Handler")
+        self.root.title("Liquid Handler (nabo)")
         self.root.geometry("1024x600")
         self.root.resizable(False, False)  # Mandatory size
 
