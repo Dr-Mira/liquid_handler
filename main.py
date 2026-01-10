@@ -367,7 +367,7 @@ class LiquidHandlerApp:
             messagebox.showerror("Save Error", f"Could not save config: {e}")
 
     def attempt_auto_connect(self):
-        target_port = "COM5"
+        target_port = "/dev/ttyUSB0"
         available_ports = [p.device for p in serial.tools.list_ports.comports()]
         if target_port in available_ports:
             self.port_var.set(target_port)
