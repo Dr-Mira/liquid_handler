@@ -93,7 +93,7 @@ FALCON_RACK_CONFIG = {
     "15ML_B3_X": -55.4, "15ML_B3_Y": -4.3,
     "50ML_X": -30.9, "50ML_Y": 6.2,
     "Z_SAFE": 62.2,
-    "Z_ASPIRATE": -52.8,
+    "Z_ASPIRATE": -57.8,
     "Z_DISPENSE": 47.2
 }
 
@@ -185,7 +185,7 @@ CALIBRATION_SETUP_GCODE = [
 class LiquidHandlerApp:
     def __init__(self, root):
         self.root = root
-        self.root.title("Liquid Handler (nabo jede)")
+        self.root.title("Mira Liquid Handler")
         self.root.geometry("1024x600")
         self.root.resizable(False, False)  # Mandatory size
 
@@ -217,7 +217,7 @@ class LiquidHandlerApp:
         self.current_z = 0.0
 
         # UI Variables
-        self.port_var = tk.StringVar(value="COM5")
+        self.port_var = tk.StringVar(value="/dev/ttyUSB0")
         self.baud_var = tk.StringVar(value="115200")
         self.status_var = tk.StringVar(value="Disconnected")
 
@@ -528,10 +528,10 @@ class LiquidHandlerApp:
         for i in range(8):
             row_vars = {
                 "execute": tk.BooleanVar(value=False),
-                "src_mod": tk.StringVar(value="4mL Rack"),
-                "src_pos": tk.StringVar(value="A1"),
-                "dest": tk.StringVar(value="Filter Eppi B1"),
-                "vol": tk.StringVar(value="500"),
+                "src_mod": tk.StringVar(value=""),
+                "src_pos": tk.StringVar(value=""),
+                "dest": tk.StringVar(value=""),
+                "vol": tk.StringVar(value="800"),
                 "volatile": tk.BooleanVar(value=False),
                 "wash_vol": tk.StringVar(value="0"),
                 "wash_times": tk.StringVar(value="2"),
@@ -758,106 +758,66 @@ class LiquidHandlerApp:
 
     def load_transfer_preset_1(self):
         preset = [
-            {"execute": False, "src_mod": "4mL Rack", "src_pos": "A1", "dest": "Filter Eppi B1",
-             "vol": 500, "volatile": False, "wash_vol": 0, "wash_times": 2, "wash_src": "Wash A"},
-            {"execute": False, "src_mod": "4mL Rack", "src_pos": "A2", "dest": "Filter Eppi B2",
-             "vol": 500, "volatile": False, "wash_vol": 0, "wash_times": 2, "wash_src": "Wash A"},
-            {"execute": False, "src_mod": "4mL Rack", "src_pos": "A3", "dest": "Filter Eppi B3",
-             "vol": 500, "volatile": False, "wash_vol": 0, "wash_times": 2, "wash_src": "Wash A"},
-            {"execute": False, "src_mod": "4mL Rack", "src_pos": "A4", "dest": "Filter Eppi B4",
-             "vol": 500, "volatile": False, "wash_vol": 0, "wash_times": 2, "wash_src": "Wash A"},
-            {"execute": False, "src_mod": "4mL Rack", "src_pos": "A5", "dest": "Filter Eppi B5",
-             "vol": 500, "volatile": False, "wash_vol": 0, "wash_times": 2, "wash_src": "Wash A"},
-            {"execute": False, "src_mod": "4mL Rack", "src_pos": "A6", "dest": "Filter Eppi B6",
-             "vol": 500, "volatile": False, "wash_vol": 0, "wash_times": 2, "wash_src": "Wash A"},
-            {"execute": False, "src_mod": "4mL Rack", "src_pos": "A7", "dest": "Filter Eppi B7",
-             "vol": 500, "volatile": False, "wash_vol": 0, "wash_times": 2, "wash_src": "Wash A"},
-            {"execute": False, "src_mod": "4mL Rack", "src_pos": "A8", "dest": "Filter Eppi B8",
-             "vol": 500, "volatile": False, "wash_vol": 0, "wash_times": 2, "wash_src": "Wash A"},
+            {"execute": False, "src_mod": "4mL Rack", "src_pos": "A1", "dest": "Filter Eppi B1", "vol": 800, "volatile": True, "wash_vol": 150, "wash_times": 2, "wash_src": "Wash B"},
+            {"execute": False, "src_mod": "4mL Rack", "src_pos": "A2", "dest": "Filter Eppi B2", "vol": 800, "volatile": True, "wash_vol": 150, "wash_times": 2, "wash_src": "Wash B"},
+            {"execute": False, "src_mod": "4mL Rack", "src_pos": "A3", "dest": "Filter Eppi B3", "vol": 800, "volatile": True, "wash_vol": 150, "wash_times": 2, "wash_src": "Wash B"},
+            {"execute": False, "src_mod": "4mL Rack", "src_pos": "A4", "dest": "Filter Eppi B4", "vol": 800, "volatile": True, "wash_vol": 150, "wash_times": 2, "wash_src": "Wash B"},
+            {"execute": False, "src_mod": "4mL Rack", "src_pos": "A5", "dest": "Filter Eppi B5", "vol": 800, "volatile": True, "wash_vol": 150, "wash_times": 2, "wash_src": "Wash B"},
+            {"execute": False, "src_mod": "4mL Rack", "src_pos": "A6", "dest": "Filter Eppi B6", "vol": 800, "volatile": True, "wash_vol": 150, "wash_times": 2, "wash_src": "Wash B"},
+            {"execute": False, "src_mod": "4mL Rack", "src_pos": "A7", "dest": "Filter Eppi B7", "vol": 800, "volatile": True, "wash_vol": 150, "wash_times": 2, "wash_src": "Wash B"},
+            {"execute": False, "src_mod": "4mL Rack", "src_pos": "A8", "dest": "Filter Eppi B8", "vol": 800, "volatile": True, "wash_vol": 150, "wash_times": 2, "wash_src": "Wash B"},
         ]
         self._apply_transfer_table_preset(preset, preset_name="Preset 1")
 
     def load_transfer_preset_2(self):
         preset = [
-            {"execute": False, "src_mod": "Falcon Rack", "src_pos": "50mL", "dest": "4mL A1",
-             "vol": 500, "volatile": False, "wash_vol": 0, "wash_times": 2, "wash_src": "Wash A"},
-            {"execute": False, "src_mod": "Falcon Rack", "src_pos": "50mL", "dest": "4mL A2",
-             "vol": 500, "volatile": False, "wash_vol": 0, "wash_times": 2, "wash_src": "Wash A"},
-            {"execute": False, "src_mod": "Falcon Rack", "src_pos": "50mL", "dest": "4mL A3",
-             "vol": 500, "volatile": False, "wash_vol": 0, "wash_times": 2, "wash_src": "Wash A"},
-            {"execute": False, "src_mod": "Falcon Rack", "src_pos": "50mL", "dest": "4mL A4",
-             "vol": 500, "volatile": False, "wash_vol": 0, "wash_times": 2, "wash_src": "Wash A"},
-            {"execute": False, "src_mod": "Falcon Rack", "src_pos": "50mL", "dest": "4mL A5",
-             "vol": 500, "volatile": False, "wash_vol": 0, "wash_times": 2, "wash_src": "Wash A"},
-            {"execute": False, "src_mod": "Falcon Rack", "src_pos": "50mL", "dest": "4mL A6",
-             "vol": 500, "volatile": False, "wash_vol": 0, "wash_times": 2, "wash_src": "Wash A"},
-            {"execute": False, "src_mod": "Falcon Rack", "src_pos": "50mL", "dest": "4mL A7",
-             "vol": 500, "volatile": False, "wash_vol": 0, "wash_times": 2, "wash_src": "Wash A"},
-            {"execute": False, "src_mod": "Falcon Rack", "src_pos": "50mL", "dest": "4mL A8",
-             "vol": 500, "volatile": False, "wash_vol": 0, "wash_times": 2, "wash_src": "Wash A"},
+            {"execute": False, "src_mod": "Eppi Rack", "src_pos": "C1", "dest": "Filter Eppi B1", "vol": 800, "volatile": False, "wash_vol": 200, "wash_times": 1, "wash_src": "Wash A"},
+            {"execute": False, "src_mod": "Eppi Rack", "src_pos": "C2", "dest": "Filter Eppi B2", "vol": 800, "volatile": False, "wash_vol": 200, "wash_times": 1, "wash_src": "Wash A"},
+            {"execute": False, "src_mod": "Eppi Rack", "src_pos": "C3", "dest": "Filter Eppi B3", "vol": 800, "volatile": False, "wash_vol": 200, "wash_times": 1, "wash_src": "Wash A"},
+            {"execute": False, "src_mod": "Eppi Rack", "src_pos": "C4", "dest": "Filter Eppi B4", "vol": 800, "volatile": False, "wash_vol": 200, "wash_times": 1, "wash_src": "Wash A"},
+            {"execute": False, "src_mod": "Eppi Rack", "src_pos": "C5", "dest": "Filter Eppi B5", "vol": 800, "volatile": False, "wash_vol": 200, "wash_times": 1, "wash_src": "Wash A"},
+            {"execute": False, "src_mod": "Eppi Rack", "src_pos": "C6", "dest": "Filter Eppi B6", "vol": 800, "volatile": False, "wash_vol": 200, "wash_times": 1, "wash_src": "Wash A"},
+            {"execute": False, "src_mod": "Eppi Rack", "src_pos": "C7", "dest": "Filter Eppi B7", "vol": 800, "volatile": False, "wash_vol": 200, "wash_times": 1, "wash_src": "Wash A"},
+            {"execute": False, "src_mod": "Eppi Rack", "src_pos": "C8", "dest": "Filter Eppi B8", "vol": 800, "volatile": False, "wash_vol": 200, "wash_times": 1, "wash_src": "Wash A"},
         ]
         self._apply_transfer_table_preset(preset, preset_name="Preset 2")
 
     def load_transfer_preset_3(self):
         preset = [
-            {"execute": False, "src_mod": "Eppi Rack", "src_pos": "C1", "dest": "HPLC D1",
-             "vol": 200, "volatile": True, "wash_vol": 200, "wash_times": 2, "wash_src": "Wash A"},
-            {"execute": False, "src_mod": "Eppi Rack", "src_pos": "C2", "dest": "HPLC D2",
-             "vol": 200, "volatile": True, "wash_vol": 200, "wash_times": 2, "wash_src": "Wash A"},
-            {"execute": False, "src_mod": "Eppi Rack", "src_pos": "C3", "dest": "HPLC D3",
-             "vol": 200, "volatile": True, "wash_vol": 200, "wash_times": 2, "wash_src": "Wash A"},
-            {"execute": False, "src_mod": "Eppi Rack", "src_pos": "C4", "dest": "HPLC D4",
-             "vol": 200, "volatile": True, "wash_vol": 200, "wash_times": 2, "wash_src": "Wash A"},
-            {"execute": False, "src_mod": "Eppi Rack", "src_pos": "C5", "dest": "HPLC D5",
-             "vol": 200, "volatile": True, "wash_vol": 200, "wash_times": 2, "wash_src": "Wash A"},
-            {"execute": False, "src_mod": "Eppi Rack", "src_pos": "C6", "dest": "HPLC D6",
-             "vol": 200, "volatile": True, "wash_vol": 200, "wash_times": 2, "wash_src": "Wash A"},
-            {"execute": False, "src_mod": "Eppi Rack", "src_pos": "C7", "dest": "HPLC D7",
-             "vol": 200, "volatile": True, "wash_vol": 200, "wash_times": 2, "wash_src": "Wash A"},
-            {"execute": False, "src_mod": "Eppi Rack", "src_pos": "C8", "dest": "HPLC D8",
-             "vol": 200, "volatile": True, "wash_vol": 200, "wash_times": 2, "wash_src": "Wash A"},
+            {"execute": False, "src_mod": "Eppi Rack", "src_pos": "C1", "dest": "HPLC D1", "vol": 800, "volatile": False, "wash_vol": 100, "wash_times": 1, "wash_src": "Wash A"},
+            {"execute": False, "src_mod": "Eppi Rack", "src_pos": "C2", "dest": "HPLC D2", "vol": 800, "volatile": False, "wash_vol": 100, "wash_times": 1, "wash_src": "Wash A"},
+            {"execute": False, "src_mod": "Eppi Rack", "src_pos": "C3", "dest": "HPLC D3", "vol": 800, "volatile": False, "wash_vol": 100, "wash_times": 1, "wash_src": "Wash A"},
+            {"execute": False, "src_mod": "Eppi Rack", "src_pos": "C4", "dest": "HPLC D4", "vol": 800, "volatile": False, "wash_vol": 100, "wash_times": 1, "wash_src": "Wash A"},
+            {"execute": False, "src_mod": "Eppi Rack", "src_pos": "C5", "dest": "HPLC D5", "vol": 800, "volatile": False, "wash_vol": 100, "wash_times": 1, "wash_src": "Wash A"},
+            {"execute": False, "src_mod": "Eppi Rack", "src_pos": "C6", "dest": "HPLC D6", "vol": 800, "volatile": False, "wash_vol": 100, "wash_times": 1, "wash_src": "Wash A"},
+            {"execute": False, "src_mod": "Eppi Rack", "src_pos": "C7", "dest": "HPLC D7", "vol": 800, "volatile": False, "wash_vol": 100, "wash_times": 1, "wash_src": "Wash A"},
+            {"execute": False, "src_mod": "Eppi Rack", "src_pos": "C8", "dest": "HPLC D8", "vol": 800, "volatile": False, "wash_vol": 100, "wash_times": 1, "wash_src": "Wash A"},
         ]
         self._apply_transfer_table_preset(preset, preset_name="Preset 3")
 
     def load_transfer_preset_4(self):
         preset = [
-            {"execute": False, "src_mod": "Wash Station", "src_pos": "Wash A", "dest": "96 Well Plate",
-             "vol": 200, "volatile": False, "wash_vol": 0, "wash_times": 2, "wash_src": "Wash A"},
-            {"execute": False, "src_mod": "Wash Station", "src_pos": "Wash A", "dest": "96 Well Plate",
-             "vol": 200, "volatile": False, "wash_vol": 0, "wash_times": 2, "wash_src": "Wash A"},
-            {"execute": False, "src_mod": "Wash Station", "src_pos": "Wash A", "dest": "96 Well Plate",
-             "vol": 200, "volatile": False, "wash_vol": 0, "wash_times": 2, "wash_src": "Wash A"},
-            {"execute": False, "src_mod": "Wash Station", "src_pos": "Wash A", "dest": "96 Well Plate",
-             "vol": 200, "volatile": False, "wash_vol": 0, "wash_times": 2, "wash_src": "Wash A"},
-            {"execute": False, "src_mod": "Wash Station", "src_pos": "Wash A", "dest": "96 Well Plate",
-             "vol": 200, "volatile": False, "wash_vol": 0, "wash_times": 2, "wash_src": "Wash A"},
-            {"execute": False, "src_mod": "Wash Station", "src_pos": "Wash A", "dest": "96 Well Plate",
-             "vol": 200, "volatile": False, "wash_vol": 0, "wash_times": 2, "wash_src": "Wash A"},
-            {"execute": False, "src_mod": "Wash Station", "src_pos": "Wash A", "dest": "96 Well Plate",
-             "vol": 200, "volatile": False, "wash_vol": 0, "wash_times": 2, "wash_src": "Wash A"},
-            {"execute": False, "src_mod": "Wash Station", "src_pos": "Wash A", "dest": "96 Well Plate",
-             "vol": 200, "volatile": False, "wash_vol": 0, "wash_times": 2, "wash_src": "Wash A"},
+            {"execute": False, "src_mod": "Falcon Rack", "src_pos": "A1", "dest": "Filter Eppi A1", "vol": 800, "volatile": False, "wash_vol": 200, "wash_times": 1, "wash_src": "Wash A"},
+            {"execute": False, "src_mod": "Falcon Rack", "src_pos": "A2", "dest": "Filter Eppi A2", "vol": 800, "volatile": False, "wash_vol": 200, "wash_times": 1, "wash_src": "Wash A"},
+            {"execute": False, "src_mod": "Falcon Rack", "src_pos": "A3", "dest": "Filter Eppi A3", "vol": 800, "volatile": False, "wash_vol": 200, "wash_times": 1, "wash_src": "Wash A"},
+            {"execute": False, "src_mod": "Falcon Rack", "src_pos": "A4", "dest": "Filter Eppi A4", "vol": 800, "volatile": False, "wash_vol": 200, "wash_times": 1, "wash_src": "Wash A"},
+            {"execute": False, "src_mod": "Falcon Rack", "src_pos": "A5", "dest": "Filter Eppi A5", "vol": 800, "volatile": False, "wash_vol": 200, "wash_times": 1, "wash_src": "Wash A"},
+            {"execute": False, "src_mod": "Falcon Rack", "src_pos": "A6", "dest": "Filter Eppi A6", "vol": 800, "volatile": False, "wash_vol": 200, "wash_times": 1, "wash_src": "Wash A"},
+            {"execute": False, "src_mod": "", "src_pos": "", "dest": "", "vol": 0, "volatile": False, "wash_vol": 0, "wash_times": 2, "wash_src": "Wash A"},
+            {"execute": False, "src_mod": "", "src_pos": "", "dest": "", "vol": 0, "volatile": False, "wash_vol": 0, "wash_times": 2, "wash_src": "Wash A"},
         ]
         self._apply_transfer_table_preset(preset, preset_name="Preset 4")
 
     def load_transfer_preset_5(self):
         preset = [
-            {"execute": False, "src_mod": "HPLC Insert", "src_pos": "E1", "dest": "Screwcap F1",
-             "vol": 300, "volatile": True, "wash_vol": 100, "wash_times": 3, "wash_src": "Wash A"},
-            {"execute": False, "src_mod": "HPLC Insert", "src_pos": "E2", "dest": "Screwcap F2",
-             "vol": 300, "volatile": True, "wash_vol": 100, "wash_times": 3, "wash_src": "Wash A"},
-            {"execute": False, "src_mod": "HPLC Insert", "src_pos": "E3", "dest": "Screwcap F3",
-             "vol": 300, "volatile": True, "wash_vol": 100, "wash_times": 3, "wash_src": "Wash A"},
-            {"execute": False, "src_mod": "HPLC Insert", "src_pos": "E4", "dest": "Screwcap F4",
-             "vol": 300, "volatile": True, "wash_vol": 100, "wash_times": 3, "wash_src": "Wash A"},
-            {"execute": False, "src_mod": "HPLC Insert", "src_pos": "E5", "dest": "Screwcap F5",
-             "vol": 300, "volatile": True, "wash_vol": 100, "wash_times": 3, "wash_src": "Wash A"},
-            {"execute": False, "src_mod": "HPLC Insert", "src_pos": "E6", "dest": "Screwcap F6",
-             "vol": 300, "volatile": True, "wash_vol": 100, "wash_times": 3, "wash_src": "Wash A"},
-            {"execute": False, "src_mod": "HPLC Insert", "src_pos": "E7", "dest": "Screwcap F7",
-             "vol": 300, "volatile": True, "wash_vol": 100, "wash_times": 3, "wash_src": "Wash A"},
-            {"execute": False, "src_mod": "HPLC Insert", "src_pos": "E8", "dest": "Screwcap F8",
-             "vol": 300, "volatile": True, "wash_vol": 100, "wash_times": 3, "wash_src": "Wash A"},
+            {"execute": False, "src_mod": "Screwcap Vial", "src_pos": "F1", "dest": "HPLC Insert E1", "vol": 20, "volatile": False, "wash_vol": 0, "wash_times": 0, "wash_src": "Wash A"},
+            {"execute": False, "src_mod": "Screwcap Vial", "src_pos": "F2", "dest": "HPLC Insert E2", "vol": 20, "volatile": False, "wash_vol": 0, "wash_times": 0, "wash_src": "Wash A"},
+            {"execute": False, "src_mod": "Screwcap Vial", "src_pos": "F3", "dest": "HPLC Insert E3", "vol": 20, "volatile": False, "wash_vol": 0, "wash_times": 0, "wash_src": "Wash A"},
+            {"execute": False, "src_mod": "Screwcap Vial", "src_pos": "F4", "dest": "HPLC Insert E4", "vol": 20, "volatile": False, "wash_vol": 0, "wash_times": 0, "wash_src": "Wash A"},
+            {"execute": False, "src_mod": "Screwcap Vial", "src_pos": "F5", "dest": "HPLC Insert E5", "vol": 20, "volatile": False, "wash_vol": 0, "wash_times": 0, "wash_src": "Wash A"},
+            {"execute": False, "src_mod": "Screwcap Vial", "src_pos": "F6", "dest": "HPLC Insert E6", "vol": 20, "volatile": False, "wash_vol": 0, "wash_times": 0, "wash_src": "Wash A"},
+            {"execute": False, "src_mod": "Screwcap Vial", "src_pos": "F7", "dest": "HPLC Insert E7", "vol": 20, "volatile": False, "wash_vol": 0, "wash_times": 0, "wash_src": "Wash A"},
+            {"execute": False, "src_mod": "Screwcap Vial", "src_pos": "F8", "dest": "HPLC Insert E8", "vol": 20, "volatile": False, "wash_vol": 0, "wash_times": 0, "wash_src": "Wash A"},
         ]
         self._apply_transfer_table_preset(preset, preset_name="Preset 5")
 
@@ -892,7 +852,7 @@ class LiquidHandlerApp:
                 "dest": tk.StringVar(),
                 "vol": tk.StringVar(value="600"),
                 "wash_vol": tk.StringVar(value="0"),
-                "wash_times": tk.StringVar(value="2"),
+                "wash_times": tk.StringVar(value="1"),
                 "wash_src": tk.StringVar(value="Wash A")
             }
             row_frame = ttk.Frame(frame)
