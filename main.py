@@ -52,9 +52,9 @@ MIN_PIPETTE_VOL = 100.0
 MAX_PIPETTE_VOL = 1000.0
 
 # Manual Control Constants
-JOG_SPEED_XY = 1500
-JOG_SPEED_Z = 1500
-PIP_SPEED = 1000
+JOG_SPEED_XY = 2000
+JOG_SPEED_Z = 2000
+PIP_SPEED = 2000
 
 # Polling Settings
 POLL_INTERVAL_MS = 1000
@@ -93,7 +93,7 @@ FALCON_RACK_CONFIG = {
     "15ML_B3_X": -55.4, "15ML_B3_Y": -4.3,
     "50ML_X": -30.9, "50ML_Y": 6.2,
     "Z_SAFE": 62.2,
-    "Z_ASPIRATE": -57.8,
+    "Z_ASPIRATE": -58.5,
     "Z_DISPENSE": 47.2
 }
 
@@ -758,14 +758,14 @@ class LiquidHandlerApp:
 
     def load_transfer_preset_1(self):
         preset = [
-            {"execute": False, "src_mod": "4mL Rack", "src_pos": "A1", "dest": "Filter Eppi B1", "vol": 800, "volatile": True, "wash_vol": 150, "wash_times": 2, "wash_src": "Wash B"},
-            {"execute": False, "src_mod": "4mL Rack", "src_pos": "A2", "dest": "Filter Eppi B2", "vol": 800, "volatile": True, "wash_vol": 150, "wash_times": 2, "wash_src": "Wash B"},
-            {"execute": False, "src_mod": "4mL Rack", "src_pos": "A3", "dest": "Filter Eppi B3", "vol": 800, "volatile": True, "wash_vol": 150, "wash_times": 2, "wash_src": "Wash B"},
-            {"execute": False, "src_mod": "4mL Rack", "src_pos": "A4", "dest": "Filter Eppi B4", "vol": 800, "volatile": True, "wash_vol": 150, "wash_times": 2, "wash_src": "Wash B"},
-            {"execute": False, "src_mod": "4mL Rack", "src_pos": "A5", "dest": "Filter Eppi B5", "vol": 800, "volatile": True, "wash_vol": 150, "wash_times": 2, "wash_src": "Wash B"},
-            {"execute": False, "src_mod": "4mL Rack", "src_pos": "A6", "dest": "Filter Eppi B6", "vol": 800, "volatile": True, "wash_vol": 150, "wash_times": 2, "wash_src": "Wash B"},
-            {"execute": False, "src_mod": "4mL Rack", "src_pos": "A7", "dest": "Filter Eppi B7", "vol": 800, "volatile": True, "wash_vol": 150, "wash_times": 2, "wash_src": "Wash B"},
-            {"execute": False, "src_mod": "4mL Rack", "src_pos": "A8", "dest": "Filter Eppi B8", "vol": 800, "volatile": True, "wash_vol": 150, "wash_times": 2, "wash_src": "Wash B"},
+            {"execute": False, "src_mod": "4mL Rack", "src_pos": "A1", "dest": "Filter Eppi B1", "vol": 600, "volatile": True, "wash_vol": 150, "wash_times": 2, "wash_src": "Wash B"},
+            {"execute": False, "src_mod": "4mL Rack", "src_pos": "A2", "dest": "Filter Eppi B2", "vol": 600, "volatile": True, "wash_vol": 150, "wash_times": 2, "wash_src": "Wash B"},
+            {"execute": False, "src_mod": "4mL Rack", "src_pos": "A3", "dest": "Filter Eppi B3", "vol": 600, "volatile": True, "wash_vol": 150, "wash_times": 2, "wash_src": "Wash B"},
+            {"execute": False, "src_mod": "4mL Rack", "src_pos": "A4", "dest": "Filter Eppi B4", "vol": 600, "volatile": True, "wash_vol": 150, "wash_times": 2, "wash_src": "Wash B"},
+            {"execute": False, "src_mod": "4mL Rack", "src_pos": "A5", "dest": "Filter Eppi B5", "vol": 600, "volatile": True, "wash_vol": 150, "wash_times": 2, "wash_src": "Wash B"},
+            {"execute": False, "src_mod": "4mL Rack", "src_pos": "A6", "dest": "Filter Eppi B6", "vol": 600, "volatile": True, "wash_vol": 150, "wash_times": 2, "wash_src": "Wash B"},
+            {"execute": False, "src_mod": "4mL Rack", "src_pos": "A7", "dest": "Filter Eppi B7", "vol": 600, "volatile": True, "wash_vol": 150, "wash_times": 2, "wash_src": "Wash B"},
+            {"execute": False, "src_mod": "4mL Rack", "src_pos": "A8", "dest": "Filter Eppi B8", "vol": 600, "volatile": True, "wash_vol": 150, "wash_times": 2, "wash_src": "Wash B"},
         ]
         self._apply_transfer_table_preset(preset, preset_name="Preset 1")
 
@@ -1913,7 +1913,7 @@ class LiquidHandlerApp:
         self.log_command(f"[TRANSFER] Starting sequence with {len(tasks)} lines.")
         e_gap_pos = -1 * AIR_GAP_UL * STEPS_PER_UL
         MAX_STD_BATCH = 800.0
-        MAX_VOLATILE_BATCH = 400.0
+        MAX_VOLATILE_BATCH = 600.0
 
         def run_seq():
             # Initialize simulated state tracker
