@@ -2225,9 +2225,9 @@ class LiquidHandlerApp:
         MAX_WASH_LOAD = MAX_PIPETTE_VOL - air_gap_ul  # normally 800
 
         # Choose behavior:
-        # False = exactly as you wrote (separate tip for distribution + new tips for each wash transfer) -> uses more tips
+        # False = separate tip for distribution + new tips for each wash transfer -> uses more tips
         # True  = reuse the distribution tip for ONE wash-recovery line (the last one) -> tip-neutral, faster, but contamination risk if distribution dips into liquid
-        REUSE_DISTRIBUTION_TIP_FOR_ONE_RECOVERY = False
+        REUSE_DISTRIBUTION_TIP_FOR_ONE_RECOVERY = True
 
         def run_seq():
             current_simulated_module = self.last_known_module
