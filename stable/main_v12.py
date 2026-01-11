@@ -44,7 +44,7 @@ AIR_GAP_UL = 200
 
 # Volatile Logic
 # Rate of aspiration (uL/min) to counteract dripping
-VOLATILE_DRIFT_RATE = 400
+VOLATILE_DRIFT_RATE = 1000
 VOLATILE_MOVE_SPEED = 1500
 
 # Limits
@@ -52,8 +52,8 @@ MIN_PIPETTE_VOL = 100.0
 MAX_PIPETTE_VOL = 1000.0
 
 # Manual Control Constants
-JOG_SPEED_XY = 2000
-JOG_SPEED_Z = 2000
+JOG_SPEED_XY = 4000
+JOG_SPEED_Z = 4000
 PIP_SPEED = 2000
 
 # Polling Settings
@@ -93,7 +93,7 @@ FALCON_RACK_CONFIG = {
     "15ML_B3_X": -55.4, "15ML_B3_Y": -4.3,
     "50ML_X": -30.9, "50ML_Y": 6.2,
     "Z_SAFE": 62.2,
-    "Z_ASPIRATE": -57.8,
+    "Z_ASPIRATE": -58.5,
     "Z_DISPENSE": 47.2
 }
 
@@ -493,8 +493,10 @@ class LiquidHandlerApp:
         frame = ttk.Frame(parent, padding=10)
         frame.pack(fill="both", expand=True)
 
-        header_frame = ttk.Frame(frame)
-        header_frame.pack(fill="x", pady=(0, 5))
+        # Use ONE grid table for header + rows (fixes header shift)
+        table = ttk.Frame(frame)
+        table.pack(fill="x", pady=(0, 5))
+        table.grid_anchor("w")  # keeps the whole grid left-aligned if extra space exists
 
         # UPDATED: Split Source into Module and Position
         cols = [
@@ -503,10 +505,14 @@ class LiquidHandlerApp:
             ("Wash Vol", 8), ("Wash Times", 8), ("Wash Source", 12)
         ]
 
-        for idx, (text, w) in enumerate(cols):
-            ttk.Label(header_frame, text=text, width=w, font=("Arial", 9, "bold")).grid(row=0, column=idx, padx=2)
+        for c, (text, w) in enumerate(cols):
+            ttk.Label(
+                table, text=text, width=w,
+                font=("Arial", 9, "bold"),
+                anchor="center"
+            ).grid(row=0, column=c, padx=2, pady=(0, 4), sticky="ew")
 
-        # Options for Destination (still uses the flat list for now to save space, or could be split too, but prompt focused on Source)
+        # Options for Destination
         dest_options = []
         dest_options.extend([f"4mL {p}" for p in self._4ml_positions])
         dest_options.extend([f"Falcon {p}" for p in self.falcon_positions])
@@ -522,6 +528,12 @@ class LiquidHandlerApp:
         wash_vol_options_volatile = ["0", "100", "200", "300", "400"]
         wash_times_options = [str(x) for x in range(1, 6)]
 
+        def wash_enabled(val: str) -> bool:
+            try:
+                return float(val) != 0.0
+            except (TypeError, ValueError):
+                return False
+
         self.transfer_rows = []
         module_names = list(self.module_options_map.keys())
 
@@ -535,86 +547,106 @@ class LiquidHandlerApp:
                 "volatile": tk.BooleanVar(value=False),
                 "wash_vol": tk.StringVar(value="0"),
                 "wash_times": tk.StringVar(value="2"),
-                "wash_src": tk.StringVar(value="Wash A")
+                "wash_src": tk.StringVar(value="Wash A"),
             }
 
-            row_frame = ttk.Frame(frame)
-            row_frame.pack(fill="x", pady=2)
+            r = i + 1  # grid row index (row 0 is header)
 
-            ttk.Checkbutton(row_frame, variable=row_vars["execute"], width=8).pack(side="left", padx=2)
-            ttk.Label(row_frame, text=f"{i + 1}", width=4).pack(side="left", padx=2)
+            # Execute
+            ttk.Checkbutton(table, variable=row_vars["execute"]).grid(row=r, column=0, padx=2, pady=2)
 
-            # Source Module Combobox
+            # Line
+            ttk.Label(table, text=f"{i + 1}", width=4, anchor="center").grid(row=r, column=1, padx=2, pady=2)
+
+            # Source Module
             cb_mod = ttk.Combobox(
-                row_frame, textvariable=row_vars["src_mod"],
+                table, textvariable=row_vars["src_mod"],
                 values=module_names, width=12, state="readonly"
             )
-            cb_mod.pack(side="left", padx=2)
+            cb_mod.grid(row=r, column=2, padx=2, pady=2)
 
-            # Source Position Combobox
-            cb_pos = ttk.Combobox(row_frame, textvariable=row_vars["src_pos"], width=10, state="readonly")
-            cb_pos.pack(side="left", padx=2)
-
-            # Store widget ref so presets can set module+pos cleanly
+            # Source Position
+            cb_pos = ttk.Combobox(table, textvariable=row_vars["src_pos"], width=10, state="readonly")
+            cb_pos.grid(row=r, column=3, padx=2, pady=2)
             row_vars["_src_pos_combo"] = cb_pos
 
-            # Bind event to update positions when module changes
             cb_mod.bind(
                 "<<ComboboxSelected>>",
-                lambda e, m=row_vars["src_mod"], p=cb_pos, v=row_vars["src_pos"]: self._update_source_pos_options(m, p,
-                                                                                                                  v)
+                lambda e, m=row_vars["src_mod"], p=cb_pos, v=row_vars["src_pos"]:
+                self._update_source_pos_options(m, p, v)
             )
-
-            # Initialize positions for the default value
             self._update_source_pos_options(row_vars["src_mod"], cb_pos, row_vars["src_pos"])
 
             # Dest Vial
             ttk.Combobox(
-                row_frame, textvariable=row_vars["dest"],
+                table, textvariable=row_vars["dest"],
                 values=dest_options, width=15, state="readonly"
-            ).pack(side="left", padx=2)
+            ).grid(row=r, column=4, padx=2, pady=2)
 
             # Volume
             ttk.Combobox(
-                row_frame, textvariable=row_vars["vol"],
+                table, textvariable=row_vars["vol"],
                 values=vol_options, width=8, state="readonly"
-            ).pack(side="left", padx=2)
+            ).grid(row=r, column=5, padx=2, pady=2)
 
-            # Volatile Checkbox
-            chk_volatile = ttk.Checkbutton(row_frame, variable=row_vars["volatile"], text="Volatile", width=10)
-            chk_volatile.pack(side="left", padx=2)
+            # Volatile checkbox (no text; header already says "Volatile")
+            ttk.Checkbutton(table, variable=row_vars["volatile"]).grid(row=r, column=6, padx=2, pady=2)
 
             # Wash Volume
             cb_wash_vol = ttk.Combobox(
-                row_frame, textvariable=row_vars["wash_vol"],
+                table, textvariable=row_vars["wash_vol"],
                 values=wash_vol_options_std, width=8, state="readonly"
             )
-            cb_wash_vol.pack(side="left", padx=2)
+            cb_wash_vol.grid(row=r, column=7, padx=2, pady=2)
 
-            def update_wash_options(var_name, index, mode, cb=cb_wash_vol, rv=row_vars):
+            # Wash Times
+            cb_wash_times = ttk.Combobox(
+                table, textvariable=row_vars["wash_times"],
+                values=wash_times_options, width=8, state="readonly"
+            )
+            cb_wash_times.grid(row=r, column=8, padx=2, pady=2)
+
+            # Wash Source
+            cb_wash_src = ttk.Combobox(
+                table, textvariable=row_vars["wash_src"],
+                values=dest_options, width=12, state="readonly"
+            )
+            cb_wash_src.grid(row=r, column=9, padx=2, pady=2)
+
+            # Volatile -> change available wash-vol choices
+            def update_wash_vol_choices(*_, cb=cb_wash_vol, rv=row_vars):
                 if rv["volatile"].get():
-                    cb['values'] = wash_vol_options_volatile
+                    cb["values"] = wash_vol_options_volatile
                     if rv["wash_vol"].get() not in wash_vol_options_volatile:
                         rv["wash_vol"].set("0")
                 else:
-                    cb['values'] = wash_vol_options_std
+                    cb["values"] = wash_vol_options_std
+                    if rv["wash_vol"].get() not in wash_vol_options_std:
+                        rv["wash_vol"].set("0")
 
-            row_vars["volatile"].trace_add("write", update_wash_options)
+            row_vars["volatile"].trace_add("write", update_wash_vol_choices)
 
-            # Wash Times
-            ttk.Combobox(
-                row_frame, textvariable=row_vars["wash_times"],
-                values=wash_times_options, width=8, state="readonly"
-            ).pack(side="left", padx=2)
+            # Wash Vol -> show/hide Wash Times + Wash Source
+            def update_wash_visibility(*_, rv=row_vars, t_cb=cb_wash_times, s_cb=cb_wash_src):
+                enabled = wash_enabled(rv["wash_vol"].get())
+                if enabled:
+                    t_cb.grid()
+                    s_cb.grid()
+                    # ensure sane defaults if coming from a preset with "0"
+                    if rv["wash_times"].get() not in wash_times_options:
+                        rv["wash_times"].set(wash_times_options[0])
+                    if not rv["wash_src"].get():
+                        rv["wash_src"].set("Wash A")
+                else:
+                    t_cb.grid_remove()
+                    s_cb.grid_remove()
 
-            # Wash Source
-            ttk.Combobox(
-                row_frame, textvariable=row_vars["wash_src"],
-                values=dest_options, width=12, state="readonly"
-            ).pack(side="left", padx=2)
+            row_vars["wash_vol"].trace_add("write", update_wash_visibility)
+            update_wash_visibility()  # apply initial visibility
 
             self.transfer_rows.append(row_vars)
 
+        # --- Buttons / presets area (unchanged) ---
         btn_frame = ttk.Frame(frame, padding=10)
         btn_frame.pack(fill="x", pady=10)
 
@@ -623,7 +655,6 @@ class LiquidHandlerApp:
             command=lambda: threading.Thread(target=self.transfer_liquid_sequence, daemon=True).start()
         ).pack(fill="x", ipady=5)
 
-        # ---- PRESETS: single horizontal line ----
         ttk.Label(btn_frame, text="Presets:", font=("Arial", 8, "italic")).pack(anchor="w", pady=(8, 2))
 
         presets_row = ttk.Frame(btn_frame)
@@ -758,14 +789,14 @@ class LiquidHandlerApp:
 
     def load_transfer_preset_1(self):
         preset = [
-            {"execute": False, "src_mod": "4mL Rack", "src_pos": "A1", "dest": "Filter Eppi B1", "vol": 800, "volatile": True, "wash_vol": 150, "wash_times": 2, "wash_src": "Wash B"},
-            {"execute": False, "src_mod": "4mL Rack", "src_pos": "A2", "dest": "Filter Eppi B2", "vol": 800, "volatile": True, "wash_vol": 150, "wash_times": 2, "wash_src": "Wash B"},
-            {"execute": False, "src_mod": "4mL Rack", "src_pos": "A3", "dest": "Filter Eppi B3", "vol": 800, "volatile": True, "wash_vol": 150, "wash_times": 2, "wash_src": "Wash B"},
-            {"execute": False, "src_mod": "4mL Rack", "src_pos": "A4", "dest": "Filter Eppi B4", "vol": 800, "volatile": True, "wash_vol": 150, "wash_times": 2, "wash_src": "Wash B"},
-            {"execute": False, "src_mod": "4mL Rack", "src_pos": "A5", "dest": "Filter Eppi B5", "vol": 800, "volatile": True, "wash_vol": 150, "wash_times": 2, "wash_src": "Wash B"},
-            {"execute": False, "src_mod": "4mL Rack", "src_pos": "A6", "dest": "Filter Eppi B6", "vol": 800, "volatile": True, "wash_vol": 150, "wash_times": 2, "wash_src": "Wash B"},
-            {"execute": False, "src_mod": "4mL Rack", "src_pos": "A7", "dest": "Filter Eppi B7", "vol": 800, "volatile": True, "wash_vol": 150, "wash_times": 2, "wash_src": "Wash B"},
-            {"execute": False, "src_mod": "4mL Rack", "src_pos": "A8", "dest": "Filter Eppi B8", "vol": 800, "volatile": True, "wash_vol": 150, "wash_times": 2, "wash_src": "Wash B"},
+            {"execute": False, "src_mod": "4mL Rack", "src_pos": "A1", "dest": "Filter Eppi B1", "vol": 600, "volatile": True, "wash_vol": 150, "wash_times": 2, "wash_src": "Wash B"},
+            {"execute": False, "src_mod": "4mL Rack", "src_pos": "A2", "dest": "Filter Eppi B2", "vol": 600, "volatile": True, "wash_vol": 150, "wash_times": 2, "wash_src": "Wash B"},
+            {"execute": False, "src_mod": "4mL Rack", "src_pos": "A3", "dest": "Filter Eppi B3", "vol": 600, "volatile": True, "wash_vol": 150, "wash_times": 2, "wash_src": "Wash B"},
+            {"execute": False, "src_mod": "4mL Rack", "src_pos": "A4", "dest": "Filter Eppi B4", "vol": 600, "volatile": True, "wash_vol": 150, "wash_times": 2, "wash_src": "Wash B"},
+            {"execute": False, "src_mod": "4mL Rack", "src_pos": "A5", "dest": "Filter Eppi B5", "vol": 600, "volatile": True, "wash_vol": 150, "wash_times": 2, "wash_src": "Wash B"},
+            {"execute": False, "src_mod": "4mL Rack", "src_pos": "A6", "dest": "Filter Eppi B6", "vol": 600, "volatile": True, "wash_vol": 150, "wash_times": 2, "wash_src": "Wash B"},
+            {"execute": False, "src_mod": "4mL Rack", "src_pos": "A7", "dest": "Filter Eppi B7", "vol": 600, "volatile": True, "wash_vol": 150, "wash_times": 2, "wash_src": "Wash B"},
+            {"execute": False, "src_mod": "4mL Rack", "src_pos": "A8", "dest": "Filter Eppi B8", "vol": 600, "volatile": True, "wash_vol": 150, "wash_times": 2, "wash_src": "Wash B"},
         ]
         self._apply_transfer_table_preset(preset, preset_name="Preset 1")
 
@@ -824,18 +855,30 @@ class LiquidHandlerApp:
     def _build_combine_fractions_tab(self, parent):
         frame = ttk.Frame(parent, padding=10)
         frame.pack(fill="both", expand=True)
-        header_frame = ttk.Frame(frame)
-        header_frame.pack(fill="x", pady=(0, 5))
 
-        # Updated Columns: Added Execute, Wash Vol, Wash Times, Wash Source
+        # Use ONE grid table for header + rows (fixes header shift)
+        table = ttk.Frame(frame)
+        table.pack(fill="x", pady=(0, 5))
+        table.grid_anchor("w")
+
         cols = [
             ("Execute", 8), ("Line", 6), ("Source Start", 12), ("Source End", 12),
             ("Dest Falcon", 12), ("Vol (uL)", 10),
             ("Wash Vol", 8), ("Wash Times", 8), ("Wash Source", 12)
         ]
 
-        for idx, (text, w) in enumerate(cols):
-            ttk.Label(header_frame, text=text, width=w, font=("Arial", 9, "bold")).grid(row=0, column=idx, padx=2)
+        for c, (text, w) in enumerate(cols):
+            ttk.Label(
+                table, text=text, width=w,
+                font=("Arial", 9, "bold"),
+                anchor="center"
+            ).grid(row=0, column=c, padx=2, pady=(0, 4), sticky="ew")
+
+        def wash_enabled(val: str) -> bool:
+            try:
+                return float(val) != 0.0
+            except (TypeError, ValueError):
+                return False
 
         self.combine_rows = []
         vol_options = [str(x) for x in range(100, 1700, 100)]
@@ -853,44 +896,91 @@ class LiquidHandlerApp:
                 "vol": tk.StringVar(value="600"),
                 "wash_vol": tk.StringVar(value="0"),
                 "wash_times": tk.StringVar(value="1"),
-                "wash_src": tk.StringVar(value="Wash A")
+                "wash_src": tk.StringVar(value="Wash A"),
             }
-            row_frame = ttk.Frame(frame)
-            row_frame.pack(fill="x", pady=2)
 
-            ttk.Checkbutton(row_frame, variable=row_vars["execute"], width=8).pack(side="left", padx=2)
-            ttk.Label(row_frame, text=f"Line {i + 1}", width=6).pack(side="left")
-            ttk.Combobox(row_frame, textvariable=row_vars["start"], values=self.plate_wells, width=10,
-                         state="readonly").pack(side="left", padx=2)
-            ttk.Combobox(row_frame, textvariable=row_vars["end"], values=self.plate_wells, width=10,
-                         state="readonly").pack(side="left", padx=2)
-            cb_dest = ttk.Combobox(row_frame, textvariable=row_vars["dest"], values=self.falcon_positions, width=10,
-                                   state="readonly")
-            cb_dest.pack(side="left", padx=2)
-            if i < len(default_falcons): row_vars["dest"].set(default_falcons[i])
+            r = i + 1
+
+            ttk.Checkbutton(table, variable=row_vars["execute"]).grid(row=r, column=0, padx=2, pady=2)
+            ttk.Label(table, text=f"Line {i + 1}", width=6).grid(row=r, column=1, padx=2, pady=2, sticky="w")
+
+            ttk.Combobox(
+                table, textvariable=row_vars["start"],
+                values=self.plate_wells, width=10, state="readonly"
+            ).grid(row=r, column=2, padx=2, pady=2)
+
+            ttk.Combobox(
+                table, textvariable=row_vars["end"],
+                values=self.plate_wells, width=10, state="readonly"
+            ).grid(row=r, column=3, padx=2, pady=2)
+
+            cb_dest = ttk.Combobox(
+                table, textvariable=row_vars["dest"],
+                values=self.falcon_positions, width=10, state="readonly"
+            )
+            cb_dest.grid(row=r, column=4, padx=2, pady=2)
+
+            if i < len(default_falcons):
+                row_vars["dest"].set(default_falcons[i])
+
             cb_dest.bind("<<ComboboxSelected>>", lambda e: self._update_falcon_exclusivity())
-            ttk.Combobox(row_frame, textvariable=row_vars["vol"], values=vol_options, width=8, state="readonly").pack(
-                side="left", padx=2)
 
-            # Wash Widgets
-            ttk.Combobox(row_frame, textvariable=row_vars["wash_vol"], values=wash_vol_options, width=8,
-                         state="readonly").pack(side="left", padx=2)
-            ttk.Combobox(row_frame, textvariable=row_vars["wash_times"], values=wash_times_options, width=8,
-                         state="readonly").pack(side="left", padx=2)
-            ttk.Combobox(row_frame, textvariable=row_vars["wash_src"], values=source_options, width=12,
-                         state="readonly").pack(side="left", padx=2)
+            ttk.Combobox(
+                table, textvariable=row_vars["vol"],
+                values=vol_options, width=8, state="readonly"
+            ).grid(row=r, column=5, padx=2, pady=2)
+
+            cb_wash_vol = ttk.Combobox(
+                table, textvariable=row_vars["wash_vol"],
+                values=wash_vol_options, width=8, state="readonly"
+            )
+            cb_wash_vol.grid(row=r, column=6, padx=2, pady=2)
+
+            cb_wash_times = ttk.Combobox(
+                table, textvariable=row_vars["wash_times"],
+                values=wash_times_options, width=8, state="readonly"
+            )
+            cb_wash_times.grid(row=r, column=7, padx=2, pady=2)
+
+            cb_wash_src = ttk.Combobox(
+                table, textvariable=row_vars["wash_src"],
+                values=source_options, width=12, state="readonly"
+            )
+            cb_wash_src.grid(row=r, column=8, padx=2, pady=2)
+
+            def update_wash_visibility(*_, rv=row_vars, t_cb=cb_wash_times, s_cb=cb_wash_src):
+                enabled = wash_enabled(rv["wash_vol"].get())
+                if enabled:
+                    t_cb.grid()
+                    s_cb.grid()
+                    if rv["wash_times"].get() not in wash_times_options:
+                        rv["wash_times"].set(wash_times_options[0])
+                    if not rv["wash_src"].get():
+                        rv["wash_src"].set("Wash A")
+                else:
+                    t_cb.grid_remove()
+                    s_cb.grid_remove()
+
+            row_vars["wash_vol"].trace_add("write", update_wash_visibility)
+            update_wash_visibility()
 
             self.combine_rows.append({"vars": row_vars, "widgets": {"dest": cb_dest}})
 
         self._update_falcon_exclusivity()
+
         btn_frame = ttk.Frame(frame, padding=10)
         btn_frame.pack(fill="x", pady=10)
-        ttk.Button(btn_frame, text="RUN COMBINE SEQUENCE",
-                   command=lambda: threading.Thread(target=self.combine_fractions_sequence, daemon=True).start()).pack(
-            fill="x", ipady=5)
-        ttk.Label(btn_frame,
-                  text="Check 'Execute' box for lines you want to run.",
-                  font=("Arial", 8, "italic")).pack(pady=5)
+
+        ttk.Button(
+            btn_frame, text="RUN COMBINE SEQUENCE",
+            command=lambda: threading.Thread(target=self.combine_fractions_sequence, daemon=True).start()
+        ).pack(fill="x", ipady=5)
+
+        ttk.Label(
+            btn_frame,
+            text="Check 'Execute' box for lines you want to run.",
+            font=("Arial", 8, "italic")
+        ).pack(pady=5)
 
     def _update_falcon_exclusivity(self):
         all_falcons = set(self.falcon_positions)
