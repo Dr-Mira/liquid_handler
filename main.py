@@ -42,8 +42,7 @@ DEFAULT_TARGET_UL = 200.0
 MOVEMENT_SPEED = 1000
 AIR_GAP_UL = 200
 
-# Volatile Logic
-# Rate of aspiration (uL/min) to counteract dripping
+# Volatile Logic, rate of aspiration (uL/min) to counteract dripping
 VOLATILE_DRIFT_RATE = 1000
 VOLATILE_MOVE_SPEED = 1500
 
@@ -56,7 +55,7 @@ JOG_SPEED_XY = 4000
 JOG_SPEED_Z = 4000
 PIP_SPEED = 2000
 
-# Polling Settings
+# Communication Polling Settings
 POLL_INTERVAL_MS = 1000
 IDLE_TIMEOUT_BEFORE_POLL = 2.0
 
@@ -1960,64 +1959,292 @@ class LiquidHandlerApp:
     #           TRANSFER LIQUID LOGIC
     # ==========================================
 
+    def _ordered_group_by(self, items, key_fn):
+        """
+        Groups items by key_fn(item) while preserving first-seen key order.
+        Returns: list of (key, [items...]) in stable order.
+        """
+        groups = {}
+        order = []
+        for it in items:
+            k = key_fn(it)
+            if k not in groups:
+                groups[k] = []
+                order.append(k)
+            groups[k].append(it)
+        return [(k, groups[k]) for k in order]
+
+    def _perform_batch_wash_distribution(
+        self,
+        wash_src_str: str,
+        tasks_for_this_wash: list,
+        e_gap_pos: float,
+        air_gap_ul: float,
+        max_liquid_ul: float = 800.0,
+        start_module: str | None = None
+    ):
+        """
+        Batch-dispense wash solvent into multiple SOURCE vials.
+
+        - Uses ONE mounted tip.
+        - Aspirates from wash_src in loads up to max_liquid_ul (normally 800uL).
+        - Dispenses each task["wash_vol"] into task["source"].
+        - Handles mid-way refill (e.g. 8x150uL).
+
+        tasks_for_this_wash: list of task dicts with at least:
+            { "line": int, "source": str, "wash_vol": float }
+        Returns: updated module tracker (string).
+        """
+        if not wash_src_str:
+            self.log_line("[WASH-BATCH] ERROR: wash_src_str is empty.")
+            return start_module if start_module is not None else self.last_known_module
+
+        if not tasks_for_this_wash:
+            return start_module if start_module is not None else self.last_known_module
+
+        # Resolve wash source coords once
+        w_mod, w_x, w_y, w_safe_z, w_asp_z, _ = self.get_coords_from_combo(wash_src_str)
+
+        # Build per-source plan (keep stable order from tasks_for_this_wash)
+        plan = []
+        for t in tasks_for_this_wash:
+            try:
+                need = float(t.get("wash_vol", 0.0))
+            except (TypeError, ValueError):
+                need = 0.0
+
+            if need <= 0:
+                continue
+
+            s_mod, s_x, s_y, s_safe_z, _, s_disp_z = self.get_coords_from_combo(t["source"])
+            plan.append({
+                "line": t["line"],
+                "need_ul": need,
+                "source": t["source"],
+                "s_mod": s_mod, "s_x": s_x, "s_y": s_y,
+                "s_safe_z": s_safe_z, "s_disp_z": s_disp_z,
+            })
+
+        if not plan:
+            return start_module if start_module is not None else self.last_known_module
+
+        remaining = [p["need_ul"] for p in plan]
+        current_mod = start_module if start_module is not None else self.last_known_module
+
+        # Main loop: refill until all remaining == 0
+        while True:
+            total_remaining = sum(remaining)
+            if total_remaining <= 0.0001:
+                break
+
+            load_ul = min(max_liquid_ul, total_remaining)
+            in_tip = load_ul
+
+            self.log_line(
+                f"[WASH-BATCH] Loading {load_ul:.1f}uL from '{wash_src_str}' (remaining total {total_remaining:.1f}uL)")
+
+            cmds = []
+            # Ensure we're at air-gap baseline before aspirating
+            cmds.append(f"G1 E{e_gap_pos:.3f} F{PIP_SPEED}")
+
+            # Go to wash source + aspirate load_ul
+            cmds.extend(self._get_smart_travel_gcode(w_mod, w_x, w_y, w_safe_z, start_module=current_mod))
+            cmds.append(f"G0 Z{w_asp_z:.2f} F{JOG_SPEED_Z}")
+
+            e_loaded = -1 * (air_gap_ul + load_ul) * STEPS_PER_UL
+            cmds.append(f"G1 E{e_loaded:.3f} F{PIP_SPEED}")
+            cmds.append(f"G0 Z{w_safe_z:.2f} F{JOG_SPEED_Z}")
+
+            current_mod = w_mod
+
+            # Dispense sequentially into sources until this load is empty
+            for i, p in enumerate(plan):
+                if remaining[i] <= 0.0001:
+                    continue
+                if in_tip <= 0.0001:
+                    break
+
+                disp_ul = min(remaining[i], in_tip)
+
+                self.log_line(f"[WASH-BATCH]  -> L{p['line']} dispense {disp_ul:.1f}uL into {p['source']}")
+
+                cmds.extend(self._get_smart_travel_gcode(p["s_mod"], p["s_x"], p["s_y"], p["s_safe_z"],
+                                                         start_module=current_mod))
+                cmds.append(f"G0 Z{p['s_disp_z']:.2f} F{JOG_SPEED_Z}")
+
+                in_tip -= disp_ul
+                remaining[i] = max(0.0, remaining[i] - disp_ul)
+
+                e_after = -1 * (air_gap_ul + in_tip) * STEPS_PER_UL
+                cmds.append(f"G1 E{e_after:.3f} F{PIP_SPEED}")
+                cmds.append(f"G0 Z{p['s_safe_z']:.2f} F{JOG_SPEED_Z}")
+
+                current_mod = p["s_mod"]
+
+            self._send_lines_with_ok(cmds)
+
+        # Ensure we finish at air gap baseline
+        self._send_lines_with_ok([f"G1 E{e_gap_pos:.3f} F{PIP_SPEED}"])
+        self.current_pipette_volume = air_gap_ul
+        self.vol_display_var.set(f"{self.current_pipette_volume:.1f} uL")
+        self.live_vol_var.set(f"{self.current_pipette_volume:.1f}")
+
+        return current_mod
+
+    def _perform_wash_mix_and_transfer(
+        self,
+        source_str: str,
+        dest_str: str,
+        wash_vol_ul: float,
+        e_gap_pos: float,
+        air_gap_ul: float,
+        start_module: str | None = None
+    ):
+        """
+        After wash solvent has already been dispensed into the SOURCE:
+          - go to source
+          - mix
+          - aspirate (wash_vol + overage, capped to 800)
+          - go to dest
+          - dispense with blowout to 100uL, reset to air gap
+
+        Returns: updated module tracker (dest module).
+        """
+        s_mod, s_x, s_y, s_safe_z, s_asp_z, _ = self.get_coords_from_combo(source_str)
+        d_mod, d_x, d_y, d_safe_z, _, d_disp_z = self.get_coords_from_combo(dest_str)
+
+        current_mod = start_module if start_module is not None else self.last_known_module
+
+        # Cap collection so air_gap + collect <= 1000 => collect <= 800
+        max_collect_ul = MAX_PIPETTE_VOL - air_gap_ul  # typically 800
+        collect_ul = min(float(wash_vol_ul) + 50.0, max_collect_ul)
+
+        mix_vol = 200.0
+        mix_vol = min(mix_vol, max_collect_ul)  # just in case
+
+        e_mix_up = -1 * (air_gap_ul) * STEPS_PER_UL
+        e_mix_down = -1 * (air_gap_ul + mix_vol) * STEPS_PER_UL
+        e_collect = -1 * (air_gap_ul + collect_ul) * STEPS_PER_UL
+        e_blowout = -1 * MIN_PIPETTE_VOL * STEPS_PER_UL  # 100uL baseline
+
+        cmds = []
+        cmds.append(f"G1 E{e_gap_pos:.3f} F{PIP_SPEED}")
+
+        # Go to source
+        cmds.extend(self._get_smart_travel_gcode(s_mod, s_x, s_y, s_safe_z, start_module=current_mod))
+        cmds.append(f"G0 Z{s_asp_z:.2f} F{JOG_SPEED_Z}")
+
+        # Mix (2 cycles like your wash cycle)
+        for _ in range(2):
+            cmds.append(f"G1 E{e_mix_down:.3f} F{PIP_SPEED}")
+            cmds.append(f"G1 E{e_mix_up:.3f} F{PIP_SPEED}")
+
+        # Aspirate wash mixture
+        cmds.append(f"G1 E{e_collect:.3f} F{PIP_SPEED}")
+        cmds.append(f"G0 Z{s_safe_z:.2f} F{JOG_SPEED_Z}")
+
+        # Go to dest + dispense
+        cmds.extend(self._get_smart_travel_gcode(d_mod, d_x, d_y, d_safe_z, start_module=s_mod))
+        cmds.append(f"G0 Z{d_disp_z:.2f} F{JOG_SPEED_Z}")
+        cmds.append(f"G1 E{e_blowout:.3f} F{PIP_SPEED}")
+        cmds.append(f"G0 Z{d_safe_z:.2f} F{JOG_SPEED_Z}")
+        cmds.append(f"G1 E{e_gap_pos:.3f} F{PIP_SPEED}")
+
+        self._send_lines_with_ok(cmds)
+
+        self.update_last_module(d_mod)
+        self.current_pipette_volume = air_gap_ul
+        self.vol_display_var.set(f"{self.current_pipette_volume:.1f} uL")
+        self.live_vol_var.set(f"{self.current_pipette_volume:.1f}")
+
+        return d_mod
+
     def transfer_liquid_sequence(self):
         if not self.ser or not self.ser.is_open:
             messagebox.showwarning("Not Connected", "Please connect to the printer first.")
             return
 
+        # --------------------------
+        # Build task list (same as you do)
+        # --------------------------
         tasks = []
         for idx, row in enumerate(self.transfer_rows):
             if not row["execute"].get():
                 continue
 
-            vol_str = row["vol"].get()
-            wash_vol_str = row["wash_vol"].get()
-            wash_times_str = row["wash_times"].get()
             try:
-                vol = float(vol_str)
-                wash_vol = float(wash_vol_str)
-                wash_times = int(wash_times_str)
-            except ValueError:
+                vol = float(row["vol"].get())
+                wash_vol = float(row["wash_vol"].get())
+                wash_times = int(row["wash_times"].get())
+            except (TypeError, ValueError):
                 continue
 
-            # Construct the source string from the two dropdowns
             src_mod_name = row["src_mod"].get()
             src_pos_name = row["src_pos"].get()
             full_source_str = self._construct_combo_string(src_mod_name, src_pos_name)
 
+            dest = row["dest"].get()
+            wash_src = row["wash_src"].get()
+
+            # Basic safety validation
+            if not full_source_str or not dest:
+                self.log_line(f"[TRANSFER] Skipping line {idx + 1}: missing source/dest.")
+                continue
+            if wash_vol > 0 and not wash_src:
+                self.log_line(f"[TRANSFER] Skipping line {idx + 1}: wash enabled but wash_src empty.")
+                continue
+
             tasks.append({
                 "line": idx + 1,
                 "source": full_source_str,
-                "dest": row["dest"].get(),
+                "dest": dest,
                 "vol": vol,
                 "volatile": row["volatile"].get(),
                 "wash_vol": wash_vol,
                 "wash_times": wash_times,
-                "wash_src": row["wash_src"].get()
+                "wash_src": wash_src,
             })
 
         if not tasks:
             messagebox.showinfo("No Tasks", "No lines selected for execution.")
             return
 
-        self.log_command(f"[TRANSFER] Starting sequence with {len(tasks)} lines.")
-        e_gap_pos = -1 * AIR_GAP_UL * STEPS_PER_UL
+        self.log_command(f"[TRANSFER] Starting sequence with {len(tasks)} lines (batched wash enabled).")
+
+        # --------------------------
+        # Constants
+        # --------------------------
+        air_gap_ul = float(AIR_GAP_UL)  # 200
+        e_gap_pos = -1 * air_gap_ul * STEPS_PER_UL
+
+        # Your transfer batching
         MAX_STD_BATCH = 800.0
         MAX_VOLATILE_BATCH = 600.0
 
+        # Wash batching (liquid capacity)
+        MAX_WASH_LOAD = MAX_PIPETTE_VOL - air_gap_ul  # normally 800
+
+        # Choose behavior:
+        # False = exactly as you wrote (separate tip for distribution + new tips for each wash transfer) -> uses more tips
+        # True  = reuse the distribution tip for ONE wash-recovery line (the last one) -> tip-neutral, faster, but contamination risk if distribution dips into liquid
+        REUSE_DISTRIBUTION_TIP_FOR_ONE_RECOVERY = False
+
         def run_seq():
-            # Initialize simulated state tracker
             current_simulated_module = self.last_known_module
 
+            # Ensure no tip at start (avoid weird state)
+            self.log_line("[TRANSFER] Ensuring no tip is loaded at start...")
+            self._send_lines_with_ok(self._get_eject_tip_commands())
+            self.update_last_module("EJECT")
+            current_simulated_module = "EJECT"
+
+            # =========================================================
+            # PHASE 1: Main transfers for all selected lines
+            # =========================================================
             for task in tasks:
                 line_num = task["line"]
-                self.log_line(f"--- Processing Line {line_num} ---")
-                self.last_cmd_var.set(f"Line {line_num}: Processing...")
-
-                self.log_line(f"[L{line_num}] Ejecting existing tip...")
-                self._send_lines_with_ok(self._get_eject_tip_commands())
-                self.update_last_module("EJECT")
-                current_simulated_module = "EJECT"
+                self.log_line(f"--- PHASE 1: Transfer Line {line_num} ---")
+                self.last_cmd_var.set(f"L{line_num}: Transfer...")
 
                 tip_key = self._find_next_available_tip()
                 if not tip_key:
@@ -2025,47 +2252,156 @@ class LiquidHandlerApp:
                     return
 
                 self.log_line(f"[L{line_num}] Picking Tip {tip_key}...")
-                # Pass current_simulated_module to ensure correct Z travel logic
                 self._send_lines_with_ok(self._get_pick_tip_commands(tip_key, start_module=current_simulated_module))
                 self.tip_inventory[tip_key] = False
+                self.root.after(0, self.update_tip_grid_colors)
                 self.update_last_module("TIPS")
                 current_simulated_module = "TIPS"
 
-                self.root.after(0, self.update_tip_grid_colors)
-                total_vol = task["vol"]
-                is_volatile = task["volatile"]
+                total_vol = float(task["vol"])
+                is_volatile = bool(task["volatile"])
                 max_batch = MAX_VOLATILE_BATCH if is_volatile else MAX_STD_BATCH
-                remaining_vol = total_vol
 
-                while remaining_vol > 0:
+                remaining_vol = total_vol
+                while remaining_vol > 0.0001:
                     batch_vol = min(remaining_vol, max_batch)
                     self.log_line(
-                        f"[L{line_num}] Transferring {batch_vol}uL ({'Volatile' if is_volatile else 'Standard'})")
+                        f"[L{line_num}] Transfer {batch_vol:.1f}uL ({'Volatile' if is_volatile else 'Standard'})")
 
-                    # Pass state to transfer function and receive new state
                     current_simulated_module = self._perform_single_transfer(
-                        task["source"], task["dest"], batch_vol, is_volatile, e_gap_pos,
-                        AIR_GAP_UL, start_module=current_simulated_module
+                        task["source"], task["dest"], batch_vol, is_volatile,
+                        e_gap_pos, air_gap_ul,
+                        start_module=current_simulated_module
                     )
                     remaining_vol -= batch_vol
 
-                wash_vol = task["wash_vol"]
-                wash_times = task["wash_times"]
+                self.log_line(f"[L{line_num}] Ejecting transfer tip...")
+                self._send_lines_with_ok(self._get_eject_tip_commands())
+                self.update_last_module("EJECT")
+                current_simulated_module = "EJECT"
 
-                if wash_vol > 0:
-                    for i in range(wash_times):
-                        self.log_line(f"[L{line_num}] Wash Cycle {i + 1}/{wash_times} ({wash_vol}uL)...")
+            # =========================================================
+            # PHASE 2+: Wash cycles (batched dispense -> per-line recovery)
+            # =========================================================
+            wash_tasks = [t for t in tasks if t["wash_vol"] > 0 and t["wash_times"] > 0]
+            if wash_tasks:
+                max_cycles = max(int(t["wash_times"]) for t in wash_tasks)
 
-                        # Perform wash cycle. This function handles Eject -> Pick -> Transfer -> Eject
-                        # It returns "EJECT" as the final state.
-                        current_simulated_module = self._perform_wash_cycle(
-                            task["wash_src"], task["source"], task["dest"], wash_vol, is_volatile,
-                            e_gap_pos, AIR_GAP_UL, start_module=current_simulated_module
+                for cycle_idx in range(1, max_cycles + 1):
+                    cycle_tasks = [t for t in wash_tasks if int(t["wash_times"]) >= cycle_idx]
+                    if not cycle_tasks:
+                        continue
+
+                    self.log_line(f"=== PHASE 2: WASH CYCLE {cycle_idx}/{max_cycles} ===")
+                    self.last_cmd_var.set(f"Wash cycle {cycle_idx}/{max_cycles}")
+
+                    # group by wash_src (preserve order)
+                    for wash_src, group in self._ordered_group_by(cycle_tasks, lambda x: x["wash_src"]):
+                        if not wash_src:
+                            self.log_line("[WASH] Skipping group: wash_src empty.")
+                            continue
+
+                        # If only one task in this wash_src group, use your legacy wash cycle (1 tip, no benefit to batching)
+                        if len(group) == 1:
+                            t = group[0]
+                            self.log_line(f"[WASH] L{t['line']}: single-task wash (legacy wash cycle).")
+                            current_simulated_module = self._perform_wash_cycle(
+                                t["wash_src"], t["source"], t["dest"], float(t["wash_vol"]),
+                                bool(t["volatile"]), e_gap_pos, air_gap_ul,
+                                start_module=current_simulated_module
+                            )
+                            current_simulated_module = "EJECT"
+                            continue
+
+                        # --------------------------
+                        # A) Batch dispense wash into ALL sources in this group
+                        # --------------------------
+                        self.log_line(f"[WASH-BATCH] Dispensing wash from '{wash_src}' into {len(group)} sources...")
+                        dist_tip = self._find_next_available_tip()
+                        if not dist_tip:
+                            messagebox.showerror("No Tips",
+                                                 f"Ran out of tips during wash distribution (cycle {cycle_idx}).")
+                            return
+
+                        self._send_lines_with_ok(
+                            self._get_pick_tip_commands(dist_tip, start_module=current_simulated_module))
+                        self.tip_inventory[dist_tip] = False
+                        self.root.after(0, self.update_tip_grid_colors)
+                        self.update_last_module("TIPS")
+                        current_simulated_module = "TIPS"
+
+                        current_simulated_module = self._perform_batch_wash_distribution(
+                            wash_src_str=wash_src,
+                            tasks_for_this_wash=group,
+                            e_gap_pos=e_gap_pos,
+                            air_gap_ul=air_gap_ul,
+                            max_liquid_ul=MAX_WASH_LOAD,
+                            start_module=current_simulated_module
                         )
 
-            self._send_lines_with_ok(self._get_eject_tip_commands())
+                        # --------------------------
+                        # B) Recovery: mix source + transfer to dest
+                        # --------------------------
+                        if REUSE_DISTRIBUTION_TIP_FOR_ONE_RECOVERY:
+                            # Use the distribution tip for ONE line (the last one) to avoid +1 tip.
+                            reuse_task = group[-1]
+                            self.log_line(
+                                f"[WASH-BATCH] Reusing distribution tip for recovery of L{reuse_task['line']} (tip-neutral mode).")
+
+                            current_simulated_module = self._perform_wash_mix_and_transfer(
+                                reuse_task["source"], reuse_task["dest"], float(reuse_task["wash_vol"]),
+                                e_gap_pos, air_gap_ul,
+                                start_module=current_simulated_module
+                            )
+
+                            self.log_line("[WASH-BATCH] Ejecting distribution/recovery tip...")
+                            self._send_lines_with_ok(self._get_eject_tip_commands())
+                            self.update_last_module("EJECT")
+                            current_simulated_module = "EJECT"
+
+                            remaining_recovery = group[:-1]
+                        else:
+                            # Eject distribution tip first (your described behavior)
+                            self.log_line("[WASH-BATCH] Ejecting distribution tip...")
+                            self._send_lines_with_ok(self._get_eject_tip_commands())
+                            self.update_last_module("EJECT")
+                            current_simulated_module = "EJECT"
+                            remaining_recovery = group
+
+                        # Now recover remaining lines using fresh tips
+                        for t in remaining_recovery:
+                            line_num = t["line"]
+                            self.log_line(f"[WASH] L{line_num}: mix+transfer wash to dest...")
+
+                            tip_key = self._find_next_available_tip()
+                            if not tip_key:
+                                messagebox.showerror("No Tips",
+                                                     f"Ran out of tips during wash recovery at Line {line_num}.")
+                                return
+
+                            self._send_lines_with_ok(
+                                self._get_pick_tip_commands(tip_key, start_module=current_simulated_module))
+                            self.tip_inventory[tip_key] = False
+                            self.root.after(0, self.update_tip_grid_colors)
+                            self.update_last_module("TIPS")
+                            current_simulated_module = "TIPS"
+
+                            current_simulated_module = self._perform_wash_mix_and_transfer(
+                                t["source"], t["dest"], float(t["wash_vol"]),
+                                e_gap_pos, air_gap_ul,
+                                start_module=current_simulated_module
+                            )
+
+                            self.log_line(f"[WASH] L{line_num}: ejecting recovery tip...")
+                            self._send_lines_with_ok(self._get_eject_tip_commands())
+                            self.update_last_module("EJECT")
+                            current_simulated_module = "EJECT"
+
+            # Done: park
             self.log_command("[TRANSFER] All lines complete. Parking.")
-            self.park_head_sequence()
+            self.last_cmd_var.set("Parking...")
+            self._send_lines_with_ok(self._get_park_head_commands())
+            self.update_last_module("PARK")
             self.last_cmd_var.set("Idle")
 
         threading.Thread(target=run_seq, daemon=True).start()
@@ -2301,7 +2637,8 @@ class LiquidHandlerApp:
 
         # --- 7. Aspirate Everything ---
         # Aspirate wash volume + extra to ensure vial is empty
-        collect_vol = min(vol + 50.0, 900.0)
+        max_collect = MAX_PIPETTE_VOL - air_gap_ul  # typically 800
+        collect_vol = min(vol + 50.0, max_collect)
         e_collected = -1 * (air_gap_ul + collect_vol) * STEPS_PER_UL
         cmds_src.append(f"G1 E{e_collected:.3f} F{PIP_SPEED}")
         cmds_src.append(f"G0 Z{s_safe_z:.2f} F{JOG_SPEED_Z}")
