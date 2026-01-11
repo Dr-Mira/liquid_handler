@@ -44,7 +44,7 @@ AIR_GAP_UL = 200
 
 # Volatile Logic
 # Rate of aspiration (uL/min) to counteract dripping
-VOLATILE_DRIFT_RATE = 400
+VOLATILE_DRIFT_RATE = 1000
 VOLATILE_MOVE_SPEED = 1500
 
 # Limits
