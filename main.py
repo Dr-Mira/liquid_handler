@@ -51,8 +51,8 @@ MIN_PIPETTE_VOL = 100.0
 MAX_PIPETTE_VOL = 1000.0
 
 # Manual Control Constants
-JOG_SPEED_XY = 4000
-JOG_SPEED_Z = 4000
+JOG_SPEED_XY = 6000
+JOG_SPEED_Z = 6000
 PIP_SPEED = 2000
 
 # Communication Polling Settings
@@ -61,19 +61,19 @@ IDLE_TIMEOUT_BEFORE_POLL = 2.0
 
 # --- EJECT STATION CONFIGURATION (Relative Offsets) ---
 EJECT_STATION_CONFIG = {
-    "APPROACH_X": 79.5,
+    "APPROACH_X": 80.5,
     "APPROACH_Y": 71.1,
     "Z_SAFE": 57.2,
     "Z_EJECT_START": 27.4,
     "EJECT_TARGET_Y": 106.7,
-    "Z_RETRACT": 57.2
+    "Z_RETRACT": 50.0
 }
 
 # --- TIP RACK CONFIGURATION (Relative Offsets) ---
 TIP_RACK_CONFIG = {
-    "A1_X": 68.7, "A1_Y": 29.9,
-    "F4_X": 99.0, "F4_Y": -19.9,
-    "Z_TRAVEL": 52.2,
+    "A1_X": 69.0, "A1_Y": 29.9,
+    "F4_X": 99.0, "F4_Y": -20.1,
+    "Z_TRAVEL": 50.0,
     "Z_PICK": -37.8,
 }
 
@@ -257,7 +257,7 @@ class LiquidHandlerApp:
         self.plate_wells = [f"{r}{c}" for r in self.plate_rows for c in self.plate_cols]
 
         self.falcon_positions = ["A1", "A2", "A3", "B1", "B2", "B3", "50mL"]
-        self.wash_positions = ["Wash A", "Wash B", "Waste A", "Waste B"]
+        self.wash_positions = ["Wash A", "Wash B", "Wash C", "Trash"]
         self._4ml_positions = [f"A{i}" for i in range(1, 9)]
         self.filter_eppi_positions = [f"B{i}" for i in range(1, 9)]
         self.eppi_positions = [f"C{i}" for i in range(1, 9)]
@@ -606,10 +606,13 @@ class LiquidHandlerApp:
             cb_wash_times.grid(row=r, column=8, padx=2, pady=2)
 
             # Wash Source
+            wash_src_options = [x for x in dest_options if x.strip().lower() != "trash"]
+
             cb_wash_src = ttk.Combobox(
                 table, textvariable=row_vars["wash_src"],
-                values=dest_options, width=12, state="readonly"
+                values=wash_src_options, width=12, state="readonly"
             )
+
             cb_wash_src.grid(row=r, column=9, padx=2, pady=2)
 
             # Volatile -> change available wash-vol choices
@@ -1401,21 +1404,27 @@ class LiquidHandlerApp:
         return x_pos, y_pos
 
     def _parse_combo_string(self, combo_str):
-        parts = combo_str.split(" ", 1)
+        s = (combo_str or "").strip()
+        s_low = s.lower()
+
+        # Wash station entries are plain strings like "Wash A" / "Wash C" / "Trash"
+        if s_low.startswith("wash") or s_low.startswith("waste") or s_low.startswith("trash"):
+            return "WASH", s
+
+        parts = s.split(" ", 1)
         if len(parts) == 1:
             return "Unknown", parts[0]
-        prefix = parts[0]
-        suffix = parts[1]
-        if combo_str.startswith("Filter Eppi"): return "FILTER_EPPI", combo_str.replace("Filter Eppi ", "")
-        if combo_str.startswith("Eppi"): return "EPPI", combo_str.replace("Eppi ", "")
-        if combo_str.startswith("HPLC Insert"): return "HPLC_INSERT", combo_str.replace("HPLC Insert ", "")
-        if combo_str.startswith("HPLC"): return "HPLC", combo_str.replace("HPLC ", "")
-        if combo_str.startswith("Screwcap"): return "SCREWCAP", combo_str.replace("Screwcap ", "")
-        if combo_str.startswith("4mL"): return "4ML", combo_str.replace("4mL ", "")
-        if combo_str.startswith("Falcon"): return "FALCON", combo_str.replace("Falcon ", "")
-        if combo_str.startswith("Wash") or combo_str.startswith("Waste"): return "WASH", combo_str
-        if combo_str.startswith("PLATE"): return "PLATE", combo_str.replace("PLATE ", "")
-        return "Unknown", combo_str
+
+        if s.startswith("Filter Eppi"): return "FILTER_EPPI", s.replace("Filter Eppi ", "")
+        if s.startswith("Eppi"): return "EPPI", s.replace("Eppi ", "")
+        if s.startswith("HPLC Insert"): return "HPLC_INSERT", s.replace("HPLC Insert ", "")
+        if s.startswith("HPLC"): return "HPLC", s.replace("HPLC ", "")
+        if s.startswith("Screwcap"): return "SCREWCAP", s.replace("Screwcap ", "")
+        if s.startswith("4mL"): return "4ML", s.replace("4mL ", "")
+        if s.startswith("Falcon"): return "FALCON", s.replace("Falcon ", "")
+        if s.startswith("PLATE"): return "PLATE", s.replace("PLATE ", "")
+
+        return "Unknown", s
 
     def _construct_combo_string(self, mod_name, pos_name):
         """Helper to reconstruct the string expected by _parse_combo_string from UI selections"""
@@ -1521,19 +1530,22 @@ class LiquidHandlerApp:
         return self.resolve_coords(rx, ry)
 
     def get_wash_coordinates(self, wash_name):
-        mapping = {"Wash A": (0, 0), "Wash B": (1, 0), "Waste A": (0, 1), "Waste B": (1, 1)}
-        col_idx, row_idx = mapping.get(wash_name, (0, 0))
-        rx, ry = self._get_interpolated_coords(col_idx, row_idx, 2, 2, WASH_RACK_CONFIG["A1_X"],
-                                               WASH_RACK_CONFIG["A1_Y"],
-                                               WASH_RACK_CONFIG["B2_X"], WASH_RACK_CONFIG["B2_Y"])
-        return self.resolve_coords(rx, ry)
+        name = (wash_name or "").strip().lower()
 
-    def get_4ml_coordinates(self, key):
-        if not key.startswith("A"): return 0.0, 0.0
-        col_num = int(key[1:])
-        col_idx = col_num - 1
-        rx, ry = self._get_interpolated_coords(col_idx, 0, 8, 1, _4ML_RACK_CONFIG["A1_X"], _4ML_RACK_CONFIG["A1_Y"],
-                                               _4ML_RACK_CONFIG["A8_X"], _4ML_RACK_CONFIG["A8_Y"])
+        mapping = {
+            "wash a": (0, 0),
+            "wash b": (0, 1),
+            "wash c": (1, 0),
+            "trash": (1, 1),
+        }
+
+        col_idx, row_idx = mapping.get(name, (0, 0))
+
+        rx, ry = self._get_interpolated_coords(
+            col_idx, row_idx, 2, 2,
+            WASH_RACK_CONFIG["A1_X"], WASH_RACK_CONFIG["A1_Y"],
+            WASH_RACK_CONFIG["B2_X"], WASH_RACK_CONFIG["B2_Y"]
+        )
         return self.resolve_coords(rx, ry)
 
     def get_1x8_rack_coordinates(self, key, config, row_char):
@@ -1903,7 +1915,7 @@ class LiquidHandlerApp:
         commands.append(f"G0 X{abs_app_x:.2f} Y{abs_app_y:.2f} F{JOG_SPEED_XY}")
         commands.append(f"G0 Z{abs_safe_z:.2f} F{JOG_SPEED_Z}")
         commands.append(f"G0 Z{abs_eject_start_z:.2f} F{JOG_SPEED_Z}")
-        commands.append(f"G0 Y{abs_target_y:.2f} F250")
+        commands.append(f"G0 Y{abs_target_y:.2f} F1000")
         commands.append(f"G0 Z{abs_retract_z:.2f} F250")
         commands.append(f"G0 Z{abs_center_z:.2f} F{JOG_SPEED_Z}")
         return commands
