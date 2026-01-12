@@ -239,7 +239,7 @@ class LiquidHandlerApp:
         self.last_cmd_var = tk.StringVar(value="Idle")
 
         # Calibration Variables
-        self.current_vol_var = tk.StringVar()
+        self.current_vol_var = DEFAULT_TARGET_UL
         self.target_vol_var = tk.StringVar(value=str(int(DEFAULT_TARGET_UL)))
 
         # Manual Control Variables
@@ -2038,7 +2038,7 @@ class LiquidHandlerApp:
         commands.append(f"G0 X{abs_app_x:.2f} Y{abs_app_y:.2f} F{JOG_SPEED_XY}")
         commands.append(f"G0 Z{abs_safe_z:.2f} F{JOG_SPEED_Z}")
         commands.append(f"G0 Z{abs_eject_start_z:.2f} F{JOG_SPEED_Z}")
-        commands.append(f"G0 Y{abs_target_y:.2f} F250")
+        commands.append(f"G0 Y{abs_target_y:.2f} F800")
         commands.append(f"G0 Z{abs_retract_z:.2f} F250")
         commands.append(f"G0 Z{abs_center_z:.2f} F{JOG_SPEED_Z}")
         return commands
