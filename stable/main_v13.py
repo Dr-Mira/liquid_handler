@@ -10,7 +10,6 @@ import random
 import math
 import json
 import os
-import glob
 from datetime import datetime
 
 # ==========================================
@@ -161,6 +160,7 @@ SCREWCAP_VIAL_RACK_CONFIG = {
 }
 
 # --- MODULE GROUPS FOR OPTIMIZATION ---
+# Modules that share the same low Z clearance (-11.2)
 SMALL_VIAL_MODULES = ["4ML", "FILTER_EPPI", "EPPI", "HPLC", "HPLC_INSERT", "SCREWCAP"]
 
 # Global Setup Commands
@@ -177,11 +177,6 @@ CALIBRATION_SETUP_GCODE = [
 ]
 
 
-class SequenceAbortedError(Exception):
-    """Custom exception to break out of sequence threads immediately."""
-    pass
-
-
 # ==========================================
 #           MAIN APPLICATION
 # ==========================================
@@ -190,8 +185,8 @@ class LiquidHandlerApp:
     def __init__(self, root):
         self.root = root
         self.root.title("Mira Liquid Handler")
-        self.root.geometry("1024x650")  # Slightly taller for abort button
-        self.root.resizable(False, False)
+        self.root.geometry("1024x600")
+        self.root.resizable(False, False)  # Mandatory size
 
         # --- LOGGING SETUP ---
         self.log_dir = os.path.join(os.path.dirname(__file__), ".log")
@@ -213,12 +208,9 @@ class LiquidHandlerApp:
         self.is_sequence_running = False
         self.last_action_time = time.time()
 
-        # --- PAUSE / ABORT CONTROL ---
-        self.is_paused = False
-        self.is_aborted = False
-
         # --- STATE TRACKING ---
         self.last_known_module = "Unknown"
+        # Raw coordinates for saving calibration
         self.current_x = 0.0
         self.current_y = 0.0
         self.current_z = 0.0
@@ -435,12 +427,6 @@ class LiquidHandlerApp:
 
         right_container = ttk.Frame(bottom_frame)
         right_container.pack(side="right", padx=5, pady=2)
-
-        # ABORT BUTTON
-        self.abort_btn = tk.Button(right_container, text="ABORT", font=("Arial", 10, "bold"), bg="red", fg="white",
-                                   command=self.abort_sequence)
-        self.abort_btn.pack(side="left", padx=10)
-
         self.status_icon_lbl = tk.Label(right_container, text="✘", font=("Arial", 12, "bold"), fg="red")
         self.status_icon_lbl.pack(side="right", padx=2)
         ttk.Label(right_container, textvariable=self.port_var, font=("Arial", 9)).pack(side="right", padx=2)
@@ -506,10 +492,12 @@ class LiquidHandlerApp:
         frame = ttk.Frame(parent, padding=10)
         frame.pack(fill="both", expand=True)
 
+        # Use ONE grid table for header + rows (fixes header shift)
         table = ttk.Frame(frame)
         table.pack(fill="x", pady=(0, 5))
-        table.grid_anchor("w")
+        table.grid_anchor("w")  # keeps the whole grid left-aligned if extra space exists
 
+        # UPDATED: Split Source into Module and Position
         cols = [
             ("Execute", 8), ("Line", 4), ("Source Mod", 12), ("Source Pos", 10),
             ("Dest Vial", 15), ("Vol (uL)", 8), ("Volatile", 8),
@@ -523,6 +511,7 @@ class LiquidHandlerApp:
                 anchor="center"
             ).grid(row=0, column=c, padx=2, pady=(0, 4), sticky="ew")
 
+        # Options for Destination
         dest_options = []
         dest_options.extend([f"4mL {p}" for p in self._4ml_positions])
         dest_options.extend([f"Falcon {p}" for p in self.falcon_positions])
@@ -560,17 +549,22 @@ class LiquidHandlerApp:
                 "wash_src": tk.StringVar(value="Wash A"),
             }
 
-            r = i + 1
+            r = i + 1  # grid row index (row 0 is header)
 
+            # Execute
             ttk.Checkbutton(table, variable=row_vars["execute"]).grid(row=r, column=0, padx=2, pady=2)
+
+            # Line
             ttk.Label(table, text=f"{i + 1}", width=4, anchor="center").grid(row=r, column=1, padx=2, pady=2)
 
+            # Source Module
             cb_mod = ttk.Combobox(
                 table, textvariable=row_vars["src_mod"],
                 values=module_names, width=12, state="readonly"
             )
             cb_mod.grid(row=r, column=2, padx=2, pady=2)
 
+            # Source Position
             cb_pos = ttk.Combobox(table, textvariable=row_vars["src_pos"], width=10, state="readonly")
             cb_pos.grid(row=r, column=3, padx=2, pady=2)
             row_vars["_src_pos_combo"] = cb_pos
@@ -582,36 +576,43 @@ class LiquidHandlerApp:
             )
             self._update_source_pos_options(row_vars["src_mod"], cb_pos, row_vars["src_pos"])
 
+            # Dest Vial
             ttk.Combobox(
                 table, textvariable=row_vars["dest"],
                 values=dest_options, width=15, state="readonly"
             ).grid(row=r, column=4, padx=2, pady=2)
 
+            # Volume
             ttk.Combobox(
                 table, textvariable=row_vars["vol"],
                 values=vol_options, width=8, state="readonly"
             ).grid(row=r, column=5, padx=2, pady=2)
 
+            # Volatile checkbox (no text; header already says "Volatile")
             ttk.Checkbutton(table, variable=row_vars["volatile"]).grid(row=r, column=6, padx=2, pady=2)
 
+            # Wash Volume
             cb_wash_vol = ttk.Combobox(
                 table, textvariable=row_vars["wash_vol"],
                 values=wash_vol_options_std, width=8, state="readonly"
             )
             cb_wash_vol.grid(row=r, column=7, padx=2, pady=2)
 
+            # Wash Times
             cb_wash_times = ttk.Combobox(
                 table, textvariable=row_vars["wash_times"],
                 values=wash_times_options, width=8, state="readonly"
             )
             cb_wash_times.grid(row=r, column=8, padx=2, pady=2)
 
+            # Wash Source
             cb_wash_src = ttk.Combobox(
                 table, textvariable=row_vars["wash_src"],
                 values=dest_options, width=12, state="readonly"
             )
             cb_wash_src.grid(row=r, column=9, padx=2, pady=2)
 
+            # Volatile -> change available wash-vol choices
             def update_wash_vol_choices(*_, cb=cb_wash_vol, rv=row_vars):
                 if rv["volatile"].get():
                     cb["values"] = wash_vol_options_volatile
@@ -624,11 +625,13 @@ class LiquidHandlerApp:
 
             row_vars["volatile"].trace_add("write", update_wash_vol_choices)
 
+            # Wash Vol -> show/hide Wash Times + Wash Source
             def update_wash_visibility(*_, rv=row_vars, t_cb=cb_wash_times, s_cb=cb_wash_src):
                 enabled = wash_enabled(rv["wash_vol"].get())
                 if enabled:
                     t_cb.grid()
                     s_cb.grid()
+                    # ensure sane defaults if coming from a preset with "0"
                     if rv["wash_times"].get() not in wash_times_options:
                         rv["wash_times"].set(wash_times_options[0])
                     if not rv["wash_src"].get():
@@ -638,28 +641,18 @@ class LiquidHandlerApp:
                     s_cb.grid_remove()
 
             row_vars["wash_vol"].trace_add("write", update_wash_visibility)
-            update_wash_visibility()
+            update_wash_visibility()  # apply initial visibility
 
             self.transfer_rows.append(row_vars)
 
+        # --- Buttons / presets area (unchanged) ---
         btn_frame = ttk.Frame(frame, padding=10)
         btn_frame.pack(fill="x", pady=10)
 
-        # EXECUTE AND PAUSE BUTTONS ROW
-        exec_row = ttk.Frame(btn_frame)
-        exec_row.pack(fill="x", pady=5)
-
-        self.transfer_exec_btn = ttk.Button(
-            exec_row, text="EXECUTE TRANSFER SEQUENCE",
+        ttk.Button(
+            btn_frame, text="EXECUTE TRANSFER SEQUENCE",
             command=lambda: threading.Thread(target=self.transfer_liquid_sequence, daemon=True).start()
-        )
-        self.transfer_exec_btn.pack(side="left", fill="x", expand=True, padx=(0, 5), ipady=5)
-
-        self.transfer_pause_btn = ttk.Button(
-            exec_row, text="PAUSE",
-            command=self.toggle_pause
-        )
-        self.transfer_pause_btn.pack(side="left", fill="x", padx=(5, 0), ipady=5)
+        ).pack(fill="x", ipady=5)
 
         ttk.Label(btn_frame, text="Presets:", font=("Arial", 8, "italic")).pack(anchor="w", pady=(8, 2))
 
@@ -699,6 +692,7 @@ class LiquidHandlerApp:
                 pos_var.set("")
 
     def _preset_val_to_str(self, v):
+        """Helper so you can type numbers as 500 or '500' inside presets."""
         if v is None:
             return ""
         if isinstance(v, bool):
@@ -710,11 +704,17 @@ class LiquidHandlerApp:
         return str(v)
 
     def _set_transfer_row_source(self, row_vars, src_mod_name, src_pos_name):
+        """
+        Sets Source Module + updates Source Pos combobox values + selects desired position if valid.
+        """
         row_vars["src_mod"].set(src_mod_name)
+
         pos_combo = row_vars.get("_src_pos_combo")
         values = self.module_options_map.get(src_mod_name, [])
+
         if pos_combo is not None:
             pos_combo["values"] = values
+
         if values:
             if src_pos_name in values:
                 row_vars["src_pos"].set(src_pos_name)
@@ -724,8 +724,23 @@ class LiquidHandlerApp:
             row_vars["src_pos"].set("")
 
     def _apply_transfer_table_preset(self, preset_rows, preset_name=""):
+        """
+        Applies a full-table preset (up to 8 rows).
+
+        Each preset row dict supports keys:
+          execute (bool)
+          src_mod (str)    -> must match Source Mod dropdown (e.g. "4mL Rack", "Falcon Rack", "Wash Station", ...)
+          src_pos (str)    -> position for that module (e.g. "A1", "B3", "Wash A", "H12", ...)
+          dest (str)       -> must match Dest Vial dropdown (e.g. "Falcon A1", "Filter Eppi B1", "Wash A", ...)
+          vol (str/int)    -> e.g. "500" or 500
+          volatile (bool)
+          wash_vol (str/int)
+          wash_times (str/int)
+          wash_src (str)   -> must match Wash Source dropdown (same options as Dest Vial)
+        """
         if not hasattr(self, "transfer_rows") or not self.transfer_rows:
             return
+
         defaults = {
             "execute": False,
             "src_mod": "4mL Rack",
@@ -737,10 +752,12 @@ class LiquidHandlerApp:
             "wash_times": "2",
             "wash_src": "Wash A",
         }
+
         for i, row_vars in enumerate(self.transfer_rows):
             spec = preset_rows[i] if i < len(preset_rows) else {}
             if spec is None:
                 spec = {}
+
             execute = bool(spec.get("execute", defaults["execute"]))
             src_mod = spec.get("src_mod", defaults["src_mod"])
             src_pos = spec.get("src_pos", defaults["src_pos"])
@@ -750,14 +767,19 @@ class LiquidHandlerApp:
             wash_vol = self._preset_val_to_str(spec.get("wash_vol", defaults["wash_vol"]))
             wash_times = self._preset_val_to_str(spec.get("wash_times", defaults["wash_times"]))
             wash_src = spec.get("wash_src", defaults["wash_src"])
+
+            # Apply in safe order (volatile first so wash options update correctly)
             row_vars["execute"].set(execute)
             self._set_transfer_row_source(row_vars, src_mod, src_pos)
             row_vars["dest"].set(dest)
             row_vars["vol"].set(vol)
+
             row_vars["volatile"].set(volatile)
             row_vars["wash_vol"].set(wash_vol)
             row_vars["wash_times"].set(wash_times)
             row_vars["wash_src"].set(wash_src)
+
+        # Optional: log to your UI log
         try:
             if preset_name:
                 self.log_line(f"[UI] Transfer preset loaded: {preset_name}")
@@ -766,106 +788,66 @@ class LiquidHandlerApp:
 
     def load_transfer_preset_1(self):
         preset = [
-            {"execute": False, "src_mod": "4mL Rack", "src_pos": "A1", "dest": "Filter Eppi B1", "vol": 600,
-             "volatile": True, "wash_vol": 150, "wash_times": 2, "wash_src": "Wash B"},
-            {"execute": False, "src_mod": "4mL Rack", "src_pos": "A2", "dest": "Filter Eppi B2", "vol": 600,
-             "volatile": True, "wash_vol": 150, "wash_times": 2, "wash_src": "Wash B"},
-            {"execute": False, "src_mod": "4mL Rack", "src_pos": "A3", "dest": "Filter Eppi B3", "vol": 600,
-             "volatile": True, "wash_vol": 150, "wash_times": 2, "wash_src": "Wash B"},
-            {"execute": False, "src_mod": "4mL Rack", "src_pos": "A4", "dest": "Filter Eppi B4", "vol": 600,
-             "volatile": True, "wash_vol": 150, "wash_times": 2, "wash_src": "Wash B"},
-            {"execute": False, "src_mod": "4mL Rack", "src_pos": "A5", "dest": "Filter Eppi B5", "vol": 600,
-             "volatile": True, "wash_vol": 150, "wash_times": 2, "wash_src": "Wash B"},
-            {"execute": False, "src_mod": "4mL Rack", "src_pos": "A6", "dest": "Filter Eppi B6", "vol": 600,
-             "volatile": True, "wash_vol": 150, "wash_times": 2, "wash_src": "Wash B"},
-            {"execute": False, "src_mod": "4mL Rack", "src_pos": "A7", "dest": "Filter Eppi B7", "vol": 600,
-             "volatile": True, "wash_vol": 150, "wash_times": 2, "wash_src": "Wash B"},
-            {"execute": False, "src_mod": "4mL Rack", "src_pos": "A8", "dest": "Filter Eppi B8", "vol": 600,
-             "volatile": True, "wash_vol": 150, "wash_times": 2, "wash_src": "Wash B"},
+            {"execute": False, "src_mod": "4mL Rack", "src_pos": "A1", "dest": "Filter Eppi B1", "vol": 600, "volatile": True, "wash_vol": 150, "wash_times": 2, "wash_src": "Wash B"},
+            {"execute": False, "src_mod": "4mL Rack", "src_pos": "A2", "dest": "Filter Eppi B2", "vol": 600, "volatile": True, "wash_vol": 150, "wash_times": 2, "wash_src": "Wash B"},
+            {"execute": False, "src_mod": "4mL Rack", "src_pos": "A3", "dest": "Filter Eppi B3", "vol": 600, "volatile": True, "wash_vol": 150, "wash_times": 2, "wash_src": "Wash B"},
+            {"execute": False, "src_mod": "4mL Rack", "src_pos": "A4", "dest": "Filter Eppi B4", "vol": 600, "volatile": True, "wash_vol": 150, "wash_times": 2, "wash_src": "Wash B"},
+            {"execute": False, "src_mod": "4mL Rack", "src_pos": "A5", "dest": "Filter Eppi B5", "vol": 600, "volatile": True, "wash_vol": 150, "wash_times": 2, "wash_src": "Wash B"},
+            {"execute": False, "src_mod": "4mL Rack", "src_pos": "A6", "dest": "Filter Eppi B6", "vol": 600, "volatile": True, "wash_vol": 150, "wash_times": 2, "wash_src": "Wash B"},
+            {"execute": False, "src_mod": "4mL Rack", "src_pos": "A7", "dest": "Filter Eppi B7", "vol": 600, "volatile": True, "wash_vol": 150, "wash_times": 2, "wash_src": "Wash B"},
+            {"execute": False, "src_mod": "4mL Rack", "src_pos": "A8", "dest": "Filter Eppi B8", "vol": 600, "volatile": True, "wash_vol": 150, "wash_times": 2, "wash_src": "Wash B"},
         ]
         self._apply_transfer_table_preset(preset, preset_name="Preset 1")
 
     def load_transfer_preset_2(self):
         preset = [
-            {"execute": False, "src_mod": "Eppi Rack", "src_pos": "C1", "dest": "Filter Eppi B1", "vol": 800,
-             "volatile": False, "wash_vol": 200, "wash_times": 1, "wash_src": "Wash A"},
-            {"execute": False, "src_mod": "Eppi Rack", "src_pos": "C2", "dest": "Filter Eppi B2", "vol": 800,
-             "volatile": False, "wash_vol": 200, "wash_times": 1, "wash_src": "Wash A"},
-            {"execute": False, "src_mod": "Eppi Rack", "src_pos": "C3", "dest": "Filter Eppi B3", "vol": 800,
-             "volatile": False, "wash_vol": 200, "wash_times": 1, "wash_src": "Wash A"},
-            {"execute": False, "src_mod": "Eppi Rack", "src_pos": "C4", "dest": "Filter Eppi B4", "vol": 800,
-             "volatile": False, "wash_vol": 200, "wash_times": 1, "wash_src": "Wash A"},
-            {"execute": False, "src_mod": "Eppi Rack", "src_pos": "C5", "dest": "Filter Eppi B5", "vol": 800,
-             "volatile": False, "wash_vol": 200, "wash_times": 1, "wash_src": "Wash A"},
-            {"execute": False, "src_mod": "Eppi Rack", "src_pos": "C6", "dest": "Filter Eppi B6", "vol": 800,
-             "volatile": False, "wash_vol": 200, "wash_times": 1, "wash_src": "Wash A"},
-            {"execute": False, "src_mod": "Eppi Rack", "src_pos": "C7", "dest": "Filter Eppi B7", "vol": 800,
-             "volatile": False, "wash_vol": 200, "wash_times": 1, "wash_src": "Wash A"},
-            {"execute": False, "src_mod": "Eppi Rack", "src_pos": "C8", "dest": "Filter Eppi B8", "vol": 800,
-             "volatile": False, "wash_vol": 200, "wash_times": 1, "wash_src": "Wash A"},
+            {"execute": False, "src_mod": "Eppi Rack", "src_pos": "C1", "dest": "Filter Eppi B1", "vol": 800, "volatile": False, "wash_vol": 200, "wash_times": 1, "wash_src": "Wash A"},
+            {"execute": False, "src_mod": "Eppi Rack", "src_pos": "C2", "dest": "Filter Eppi B2", "vol": 800, "volatile": False, "wash_vol": 200, "wash_times": 1, "wash_src": "Wash A"},
+            {"execute": False, "src_mod": "Eppi Rack", "src_pos": "C3", "dest": "Filter Eppi B3", "vol": 800, "volatile": False, "wash_vol": 200, "wash_times": 1, "wash_src": "Wash A"},
+            {"execute": False, "src_mod": "Eppi Rack", "src_pos": "C4", "dest": "Filter Eppi B4", "vol": 800, "volatile": False, "wash_vol": 200, "wash_times": 1, "wash_src": "Wash A"},
+            {"execute": False, "src_mod": "Eppi Rack", "src_pos": "C5", "dest": "Filter Eppi B5", "vol": 800, "volatile": False, "wash_vol": 200, "wash_times": 1, "wash_src": "Wash A"},
+            {"execute": False, "src_mod": "Eppi Rack", "src_pos": "C6", "dest": "Filter Eppi B6", "vol": 800, "volatile": False, "wash_vol": 200, "wash_times": 1, "wash_src": "Wash A"},
+            {"execute": False, "src_mod": "Eppi Rack", "src_pos": "C7", "dest": "Filter Eppi B7", "vol": 800, "volatile": False, "wash_vol": 200, "wash_times": 1, "wash_src": "Wash A"},
+            {"execute": False, "src_mod": "Eppi Rack", "src_pos": "C8", "dest": "Filter Eppi B8", "vol": 800, "volatile": False, "wash_vol": 200, "wash_times": 1, "wash_src": "Wash A"},
         ]
         self._apply_transfer_table_preset(preset, preset_name="Preset 2")
 
     def load_transfer_preset_3(self):
         preset = [
-            {"execute": False, "src_mod": "Eppi Rack", "src_pos": "C1", "dest": "HPLC D1", "vol": 800,
-             "volatile": False, "wash_vol": 100, "wash_times": 1, "wash_src": "Wash A"},
-            {"execute": False, "src_mod": "Eppi Rack", "src_pos": "C2", "dest": "HPLC D2", "vol": 800,
-             "volatile": False, "wash_vol": 100, "wash_times": 1, "wash_src": "Wash A"},
-            {"execute": False, "src_mod": "Eppi Rack", "src_pos": "C3", "dest": "HPLC D3", "vol": 800,
-             "volatile": False, "wash_vol": 100, "wash_times": 1, "wash_src": "Wash A"},
-            {"execute": False, "src_mod": "Eppi Rack", "src_pos": "C4", "dest": "HPLC D4", "vol": 800,
-             "volatile": False, "wash_vol": 100, "wash_times": 1, "wash_src": "Wash A"},
-            {"execute": False, "src_mod": "Eppi Rack", "src_pos": "C5", "dest": "HPLC D5", "vol": 800,
-             "volatile": False, "wash_vol": 100, "wash_times": 1, "wash_src": "Wash A"},
-            {"execute": False, "src_mod": "Eppi Rack", "src_pos": "C6", "dest": "HPLC D6", "vol": 800,
-             "volatile": False, "wash_vol": 100, "wash_times": 1, "wash_src": "Wash A"},
-            {"execute": False, "src_mod": "Eppi Rack", "src_pos": "C7", "dest": "HPLC D7", "vol": 800,
-             "volatile": False, "wash_vol": 100, "wash_times": 1, "wash_src": "Wash A"},
-            {"execute": False, "src_mod": "Eppi Rack", "src_pos": "C8", "dest": "HPLC D8", "vol": 800,
-             "volatile": False, "wash_vol": 100, "wash_times": 1, "wash_src": "Wash A"},
+            {"execute": False, "src_mod": "Eppi Rack", "src_pos": "C1", "dest": "HPLC D1", "vol": 800, "volatile": False, "wash_vol": 100, "wash_times": 1, "wash_src": "Wash A"},
+            {"execute": False, "src_mod": "Eppi Rack", "src_pos": "C2", "dest": "HPLC D2", "vol": 800, "volatile": False, "wash_vol": 100, "wash_times": 1, "wash_src": "Wash A"},
+            {"execute": False, "src_mod": "Eppi Rack", "src_pos": "C3", "dest": "HPLC D3", "vol": 800, "volatile": False, "wash_vol": 100, "wash_times": 1, "wash_src": "Wash A"},
+            {"execute": False, "src_mod": "Eppi Rack", "src_pos": "C4", "dest": "HPLC D4", "vol": 800, "volatile": False, "wash_vol": 100, "wash_times": 1, "wash_src": "Wash A"},
+            {"execute": False, "src_mod": "Eppi Rack", "src_pos": "C5", "dest": "HPLC D5", "vol": 800, "volatile": False, "wash_vol": 100, "wash_times": 1, "wash_src": "Wash A"},
+            {"execute": False, "src_mod": "Eppi Rack", "src_pos": "C6", "dest": "HPLC D6", "vol": 800, "volatile": False, "wash_vol": 100, "wash_times": 1, "wash_src": "Wash A"},
+            {"execute": False, "src_mod": "Eppi Rack", "src_pos": "C7", "dest": "HPLC D7", "vol": 800, "volatile": False, "wash_vol": 100, "wash_times": 1, "wash_src": "Wash A"},
+            {"execute": False, "src_mod": "Eppi Rack", "src_pos": "C8", "dest": "HPLC D8", "vol": 800, "volatile": False, "wash_vol": 100, "wash_times": 1, "wash_src": "Wash A"},
         ]
         self._apply_transfer_table_preset(preset, preset_name="Preset 3")
 
     def load_transfer_preset_4(self):
         preset = [
-            {"execute": False, "src_mod": "Falcon Rack", "src_pos": "A1", "dest": "Filter Eppi A1", "vol": 800,
-             "volatile": False, "wash_vol": 200, "wash_times": 1, "wash_src": "Wash A"},
-            {"execute": False, "src_mod": "Falcon Rack", "src_pos": "A2", "dest": "Filter Eppi A2", "vol": 800,
-             "volatile": False, "wash_vol": 200, "wash_times": 1, "wash_src": "Wash A"},
-            {"execute": False, "src_mod": "Falcon Rack", "src_pos": "A3", "dest": "Filter Eppi A3", "vol": 800,
-             "volatile": False, "wash_vol": 200, "wash_times": 1, "wash_src": "Wash A"},
-            {"execute": False, "src_mod": "Falcon Rack", "src_pos": "A4", "dest": "Filter Eppi A4", "vol": 800,
-             "volatile": False, "wash_vol": 200, "wash_times": 1, "wash_src": "Wash A"},
-            {"execute": False, "src_mod": "Falcon Rack", "src_pos": "A5", "dest": "Filter Eppi A5", "vol": 800,
-             "volatile": False, "wash_vol": 200, "wash_times": 1, "wash_src": "Wash A"},
-            {"execute": False, "src_mod": "Falcon Rack", "src_pos": "A6", "dest": "Filter Eppi A6", "vol": 800,
-             "volatile": False, "wash_vol": 200, "wash_times": 1, "wash_src": "Wash A"},
-            {"execute": False, "src_mod": "", "src_pos": "", "dest": "", "vol": 0, "volatile": False, "wash_vol": 0,
-             "wash_times": 2, "wash_src": "Wash A"},
-            {"execute": False, "src_mod": "", "src_pos": "", "dest": "", "vol": 0, "volatile": False, "wash_vol": 0,
-             "wash_times": 2, "wash_src": "Wash A"},
+            {"execute": False, "src_mod": "Falcon Rack", "src_pos": "A1", "dest": "Filter Eppi A1", "vol": 800, "volatile": False, "wash_vol": 200, "wash_times": 1, "wash_src": "Wash A"},
+            {"execute": False, "src_mod": "Falcon Rack", "src_pos": "A2", "dest": "Filter Eppi A2", "vol": 800, "volatile": False, "wash_vol": 200, "wash_times": 1, "wash_src": "Wash A"},
+            {"execute": False, "src_mod": "Falcon Rack", "src_pos": "A3", "dest": "Filter Eppi A3", "vol": 800, "volatile": False, "wash_vol": 200, "wash_times": 1, "wash_src": "Wash A"},
+            {"execute": False, "src_mod": "Falcon Rack", "src_pos": "A4", "dest": "Filter Eppi A4", "vol": 800, "volatile": False, "wash_vol": 200, "wash_times": 1, "wash_src": "Wash A"},
+            {"execute": False, "src_mod": "Falcon Rack", "src_pos": "A5", "dest": "Filter Eppi A5", "vol": 800, "volatile": False, "wash_vol": 200, "wash_times": 1, "wash_src": "Wash A"},
+            {"execute": False, "src_mod": "Falcon Rack", "src_pos": "A6", "dest": "Filter Eppi A6", "vol": 800, "volatile": False, "wash_vol": 200, "wash_times": 1, "wash_src": "Wash A"},
+            {"execute": False, "src_mod": "", "src_pos": "", "dest": "", "vol": 0, "volatile": False, "wash_vol": 0, "wash_times": 2, "wash_src": "Wash A"},
+            {"execute": False, "src_mod": "", "src_pos": "", "dest": "", "vol": 0, "volatile": False, "wash_vol": 0, "wash_times": 2, "wash_src": "Wash A"},
         ]
         self._apply_transfer_table_preset(preset, preset_name="Preset 4")
 
     def load_transfer_preset_5(self):
         preset = [
-            {"execute": False, "src_mod": "Screwcap Vial", "src_pos": "F1", "dest": "HPLC Insert E1", "vol": 20,
-             "volatile": False, "wash_vol": 0, "wash_times": 0, "wash_src": "Wash A"},
-            {"execute": False, "src_mod": "Screwcap Vial", "src_pos": "F2", "dest": "HPLC Insert E2", "vol": 20,
-             "volatile": False, "wash_vol": 0, "wash_times": 0, "wash_src": "Wash A"},
-            {"execute": False, "src_mod": "Screwcap Vial", "src_pos": "F3", "dest": "HPLC Insert E3", "vol": 20,
-             "volatile": False, "wash_vol": 0, "wash_times": 0, "wash_src": "Wash A"},
-            {"execute": False, "src_mod": "Screwcap Vial", "src_pos": "F4", "dest": "HPLC Insert E4", "vol": 20,
-             "volatile": False, "wash_vol": 0, "wash_times": 0, "wash_src": "Wash A"},
-            {"execute": False, "src_mod": "Screwcap Vial", "src_pos": "F5", "dest": "HPLC Insert E5", "vol": 20,
-             "volatile": False, "wash_vol": 0, "wash_times": 0, "wash_src": "Wash A"},
-            {"execute": False, "src_mod": "Screwcap Vial", "src_pos": "F6", "dest": "HPLC Insert E6", "vol": 20,
-             "volatile": False, "wash_vol": 0, "wash_times": 0, "wash_src": "Wash A"},
-            {"execute": False, "src_mod": "Screwcap Vial", "src_pos": "F7", "dest": "HPLC Insert E7", "vol": 20,
-             "volatile": False, "wash_vol": 0, "wash_times": 0, "wash_src": "Wash A"},
-            {"execute": False, "src_mod": "Screwcap Vial", "src_pos": "F8", "dest": "HPLC Insert E8", "vol": 20,
-             "volatile": False, "wash_vol": 0, "wash_times": 0, "wash_src": "Wash A"},
+            {"execute": False, "src_mod": "Screwcap Vial", "src_pos": "F1", "dest": "HPLC Insert E1", "vol": 20, "volatile": False, "wash_vol": 0, "wash_times": 0, "wash_src": "Wash A"},
+            {"execute": False, "src_mod": "Screwcap Vial", "src_pos": "F2", "dest": "HPLC Insert E2", "vol": 20, "volatile": False, "wash_vol": 0, "wash_times": 0, "wash_src": "Wash A"},
+            {"execute": False, "src_mod": "Screwcap Vial", "src_pos": "F3", "dest": "HPLC Insert E3", "vol": 20, "volatile": False, "wash_vol": 0, "wash_times": 0, "wash_src": "Wash A"},
+            {"execute": False, "src_mod": "Screwcap Vial", "src_pos": "F4", "dest": "HPLC Insert E4", "vol": 20, "volatile": False, "wash_vol": 0, "wash_times": 0, "wash_src": "Wash A"},
+            {"execute": False, "src_mod": "Screwcap Vial", "src_pos": "F5", "dest": "HPLC Insert E5", "vol": 20, "volatile": False, "wash_vol": 0, "wash_times": 0, "wash_src": "Wash A"},
+            {"execute": False, "src_mod": "Screwcap Vial", "src_pos": "F6", "dest": "HPLC Insert E6", "vol": 20, "volatile": False, "wash_vol": 0, "wash_times": 0, "wash_src": "Wash A"},
+            {"execute": False, "src_mod": "Screwcap Vial", "src_pos": "F7", "dest": "HPLC Insert E7", "vol": 20, "volatile": False, "wash_vol": 0, "wash_times": 0, "wash_src": "Wash A"},
+            {"execute": False, "src_mod": "Screwcap Vial", "src_pos": "F8", "dest": "HPLC Insert E8", "vol": 20, "volatile": False, "wash_vol": 0, "wash_times": 0, "wash_src": "Wash A"},
         ]
         self._apply_transfer_table_preset(preset, preset_name="Preset 5")
 
@@ -873,6 +855,7 @@ class LiquidHandlerApp:
         frame = ttk.Frame(parent, padding=10)
         frame.pack(fill="both", expand=True)
 
+        # Use ONE grid table for header + rows (fixes header shift)
         table = ttk.Frame(frame)
         table.pack(fill="x", pady=(0, 5))
         table.grid_anchor("w")
@@ -987,21 +970,10 @@ class LiquidHandlerApp:
         btn_frame = ttk.Frame(frame, padding=10)
         btn_frame.pack(fill="x", pady=10)
 
-        # EXECUTE AND PAUSE BUTTONS ROW
-        exec_row = ttk.Frame(btn_frame)
-        exec_row.pack(fill="x", pady=5)
-
-        self.combine_exec_btn = ttk.Button(
-            exec_row, text="RUN COMBINE SEQUENCE",
+        ttk.Button(
+            btn_frame, text="RUN COMBINE SEQUENCE",
             command=lambda: threading.Thread(target=self.combine_fractions_sequence, daemon=True).start()
-        )
-        self.combine_exec_btn.pack(side="left", fill="x", expand=True, padx=(0, 5), ipady=5)
-
-        self.combine_pause_btn = ttk.Button(
-            exec_row, text="PAUSE",
-            command=self.toggle_pause
-        )
-        self.combine_pause_btn.pack(side="left", fill="x", padx=(5, 0), ipady=5)
+        ).pack(fill="x", ipady=5)
 
         ttk.Label(
             btn_frame,
@@ -1201,6 +1173,8 @@ class LiquidHandlerApp:
                 fname = os.path.join(self.log_dir, f"positions-{today}.txt")
 
                 # Read from internal memory variables
+                # These are updated by _parse_coordinates when available,
+                # or maintained by the script logic.
                 x = self.current_x
                 y = self.current_y
                 z = self.current_z
@@ -1262,74 +1236,7 @@ class LiquidHandlerApp:
         self.reader_thread.start()
         self.log_line(f"[HOST] Connected to {port} @ {baud}")
         self.update_connection_status_icon(True)
-
-        # Check logs immediately after connection logic
-        self.root.after(500, self.check_last_position_log)
-
         threading.Thread(target=self._run_startup_sequence, daemon=True).start()
-
-    def check_last_position_log(self):
-        """
-        Reads the last line of the most recent log file to determine safety.
-        """
-        try:
-            # Find most recent file
-            list_of_files = glob.glob(os.path.join(self.log_dir, "positions-*.txt"))
-            if not list_of_files:
-                return  # No logs, assume first run
-
-            latest_file = max(list_of_files, key=os.path.getctime)
-
-            last_line = ""
-            with open(latest_file, "r") as f:
-                lines = f.readlines()
-                if lines:
-                    last_line = lines[-1]
-
-            if not last_line:
-                return
-
-            # Parse X, Y, Z
-            # Format: HH:MM:SS -> X:0.00 Y:0.00 Z:0.00 Vol:200.0
-            match = re.search(r"X:([0-9.-]+)\s*Y:([0-9.-]+)\s*Z:([0-9.-]+)", last_line)
-            if match:
-                log_x = float(match.group(1))
-                log_y = float(match.group(2))
-                log_z = float(match.group(3))
-
-                # CHECK 1: Magic Numbers (Machine Off/Freeze)
-                # X -13 Y -15 Z 0
-                if int(log_x) == -13 and int(log_y) == -15 and int(log_z) == 0:
-                    response = messagebox.askyesno(
-                        "Startup Check",
-                        "Last log entry indicates machine was off or frozen (Magic Coordinates).\n\nDo you want to HOME ALL now?"
-                    )
-                    if response:
-                        self.send_home("All")
-                    return
-
-                # CHECK 2: High Z Danger
-                if log_z > 190:
-                    messagebox.showwarning(
-                        "High Z Warning",
-                        f"Last known Z position was {log_z:.1f} (High).\n\nPlease move the head down manually before homing to avoid crashing into the top frame."
-                    )
-                    return
-
-                # CHECK 3: Position Mismatch (Generic)
-                # On startup, machine usually reports 0,0,0 or unknown until homed.
-                # If log says we were at X:100, Y:100, Z:50, and machine says 0,0,0 (unhomed), warn user.
-                # We can't easily check 'machine reported' here synchronously without blocking,
-                # but usually startup implies unhomed.
-                response = messagebox.askyesno(
-                    "Position Check",
-                    f"Last known position: X{log_x} Y{log_y} Z{log_z}.\nMachine likely not homed.\n\nDo you want to HOME ALL now?"
-                )
-                if response:
-                    self.send_home("All")
-
-        except Exception as e:
-            print(f"Error checking log file: {e}")
 
     def _run_startup_sequence(self):
         self.last_cmd_var.set("Initializing...")
@@ -1347,6 +1254,7 @@ class LiquidHandlerApp:
         if self.reader_thread and self.reader_thread.is_alive():
             self.reader_thread.join(timeout=1.0)
         if self.pos_log_thread and self.pos_log_thread.is_alive():
+            # Join isn't strictly necessary for daemon threads on exit, but good practice
             pass
         if self.ser:
             try:
@@ -1361,8 +1269,8 @@ class LiquidHandlerApp:
     def _poll_position_loop(self):
         time_since_last_cmd = time.time() - self.last_action_time
         should_poll = (
-            not self.is_sequence_running and
-            time_since_last_cmd > IDLE_TIMEOUT_BEFORE_POLL
+                not self.is_sequence_running and
+                time_since_last_cmd > IDLE_TIMEOUT_BEFORE_POLL
         )
         if self.ser and self.ser.is_open and should_poll:
             if self.ok_event.is_set() or self.rx_queue.empty():
@@ -1431,84 +1339,11 @@ class LiquidHandlerApp:
                 self.ser.write(data.encode("utf-8", errors="replace"))
                 self.ser.flush()
 
-    # ==========================================
-    #           PAUSE / ABORT LOGIC
-    # ==========================================
-
-    def toggle_pause(self):
-        self.is_paused = not self.is_paused
-        status = "RESUME" if self.is_paused else "PAUSE"
-        self.transfer_pause_btn.config(text=status)
-        self.combine_pause_btn.config(text=status)
-        if self.is_paused:
-            self.log_line("[USER] Paused sequence.")
-            self.last_cmd_var.set("PAUSED")
-        else:
-            self.log_line("[USER] Resumed sequence.")
-            self.last_cmd_var.set("Resuming...")
-
-    def send_resume(self):
-        # This is for the manual resume button in maintenance tab,
-        # but also serves to unpause the script logic.
-        if self.is_paused:
-            self.toggle_pause()
-        # Also send M108 in case the firmware is blocking
-        if self.ser and self.ser.is_open:
-            self._send_raw("M108\n")
-
-    def abort_sequence(self):
-        if not self.is_sequence_running:
-            self.log_line("[USER] Abort clicked, but no sequence running.")
-            # Still run eject/park just in case
-            threading.Thread(target=self._emergency_park, daemon=True).start()
-            return
-
-        self.log_line("[USER] ABORTING SEQUENCE!")
-        self.is_aborted = True
-        self.is_paused = False  # Unpause so loop breaks and exception raises
-
-        # The running thread will catch SequenceAbortedError and exit.
-        # We start a separate thread to handle the cleanup (Eject + Park)
-        threading.Thread(target=self._emergency_park, daemon=True).start()
-
-    def _emergency_park(self):
-        # Wait a moment for the main sequence thread to die/release lock
-        time.sleep(1.0)
-        self.log_line("[ABORT] Running Emergency Eject & Park...")
-
-        # Reset flags for the new cleanup sequence
-        self.is_aborted = False
-        self.is_paused = False
-
-        # Run Eject
-        try:
-            self.eject_tip_sequence()
-            # Wait for eject to finish (it runs in a thread, so we join it?
-            # No, eject_tip_sequence starts a thread. We need to run it synchronously here or chain them.)
-            # Since eject_tip_sequence spawns a thread, we should call the internal logic directly or wait.
-            # Ideally, we reconstruct the commands here to run in *this* thread.
-        except:
-            pass
-
-        # Since eject_tip_sequence is async, we can't easily chain park after it without refactoring.
-        # However, eject_tip_sequence ALREADY calls park at the end.
-        # So calling eject_tip_sequence is sufficient.
-
     def _send_lines_with_ok(self, lines):
         self.is_sequence_running = True
         self.last_action_time = time.time()
         try:
             for line in lines:
-                # --- ABORT CHECK ---
-                if self.is_aborted:
-                    raise SequenceAbortedError("User Aborted")
-
-                # --- PAUSE CHECK ---
-                while self.is_paused:
-                    time.sleep(0.1)
-                    if self.is_aborted:
-                        raise SequenceAbortedError("User Aborted")
-
                 self.ok_event.clear()
                 try:
                     self.rx_queue.put(f"[HOST] >> {line}")
@@ -1517,26 +1352,19 @@ class LiquidHandlerApp:
                 except Exception as e:
                     self.rx_queue.put(f"[HOST] Send error: {e}")
                     return
-
                 current_timeout = 60.0
                 cmd_upper = line.upper()
                 if "G28" in cmd_upper or "G29" in cmd_upper:
                     current_timeout = 200.0
-
                 ok = self.ok_event.wait(timeout=current_timeout)
                 if not ok:
                     self.rx_queue.put(f"[HOST] Error: Timeout waiting for 'ok' on: {line}")
                     self.rx_queue.put("[HOST] Stopping sequence to prevent crash.")
                     return
-        except SequenceAbortedError:
-            self.rx_queue.put("[HOST] Sequence Aborted by User.")
-            return  # Exit immediately
         finally:
             self.is_sequence_running = False
             self.last_action_time = time.time()
-            # Don't log "Complete" if aborted
-            if not self.is_aborted:
-                self.rx_queue.put("[HOST] Sequence Complete")
+            self.rx_queue.put("[HOST] Sequence Complete")
 
     def _wait_for_finish(self):
         if not self.ser or not self.ser.is_open: return
@@ -1590,6 +1418,7 @@ class LiquidHandlerApp:
         return "Unknown", combo_str
 
     def _construct_combo_string(self, mod_name, pos_name):
+        """Helper to reconstruct the string expected by _parse_combo_string from UI selections"""
         if mod_name == "96 Well Plate": return f"PLATE {pos_name}"
         if mod_name == "Falcon Rack": return f"Falcon {pos_name}"
         if mod_name == "4mL Rack": return f"4mL {pos_name}"
@@ -1598,7 +1427,7 @@ class LiquidHandlerApp:
         if mod_name == "HPLC Vial": return f"HPLC {pos_name}"
         if mod_name == "HPLC Insert": return f"HPLC Insert {pos_name}"
         if mod_name == "Screwcap Vial": return f"Screwcap {pos_name}"
-        if mod_name == "Wash Station": return pos_name
+        if mod_name == "Wash Station": return pos_name  # Wash positions are "Wash A", etc.
         return f"{mod_name} {pos_name}"
 
     def get_coords_from_combo(self, combo_str):
@@ -1764,6 +1593,11 @@ class LiquidHandlerApp:
     #           MOVEMENT COMMANDS
     # ==========================================
 
+    def send_resume(self):
+        if not self.ser or not self.ser.is_open: return
+        self.log_line("[MANUAL] Sending Resume (M108)...")
+        self._send_raw("M108\n")
+
     def send_jog(self, axis, direction_sign):
         if not self.ser or not self.ser.is_open:
             messagebox.showwarning("Not Connected", "Please connect to the printer first.")
@@ -1784,14 +1618,23 @@ class LiquidHandlerApp:
         threading.Thread(target=run_seq, daemon=True).start()
 
     def _get_park_head_commands(self):
+        """
+        Generates G-Code to park the head.
+        Logic:
+        1. Calculate Absolute Park Coordinates (Relative + Pin).
+        2. Calculate Global Safe Z (Relative + Pin).
+        3. Move Z to Global Safe Z.
+        4. Move XY to Park XY.
+        5. Move Z to Park Z.
+        """
         abs_park_x, abs_park_y, abs_park_z = self.resolve_coords(PARK_HEAD_X, PARK_HEAD_Y, PARK_HEAD_Z)
         _, _, abs_global_safe_z = self.resolve_coords(0, 0, GLOBAL_SAFE_Z_OFFSET)
 
         return [
-            "G90",
-            f"G0 Z{abs_global_safe_z:.2f} F{JOG_SPEED_Z}",
-            f"G0 X{abs_park_x:.2f} Y{abs_park_y:.2f} F{JOG_SPEED_XY}",
-            f"G0 Z{abs_park_z:.2f} F{JOG_SPEED_Z}"
+            "G90",  # Absolute positioning
+            f"G0 Z{abs_global_safe_z:.2f} F{JOG_SPEED_Z}",  # Move to Safe Z first
+            f"G0 X{abs_park_x:.2f} Y{abs_park_y:.2f} F{JOG_SPEED_XY}",  # Move to Park XY
+            f"G0 Z{abs_park_z:.2f} F{JOG_SPEED_Z}"  # Move down to Park Z
         ]
 
     def send_home(self, axes):
@@ -1805,7 +1648,10 @@ class LiquidHandlerApp:
         else:
             home_cmd = f"G28 {' '.join(list(axes))}"
 
+        # Homing command followed by disabling extruder
         commands = [home_cmd, "M18 E"]
+
+        # Append Parking Sequence (Safe Z -> Park XY -> Park Z)
         commands.extend(self._get_park_head_commands())
 
         self.log_line(f"[MANUAL] Homing {axes} and Parking...")
@@ -1826,6 +1672,8 @@ class LiquidHandlerApp:
 
         self.log_line("[SYSTEM] Parking Head...")
         self.log_command("Park Head (Defined Coordinates)")
+
+        # Use the helper method to get the correct sequence
         commands = self._get_park_head_commands()
 
         def run_seq():
@@ -2004,12 +1852,21 @@ class LiquidHandlerApp:
 
     def _get_smart_travel_gcode(self, target_module, target_x, target_y, module_abs_safe_z, start_module=None):
         global_safe_z = self.resolve_coords(0, 0, GLOBAL_SAFE_Z_OFFSET)[2]
+
+        # Use the provided start_module (from pre-calculated sequence) if available,
+        # otherwise fall back to the last known state (for manual moves).
         current_mod = start_module if start_module is not None else self.last_known_module
+
+        # --- OPTIMIZATION LOGIC FOR Z HEIGHT ---
+        # If moving between two small vial modules, use the lower safe Z
         use_optimized_z = (
-            current_mod in SMALL_VIAL_MODULES and
-            target_module in SMALL_VIAL_MODULES
+                current_mod in SMALL_VIAL_MODULES and
+                target_module in SMALL_VIAL_MODULES
         )
+
+        # Calculate the travel Z height
         if use_optimized_z:
+            # All small modules share -11.2 relative safe Z
             travel_z = self.resolve_coords(0, 0, _4ML_RACK_CONFIG["Z_SAFE"])[2]
         else:
             travel_z = global_safe_z
@@ -2058,12 +1915,16 @@ class LiquidHandlerApp:
         self.log_line("[SYSTEM] Ejecting Tip...")
         self.log_command("Ejecting Tip")
         commands = self._get_eject_tip_commands()
+
+        # Append Parking Sequence for Manual Eject
         commands.extend(self._get_park_head_commands())
 
         def run_seq():
             self.last_cmd_var.set("Ejecting Tip...")
             self._send_lines_with_ok(commands)
             self._wait_for_finish()
+            self.update_last_module("EJECT")
+            # Since we parked, update to PARK
             self.update_last_module("PARK")
             self.last_cmd_var.set("Idle")
 
@@ -2079,6 +1940,7 @@ class LiquidHandlerApp:
             return
         self.log_line(f"[SYSTEM] Picking Tip {target_tip}...")
         self.log_command(f"Pick Tip: {target_tip}")
+        # When picking manually, we use self.last_known_module (default)
         commands = self._get_pick_tip_commands(target_tip)
 
         def run_seq():
@@ -2098,6 +1960,10 @@ class LiquidHandlerApp:
     # ==========================================
 
     def _ordered_group_by(self, items, key_fn):
+        """
+        Groups items by key_fn(item) while preserving first-seen key order.
+        Returns: list of (key, [items...]) in stable order.
+        """
         groups = {}
         order = []
         for it in items:
@@ -2117,6 +1983,18 @@ class LiquidHandlerApp:
         max_liquid_ul: float = 800.0,
         start_module: str | None = None
     ):
+        """
+        Batch-dispense wash solvent into multiple SOURCE vials.
+
+        - Uses ONE mounted tip.
+        - Aspirates from wash_src in loads up to max_liquid_ul (normally 800uL).
+        - Dispenses each task["wash_vol"] into task["source"].
+        - Handles mid-way refill (e.g. 8x150uL).
+
+        tasks_for_this_wash: list of task dicts with at least:
+            { "line": int, "source": str, "wash_vol": float }
+        Returns: updated module tracker (string).
+        """
         if not wash_src_str:
             self.log_line("[WASH-BATCH] ERROR: wash_src_str is empty.")
             return start_module if start_module is not None else self.last_known_module
@@ -2124,15 +2002,20 @@ class LiquidHandlerApp:
         if not tasks_for_this_wash:
             return start_module if start_module is not None else self.last_known_module
 
+        # Resolve wash source coords once
         w_mod, w_x, w_y, w_safe_z, w_asp_z, _ = self.get_coords_from_combo(wash_src_str)
+
+        # Build per-source plan (keep stable order from tasks_for_this_wash)
         plan = []
         for t in tasks_for_this_wash:
             try:
                 need = float(t.get("wash_vol", 0.0))
             except (TypeError, ValueError):
                 need = 0.0
+
             if need <= 0:
                 continue
+
             s_mod, s_x, s_y, s_safe_z, _, s_disp_z = self.get_coords_from_combo(t["source"])
             plan.append({
                 "line": t["line"],
@@ -2148,6 +2031,7 @@ class LiquidHandlerApp:
         remaining = [p["need_ul"] for p in plan]
         current_mod = start_module if start_module is not None else self.last_known_module
 
+        # Main loop: refill until all remaining == 0
         while True:
             total_remaining = sum(remaining)
             if total_remaining <= 0.0001:
@@ -2160,7 +2044,10 @@ class LiquidHandlerApp:
                 f"[WASH-BATCH] Loading {load_ul:.1f}uL from '{wash_src_str}' (remaining total {total_remaining:.1f}uL)")
 
             cmds = []
+            # Ensure we're at air-gap baseline before aspirating
             cmds.append(f"G1 E{e_gap_pos:.3f} F{PIP_SPEED}")
+
+            # Go to wash source + aspirate load_ul
             cmds.extend(self._get_smart_travel_gcode(w_mod, w_x, w_y, w_safe_z, start_module=current_mod))
             cmds.append(f"G0 Z{w_asp_z:.2f} F{JOG_SPEED_Z}")
 
@@ -2170,6 +2057,7 @@ class LiquidHandlerApp:
 
             current_mod = w_mod
 
+            # Dispense sequentially into sources until this load is empty
             for i, p in enumerate(plan):
                 if remaining[i] <= 0.0001:
                     continue
@@ -2195,6 +2083,7 @@ class LiquidHandlerApp:
 
             self._send_lines_with_ok(cmds)
 
+        # Ensure we finish at air gap baseline
         self._send_lines_with_ok([f"G1 E{e_gap_pos:.3f} F{PIP_SPEED}"])
         self.current_pipette_volume = air_gap_ul
         self.vol_display_var.set(f"{self.current_pipette_volume:.1f} uL")
@@ -2211,34 +2100,50 @@ class LiquidHandlerApp:
         air_gap_ul: float,
         start_module: str | None = None
     ):
+        """
+        After wash solvent has already been dispensed into the SOURCE:
+          - go to source
+          - mix
+          - aspirate (wash_vol + overage, capped to 800)
+          - go to dest
+          - dispense with blowout to 100uL, reset to air gap
+
+        Returns: updated module tracker (dest module).
+        """
         s_mod, s_x, s_y, s_safe_z, s_asp_z, _ = self.get_coords_from_combo(source_str)
         d_mod, d_x, d_y, d_safe_z, _, d_disp_z = self.get_coords_from_combo(dest_str)
 
         current_mod = start_module if start_module is not None else self.last_known_module
-        max_collect_ul = MAX_PIPETTE_VOL - air_gap_ul
+
+        # Cap collection so air_gap + collect <= 1000 => collect <= 800
+        max_collect_ul = MAX_PIPETTE_VOL - air_gap_ul  # typically 800
         collect_ul = min(float(wash_vol_ul) + 50.0, max_collect_ul)
 
         mix_vol = 200.0
-        mix_vol = min(mix_vol, max_collect_ul)
+        mix_vol = min(mix_vol, max_collect_ul)  # just in case
 
         e_mix_up = -1 * (air_gap_ul) * STEPS_PER_UL
         e_mix_down = -1 * (air_gap_ul + mix_vol) * STEPS_PER_UL
         e_collect = -1 * (air_gap_ul + collect_ul) * STEPS_PER_UL
-        e_blowout = -1 * MIN_PIPETTE_VOL * STEPS_PER_UL
+        e_blowout = -1 * MIN_PIPETTE_VOL * STEPS_PER_UL  # 100uL baseline
 
         cmds = []
         cmds.append(f"G1 E{e_gap_pos:.3f} F{PIP_SPEED}")
 
+        # Go to source
         cmds.extend(self._get_smart_travel_gcode(s_mod, s_x, s_y, s_safe_z, start_module=current_mod))
         cmds.append(f"G0 Z{s_asp_z:.2f} F{JOG_SPEED_Z}")
 
+        # Mix (2 cycles like your wash cycle)
         for _ in range(2):
             cmds.append(f"G1 E{e_mix_down:.3f} F{PIP_SPEED}")
             cmds.append(f"G1 E{e_mix_up:.3f} F{PIP_SPEED}")
 
+        # Aspirate wash mixture
         cmds.append(f"G1 E{e_collect:.3f} F{PIP_SPEED}")
         cmds.append(f"G0 Z{s_safe_z:.2f} F{JOG_SPEED_Z}")
 
+        # Go to dest + dispense
         cmds.extend(self._get_smart_travel_gcode(d_mod, d_x, d_y, d_safe_z, start_module=s_mod))
         cmds.append(f"G0 Z{d_disp_z:.2f} F{JOG_SPEED_Z}")
         cmds.append(f"G1 E{e_blowout:.3f} F{PIP_SPEED}")
@@ -2259,6 +2164,9 @@ class LiquidHandlerApp:
             messagebox.showwarning("Not Connected", "Please connect to the printer first.")
             return
 
+        # --------------------------
+        # Build task list (same as you do)
+        # --------------------------
         tasks = []
         for idx, row in enumerate(self.transfer_rows):
             if not row["execute"].get():
@@ -2278,6 +2186,7 @@ class LiquidHandlerApp:
             dest = row["dest"].get()
             wash_src = row["wash_src"].get()
 
+            # Basic safety validation
             if not full_source_str or not dest:
                 self.log_line(f"[TRANSFER] Skipping line {idx + 1}: missing source/dest.")
                 continue
@@ -2302,20 +2211,36 @@ class LiquidHandlerApp:
 
         self.log_command(f"[TRANSFER] Starting sequence with {len(tasks)} lines (batched wash enabled).")
 
-        air_gap_ul = float(AIR_GAP_UL)
+        # --------------------------
+        # Constants
+        # --------------------------
+        air_gap_ul = float(AIR_GAP_UL)  # 200
         e_gap_pos = -1 * air_gap_ul * STEPS_PER_UL
+
+        # Your transfer batching
         MAX_STD_BATCH = 800.0
         MAX_VOLATILE_BATCH = 600.0
-        MAX_WASH_LOAD = MAX_PIPETTE_VOL - air_gap_ul
+
+        # Wash batching (liquid capacity)
+        MAX_WASH_LOAD = MAX_PIPETTE_VOL - air_gap_ul  # normally 800
+
+        # Choose behavior:
+        # False = exactly as you wrote (separate tip for distribution + new tips for each wash transfer) -> uses more tips
+        # True  = reuse the distribution tip for ONE wash-recovery line (the last one) -> tip-neutral, faster, but contamination risk if distribution dips into liquid
         REUSE_DISTRIBUTION_TIP_FOR_ONE_RECOVERY = True
 
         def run_seq():
             current_simulated_module = self.last_known_module
+
+            # Ensure no tip at start (avoid weird state)
             self.log_line("[TRANSFER] Ensuring no tip is loaded at start...")
             self._send_lines_with_ok(self._get_eject_tip_commands())
             self.update_last_module("EJECT")
             current_simulated_module = "EJECT"
 
+            # =========================================================
+            # PHASE 1: Main transfers for all selected lines
+            # =========================================================
             for task in tasks:
                 line_num = task["line"]
                 self.log_line(f"--- PHASE 1: Transfer Line {line_num} ---")
@@ -2355,6 +2280,9 @@ class LiquidHandlerApp:
                 self.update_last_module("EJECT")
                 current_simulated_module = "EJECT"
 
+            # =========================================================
+            # PHASE 2+: Wash cycles (batched dispense -> per-line recovery)
+            # =========================================================
             wash_tasks = [t for t in tasks if t["wash_vol"] > 0 and t["wash_times"] > 0]
             if wash_tasks:
                 max_cycles = max(int(t["wash_times"]) for t in wash_tasks)
@@ -2367,11 +2295,13 @@ class LiquidHandlerApp:
                     self.log_line(f"=== PHASE 2: WASH CYCLE {cycle_idx}/{max_cycles} ===")
                     self.last_cmd_var.set(f"Wash cycle {cycle_idx}/{max_cycles}")
 
+                    # group by wash_src (preserve order)
                     for wash_src, group in self._ordered_group_by(cycle_tasks, lambda x: x["wash_src"]):
                         if not wash_src:
                             self.log_line("[WASH] Skipping group: wash_src empty.")
                             continue
 
+                        # If only one task in this wash_src group, use your legacy wash cycle (1 tip, no benefit to batching)
                         if len(group) == 1:
                             t = group[0]
                             self.log_line(f"[WASH] L{t['line']}: single-task wash (legacy wash cycle).")
@@ -2383,6 +2313,9 @@ class LiquidHandlerApp:
                             current_simulated_module = "EJECT"
                             continue
 
+                        # --------------------------
+                        # A) Batch dispense wash into ALL sources in this group
+                        # --------------------------
                         self.log_line(f"[WASH-BATCH] Dispensing wash from '{wash_src}' into {len(group)} sources...")
                         dist_tip = self._find_next_available_tip()
                         if not dist_tip:
@@ -2406,7 +2339,11 @@ class LiquidHandlerApp:
                             start_module=current_simulated_module
                         )
 
+                        # --------------------------
+                        # B) Recovery: mix source + transfer to dest
+                        # --------------------------
                         if REUSE_DISTRIBUTION_TIP_FOR_ONE_RECOVERY:
+                            # Use the distribution tip for ONE line (the last one) to avoid +1 tip.
                             reuse_task = group[-1]
                             self.log_line(
                                 f"[WASH-BATCH] Reusing distribution tip for recovery of L{reuse_task['line']} (tip-neutral mode).")
@@ -2424,12 +2361,14 @@ class LiquidHandlerApp:
 
                             remaining_recovery = group[:-1]
                         else:
+                            # Eject distribution tip first (your described behavior)
                             self.log_line("[WASH-BATCH] Ejecting distribution tip...")
                             self._send_lines_with_ok(self._get_eject_tip_commands())
                             self.update_last_module("EJECT")
                             current_simulated_module = "EJECT"
                             remaining_recovery = group
 
+                        # Now recover remaining lines using fresh tips
                         for t in remaining_recovery:
                             line_num = t["line"]
                             self.log_line(f"[WASH] L{line_num}: mix+transfer wash to dest...")
@@ -2458,6 +2397,7 @@ class LiquidHandlerApp:
                             self.update_last_module("EJECT")
                             current_simulated_module = "EJECT"
 
+            # Done: park
             self.log_command("[TRANSFER] All lines complete. Parking.")
             self.last_cmd_var.set("Parking...")
             self._send_lines_with_ok(self._get_park_head_commands())
@@ -2472,14 +2412,21 @@ class LiquidHandlerApp:
         dest_mod, dest_x, dest_y, dest_safe_z, _, dest_disp_z = self.get_coords_from_combo(dest_str)
         global_safe_z = self.resolve_coords(0, 0, GLOBAL_SAFE_Z_OFFSET)[2]
 
+        # Use the passed start_module to determine optimization path
         current_mod_tracker = start_module if start_module is not None else self.last_known_module
+
+        # --- Z OPTIMIZATION LOGIC FOR SOURCE APPROACH ---
         use_optimized_z_src = (current_mod_tracker in SMALL_VIAL_MODULES and src_mod in SMALL_VIAL_MODULES)
+        # Use the constant defined for 4ML racks (which is -11.2) as the shared low Z height
         travel_z_src = self.resolve_coords(0, 0, _4ML_RACK_CONFIG["Z_SAFE"])[
             2] if use_optimized_z_src else global_safe_z
 
         cmds = []
+
+        # 1. Move to Source (Standard Absolute Moves)
         cmds.append(f"G1 E{e_gap_pos:.3f} F{PIP_SPEED}")
 
+        # Logic to decide if we need to go to safe Z first or direct
         if current_mod_tracker == src_mod:
             cmds.append(f"G0 Z{src_safe_z:.2f} F{JOG_SPEED_Z}")
             cmds.append(f"G0 X{src_x:.2f} Y{src_y:.2f} F{JOG_SPEED_XY}")
@@ -2488,74 +2435,122 @@ class LiquidHandlerApp:
             cmds.append(f"G0 X{src_x:.2f} Y{src_y:.2f} F{JOG_SPEED_XY}")
             cmds.append(f"G0 Z{src_safe_z:.2f} F{JOG_SPEED_Z}")
 
+        # 2. Aspirate
         e_loaded_pos = -1 * (air_gap_ul + vol) * STEPS_PER_UL
         cmds.append(f"G0 Z{src_asp_z:.2f} F{JOG_SPEED_Z}")
 
+        # --- PRE-WETTING / MIXING (Only if Volatile) ---
         if is_volatile:
             mix_vol = 500.0
             e_mix_down = -1 * (air_gap_ul + mix_vol) * STEPS_PER_UL
             e_mix_up = -1 * (air_gap_ul) * STEPS_PER_UL
+
             self.log_line(f"[VOLATILE] Pre-wetting/Mixing source 3 times...")
             for _ in range(2):
                 cmds.append(f"G1 E{e_mix_down:.3f} F{PIP_SPEED}")
                 cmds.append(f"G1 E{e_mix_up:.3f} F{PIP_SPEED}")
 
+        # Perform final aspiration
         cmds.append(f"G1 E{e_loaded_pos:.3f} F{PIP_SPEED}")
+
+        # Send the preparation commands before the complex travel
         self._send_lines_with_ok(cmds)
 
+        # --- Z OPTIMIZATION LOGIC FOR DESTINATION ---
+        # CRITICAL FIX: We are now physically at 'src_mod'.
+        # We must compare 'src_mod' vs 'dest_mod' to decide if we can stay low.
         use_optimized_z_dest = (src_mod in SMALL_VIAL_MODULES and dest_mod in SMALL_VIAL_MODULES)
+
+        # Use the constant defined for 4ML racks (which is -11.2) as the shared low Z height
         travel_z_dest = self.resolve_coords(0, 0, _4ML_RACK_CONFIG["Z_SAFE"])[
             2] if use_optimized_z_dest else global_safe_z
 
+        # 3. TRAVEL TO DESTINATION (The Complex Part)
         if is_volatile:
             self.log_line("[VOLATILE] Performing synchronized relative travel...")
+
+            # A. Calculate Distances (Deltas)
+            # 1. Lift out of vial (Target Height - Current Height)
             dz_lift = travel_z_dest - src_asp_z
+
+            # 2. XY Travel
             dx = dest_x - src_x
             dy = dest_y - src_y
             dist_xy = math.sqrt(dx ** 2 + dy ** 2)
+
+            # 3. Drop into dest (Target Height - Current Height)
             dz_drop = dest_safe_z - travel_z_dest
+
+            # B. Calculate E-Drift based on F200 speed
             drift_per_min = VOLATILE_DRIFT_RATE * STEPS_PER_UL
+
             t_lift = abs(dz_lift) / VOLATILE_MOVE_SPEED
             e_drift_lift = drift_per_min * t_lift
+
             t_xy = dist_xy / VOLATILE_MOVE_SPEED
             e_drift_xy = drift_per_min * t_xy
+
             t_drop = abs(dz_drop) / VOLATILE_MOVE_SPEED
             e_drift_drop = drift_per_min * t_drop
+
+            # Total drift to update our internal absolute tracker later
             total_drift_steps = e_drift_lift + e_drift_xy + e_drift_drop
+
+            # C. Construct Relative Commands
             volatile_cmds = [
-                "G91",
+                "G91",  # Switch to Relative Positioning
+
+                # Move 1: Lift Z
                 f"G1 Z{dz_lift:.2f} E-{e_drift_lift:.3f} F{VOLATILE_MOVE_SPEED}",
+
+                # Move 2: Travel XY
                 f"G1 X{dx:.2f} Y{dy:.2f} E-{e_drift_xy:.3f} F{VOLATILE_MOVE_SPEED}",
+
+                # Move 3: Drop Z
                 f"G1 Z{dz_drop:.2f} E-{e_drift_drop:.3f} F{VOLATILE_MOVE_SPEED}",
-                "G90"
+
+                "G90"  # Switch back to Absolute Positioning
             ]
+
             self._send_lines_with_ok(volatile_cmds)
+
+            # IMPORTANT: Update the python tracker for E!
             e_loaded_pos -= total_drift_steps
+
         else:
+            # Standard Non-Volatile Move
             cmds_std = []
-            cmds_std.append(f"G0 Z{src_safe_z:.2f} F{JOG_SPEED_Z}")
-            cmds_std.append(f"G0 Z{travel_z_dest:.2f} F{JOG_SPEED_Z}")
-            cmds_std.append(f"G0 X{dest_x:.2f} Y{dest_y:.2f} F{JOG_SPEED_XY}")
-            cmds_std.append(f"G0 Z{dest_safe_z:.2f} F{JOG_SPEED_Z}")
+            cmds_std.append(f"G0 Z{src_safe_z:.2f} F{JOG_SPEED_Z}")  # Lift out
+            cmds_std.append(f"G0 Z{travel_z_dest:.2f} F{JOG_SPEED_Z}")  # Go to travel height
+            cmds_std.append(f"G0 X{dest_x:.2f} Y{dest_y:.2f} F{JOG_SPEED_XY}")  # XY
+            cmds_std.append(f"G0 Z{dest_safe_z:.2f} F{JOG_SPEED_Z}")  # Drop
             self._send_lines_with_ok(cmds_std)
 
         self.update_last_module(dest_mod)
         current_mod_tracker = dest_mod
 
+        # 4. Dispense
         e_blowout_pos = -1 * 100.0 * STEPS_PER_UL
         cmds_disp = []
 
+        # If volatile, we might want to drift during the final plunge to dispense height too
         if is_volatile:
-            dz_final = dest_disp_z - dest_safe_z
+            # Calculate plunge to dispense height
+            dz_final = dest_disp_z - dest_safe_z  # Negative
             t_final = abs(dz_final) / VOLATILE_MOVE_SPEED
             e_drift_final = drift_per_min * t_final
+
+            # Execute relative plunge
             cmds_disp.append("G91")
             cmds_disp.append(f"G1 Z{dz_final:.2f} E-{e_drift_final:.3f} F{VOLATILE_MOVE_SPEED}")
             cmds_disp.append("G90")
+
+            # Update tracker again
             e_loaded_pos -= e_drift_final
         else:
             cmds_disp.append(f"G0 Z{dest_disp_z:.2f} F{JOG_SPEED_Z}")
 
+        # Final Blowout (Absolute move)
         cmds_disp.append(f"G1 E{e_blowout_pos:.3f} F{PIP_SPEED}")
         cmds_disp.append(f"G0 Z{dest_safe_z:.2f} F{JOG_SPEED_Z}")
         cmds_disp.append(f"G1 E{e_gap_pos:.3f} F{PIP_SPEED}")
@@ -2568,6 +2563,21 @@ class LiquidHandlerApp:
 
     def _perform_wash_cycle(self, wash_src_str, original_src_str, dest_str, vol, is_volatile, e_gap_pos, air_gap_ul,
                             start_module=None):
+        """
+        Robust Wash Cycle:
+        1. Eject dirty tip (if not already ejected).
+        2. Pick new tip.
+        3. Aspirate Wash Liquid.
+        4. Move to Source Vial.
+        5. Dispense Wash into Source.
+        6. Mix (Up/Down loop).
+        7. Aspirate everything.
+        8. Move to Dest.
+        9. Dispense.
+        10. Eject.
+        """
+
+        # --- 1. Eject Old Tip ---
         if start_module != "EJECT":
             self.log_line("[WASH] Ejecting dirty tip...")
             self._send_lines_with_ok(self._get_eject_tip_commands())
@@ -2575,6 +2585,7 @@ class LiquidHandlerApp:
         else:
             self.log_line("[WASH] Tip already ejected, skipping redundant eject.")
 
+        # --- 2. Pick New Tip ---
         tip_key = self._find_next_available_tip()
         if not tip_key:
             messagebox.showerror("No Tips", "Ran out of tips during wash.")
@@ -2587,6 +2598,7 @@ class LiquidHandlerApp:
         self.root.after(0, self.update_tip_grid_colors)
         current_mod_tracker = "TIPS"
 
+        # --- 3. Aspirate Wash Liquid ---
         w_mod, w_x, w_y, w_safe_z, w_asp_z, _ = self.get_coords_from_combo(wash_src_str)
         cmds = []
         cmds.append(f"G1 E{e_gap_pos:.3f} F{PIP_SPEED}")
@@ -2600,24 +2612,32 @@ class LiquidHandlerApp:
         self.update_last_module(w_mod)
         current_mod_tracker = w_mod
 
+        # --- 4. Move to Source Vial ---
         s_mod, s_x, s_y, s_safe_z, s_asp_z, s_disp_z = self.get_coords_from_combo(original_src_str)
         cmds_src = []
         cmds_src.extend(self._get_smart_travel_gcode(s_mod, s_x, s_y, s_safe_z, start_module=current_mod_tracker))
 
+        # --- 5. Dispense Wash into Source ---
+        # We dispense at Dispense Height (usually higher) to avoid cross-contamination initially,
+        # or aspirate height if we want to be submerged immediately.
+        # For robust mixing, we usually dispense, then mix.
         cmds_src.append(f"G0 Z{s_disp_z:.2f} F{JOG_SPEED_Z}")
-        cmds_src.append(f"G1 E{e_gap_pos:.3f} F{PIP_SPEED}")
+        cmds_src.append(f"G1 E{e_gap_pos:.3f} F{PIP_SPEED}")  # Push liquid out (back to air gap)
 
+        # --- 6. Mix Loop (Robust) ---
         self.log_line("[WASH] Performing robust mixing in source...")
         mix_vol = 200.0
         e_mix_up = -1 * (air_gap_ul) * STEPS_PER_UL
         e_mix_down = -1 * (air_gap_ul + mix_vol) * STEPS_PER_UL
 
-        cmds_src.append(f"G0 Z{s_asp_z:.2f} F{JOG_SPEED_Z}")
+        cmds_src.append(f"G0 Z{s_asp_z:.2f} F{JOG_SPEED_Z}")  # Go down to liquid level
         for _ in range(2):
-            cmds_src.append(f"G1 E{e_mix_down:.3f} F{PIP_SPEED}")
-            cmds_src.append(f"G1 E{e_mix_up:.3f} F{PIP_SPEED}")
+            cmds_src.append(f"G1 E{e_mix_down:.3f} F{PIP_SPEED}")  # Asp
+            cmds_src.append(f"G1 E{e_mix_up:.3f} F{PIP_SPEED}")  # Disp
 
-        max_collect = MAX_PIPETTE_VOL - air_gap_ul
+        # --- 7. Aspirate Everything ---
+        # Aspirate wash volume + extra to ensure vial is empty
+        max_collect = MAX_PIPETTE_VOL - air_gap_ul  # typically 800
         collect_vol = min(vol + 50.0, max_collect)
         e_collected = -1 * (air_gap_ul + collect_vol) * STEPS_PER_UL
         cmds_src.append(f"G1 E{e_collected:.3f} F{PIP_SPEED}")
@@ -2627,8 +2647,11 @@ class LiquidHandlerApp:
         self.update_last_module(s_mod)
         current_mod_tracker = s_mod
 
+        # --- 8. Move to Dest & 9. Dispense ---
         self.log_line("[WASH] Transferring mixed wash liquid to destination...")
 
+        # We manually handle the move/dispense here instead of calling _perform_single_transfer
+        # because we already have liquid in the tip.
         d_mod, d_x, d_y, d_safe_z, _, d_disp_z = self.get_coords_from_combo(dest_str)
         cmds_dest = []
         cmds_dest.extend(self._get_smart_travel_gcode(d_mod, d_x, d_y, d_safe_z, start_module=current_mod_tracker))
@@ -2637,11 +2660,12 @@ class LiquidHandlerApp:
         cmds_dest.append(f"G0 Z{d_disp_z:.2f} F{JOG_SPEED_Z}")
         cmds_dest.append(f"G1 E{e_blowout:.3f} F{PIP_SPEED}")
         cmds_dest.append(f"G0 Z{d_safe_z:.2f} F{JOG_SPEED_Z}")
-        cmds_dest.append(f"G1 E{e_gap_pos:.3f} F{PIP_SPEED}")
+        cmds_dest.append(f"G1 E{e_gap_pos:.3f} F{PIP_SPEED}")  # Reset plunger
 
         self._send_lines_with_ok(cmds_dest)
         self.update_last_module(d_mod)
 
+        # --- 10. Eject ---
         self.log_line("[WASH] Cycle complete. Ejecting wash tip...")
         self._send_lines_with_ok(self._get_eject_tip_commands())
         self.update_last_module("EJECT")
@@ -2653,6 +2677,7 @@ class LiquidHandlerApp:
             return
         tasks = []
         for idx, row in enumerate(self.combine_rows):
+            # Check Execute Box
             if not row["vars"]["execute"].get():
                 continue
 
@@ -2661,6 +2686,7 @@ class LiquidHandlerApp:
             dest_falcon = row["vars"]["dest"].get()
             vol_str = row["vars"]["vol"].get()
 
+            # Wash vars
             wash_vol_str = row["vars"]["wash_vol"].get()
             wash_times_str = row["vars"]["wash_times"].get()
             wash_src = row["vars"]["wash_src"].get()
@@ -2701,188 +2727,206 @@ class LiquidHandlerApp:
         plate_disp_z = self.resolve_coords(0, 0, PLATE_CONFIG["Z_DISPENSE"])[2]
         falcon_safe_z = self.resolve_coords(0, 0, FALCON_RACK_CONFIG["Z_SAFE"])[2]
         falcon_disp_z = self.resolve_coords(0, 0, FALCON_RACK_CONFIG["Z_DISPENSE"])[2]
+        global_safe_z = self.resolve_coords(0, 0, GLOBAL_SAFE_Z_OFFSET)[2]
         air_gap_vol = 200.0
         e_pos_air_gap = -1 * air_gap_vol * STEPS_PER_UL
         e_pos_blowout = -1 * 100.0 * STEPS_PER_UL
 
-        def run_seq():
-            for task in tasks:
-                line_num = task["line"]
-                dest_falcon = task["dest"]
-                vol_total = task["vol"]
-                wells = task["wells"]
-                self.log_line(f"[COMBINE] Processing Line {line_num}: {len(wells)} wells -> {dest_falcon}")
-                self.last_cmd_var.set(f"Line {line_num}: Processing...")
-                self.log_line(f"[COMBINE] Line {line_num}: Ejecting old tip...")
-                self._send_lines_with_ok(self._get_eject_tip_commands())
-                self.update_last_module("EJECT")
-                current_sim_module = "EJECT"
+        for task in tasks:
+            line_num = task["line"]
+            dest_falcon = task["dest"]
+            vol_total = task["vol"]
+            wells = task["wells"]
+            self.log_line(f"[COMBINE] Processing Line {line_num}: {len(wells)} wells -> {dest_falcon}")
+            self.last_cmd_var.set(f"Line {line_num}: Processing...")
+            self.log_line(f"[COMBINE] Line {line_num}: Ejecting old tip...")
+            self._send_lines_with_ok(self._get_eject_tip_commands())
+            self.update_last_module("EJECT")
+            current_sim_module = "EJECT"
 
-                tip_key = self._find_next_available_tip()
-                if not tip_key:
-                    messagebox.showerror("No Tips", f"Ran out of tips at Line {line_num}.")
-                    return
-                self.log_line(f"[COMBINE] Line {line_num}: Picking Tip {tip_key}...")
-                self._send_lines_with_ok(self._get_pick_tip_commands(tip_key, start_module=current_sim_module))
-                self.tip_inventory[tip_key] = False
-                self.update_last_module("TIPS")
-                current_sim_module = "TIPS"
+            tip_key = self._find_next_available_tip()
+            if not tip_key:
+                messagebox.showerror("No Tips", f"Ran out of tips at Line {line_num}.")
+                return
+            self.log_line(f"[COMBINE] Line {line_num}: Picking Tip {tip_key}...")
+            self._send_lines_with_ok(self._get_pick_tip_commands(tip_key, start_module=current_sim_module))
+            self.tip_inventory[tip_key] = False
+            self.update_last_module("TIPS")
+            current_sim_module = "TIPS"
 
-                self.root.after(0, self.update_tip_grid_colors)
-                for well in wells:
-                    remaining_vol = vol_total
-                    if remaining_vol > 800:
-                        num_batches = math.ceil(remaining_vol / 800.0)
-                        batch_vol = remaining_vol / num_batches
-                    else:
-                        num_batches = 1
-                        batch_vol = remaining_vol
-                    for b in range(num_batches):
-                        self.last_cmd_var.set(f"L{line_num}: {well}->{dest_falcon} ({b + 1}/{num_batches})")
-                        vol_aspirated = batch_vol
-                        e_pos_full = -1 * (air_gap_vol + vol_aspirated) * STEPS_PER_UL
-                        cmds = []
-                        cmds.append(f"G1 E{e_pos_air_gap:.3f} F{PIP_SPEED}")
-                        sx, sy = self.get_well_coordinates(well)
+            self.root.after(0, self.update_tip_grid_colors)
+            for well in wells:
+                remaining_vol = vol_total
+                if remaining_vol > 800:
+                    num_batches = math.ceil(remaining_vol / 800.0)
+                    batch_vol = remaining_vol / num_batches
+                else:
+                    num_batches = 1
+                    batch_vol = remaining_vol
+                for b in range(num_batches):
+                    self.last_cmd_var.set(f"L{line_num}: {well}->{dest_falcon} ({b + 1}/{num_batches})")
+                    vol_aspirated = batch_vol
+                    e_pos_full = -1 * (air_gap_vol + vol_aspirated) * STEPS_PER_UL
+                    cmds = []
+                    cmds.append(f"G1 E{e_pos_air_gap:.3f} F{PIP_SPEED}")
+                    sx, sy = self.get_well_coordinates(well)
 
-                        cmds.extend(
-                            self._get_smart_travel_gcode("PLATE", sx, sy, plate_safe_z,
-                                                         start_module=current_sim_module))
+                    # Move to Plate Well
+                    cmds.extend(
+                        self._get_smart_travel_gcode("PLATE", sx, sy, plate_safe_z, start_module=current_sim_module))
 
-                        cmds.append(f"G0 Z{plate_asp_z:.2f} F{JOG_SPEED_Z}")
-                        cmds.append(f"G1 E{e_pos_full:.3f} F{PIP_SPEED}")
-                        cmds.append(f"G0 Z{plate_safe_z:.2f} F{JOG_SPEED_Z}")
+                    cmds.append(f"G0 Z{plate_asp_z:.2f} F{JOG_SPEED_Z}")
+                    cmds.append(f"G1 E{e_pos_full:.3f} F{PIP_SPEED}")
+                    cmds.append(f"G0 Z{plate_safe_z:.2f} F{JOG_SPEED_Z}")
+                    self.update_last_module("PLATE")
+                    current_sim_module = "PLATE"
+
+                    dx, dy = self.get_falcon_coordinates(dest_falcon)
+
+                    # Move to Falcon
+                    cmds.extend(
+                        self._get_smart_travel_gcode("FALCON", dx, dy, falcon_safe_z, start_module=current_sim_module))
+
+                    cmds.append(f"G0 Z{falcon_disp_z:.2f} F{JOG_SPEED_Z}")
+                    cmds.append(f"G1 E{e_pos_blowout:.3f} F{PIP_SPEED}")
+                    cmds.append(f"G0 Z{falcon_safe_z:.2f} F{JOG_SPEED_Z}")
+                    self._send_lines_with_ok(cmds)
+                    self.update_last_module("FALCON")
+                    current_sim_module = "FALCON"
+
+                    self.current_pipette_volume = 100.0
+                    self.vol_display_var.set(f"{self.current_pipette_volume:.1f} uL")
+                    self.live_vol_var.set(f"{self.current_pipette_volume:.1f}")
+
+            # --- WASH LOGIC FOR COMBINE FRACTIONS (BATCH MODE) ---
+            wash_vol = task["wash_vol"]
+            wash_times = task["wash_times"]
+
+            if wash_vol > 0:
+                # 1. Eject the tip from the main transfer (if not already done)
+                if current_sim_module != "EJECT":
+                    self.log_line(f"[COMBINE] Line {line_num}: Ejecting main transfer tip...")
+                    self._send_lines_with_ok(self._get_eject_tip_commands())
+                    self.update_last_module("EJECT")
+                    current_sim_module = "EJECT"
+
+                for cycle in range(wash_times):
+                    # --- TIP EXCHANGE LOGIC ---
+                    # Always pick a fresh tip for the start of a wash cycle.
+                    # If this is not the first cycle, the previous cycle ejected the dirty tip.
+                    tip_key = self._find_next_available_tip()
+                    if not tip_key:
+                        messagebox.showerror("No Tips", f"Ran out of tips for wash at Line {line_num}.")
+                        return
+
+                    self.log_line(f"[COMBINE] Line {line_num}: Picking Wash Tip {tip_key} (Cycle {cycle + 1})...")
+                    self._send_lines_with_ok(self._get_pick_tip_commands(tip_key, start_module=current_sim_module))
+                    self.tip_inventory[tip_key] = False
+                    self.update_last_module("TIPS")
+                    current_sim_module = "TIPS"
+                    self.root.after(0, self.update_tip_grid_colors)
+
+                    # 3. Handle Wash Cycles
+                    wash_src_str = task["wash_src"]
+                    falcon_dest_str = f"Falcon {dest_falcon}"
+
+                    # Get Wash Source Coordinates
+                    w_mod, w_x, w_y, w_safe_z, w_asp_z, _ = self.get_coords_from_combo(wash_src_str)
+
+                    self.log_line(f"[COMBINE] Line {line_num}: Wash Cycle {cycle + 1}/{wash_times} (Batch Mode)...")
+
+                    # --- A. Distribute Wash Liquid to ALL wells ---
+                    for well in wells:
+                        self.log_line(f"  -> Distributing {wash_vol}uL Wash to {well}")
+
+                        # Move to Wash Source
+                        cmds_dist = []
+                        cmds_dist.append(f"G1 E{e_pos_air_gap:.3f} F{PIP_SPEED}")
+                        cmds_dist.extend(
+                            self._get_smart_travel_gcode(w_mod, w_x, w_y, w_safe_z, start_module=current_sim_module))
+
+                        # Aspirate Wash
+                        e_loaded = -1 * (air_gap_vol + wash_vol) * STEPS_PER_UL
+                        cmds_dist.append(f"G0 Z{w_asp_z:.2f} F{JOG_SPEED_Z}")
+                        cmds_dist.append(f"G1 E{e_loaded:.3f} F{PIP_SPEED}")
+                        cmds_dist.append(f"G0 Z{w_safe_z:.2f} F{JOG_SPEED_Z}")
+
+                        self._send_lines_with_ok(cmds_dist)
+                        self.update_last_module(w_mod)
+                        current_sim_module = w_mod
+
+                        # Move to Well
+                        wx, wy = self.get_well_coordinates(well)
+                        cmds_well = []
+                        cmds_well.extend(self._get_smart_travel_gcode("PLATE", wx, wy, plate_safe_z,
+                                                                      start_module=current_sim_module))
+
+                        # Dispense Wash into Well (HIGH Z to avoid contamination)
+                        cmds_well.append(f"G0 Z{plate_disp_z:.2f} F{JOG_SPEED_Z}")  # Dispense HIGH
+                        cmds_well.append(f"G1 E{e_pos_air_gap:.3f} F{PIP_SPEED}")  # Back to air gap (dispense liquid)
+                        cmds_well.append(f"G0 Z{plate_safe_z:.2f} F{JOG_SPEED_Z}")
+
+                        self._send_lines_with_ok(cmds_well)
                         self.update_last_module("PLATE")
                         current_sim_module = "PLATE"
 
+                    # --- B. Collect Wash Liquid from ALL wells ---
+                    for well in wells:
+                        self.log_line(f"  -> Collecting Wash from {well}")
+
+                        # Move to Well
+                        wx, wy = self.get_well_coordinates(well)
+                        cmds_col = []
+                        cmds_col.extend(self._get_smart_travel_gcode("PLATE", wx, wy, plate_safe_z,
+                                                                     start_module=current_sim_module))
+
+                        # Mix and Aspirate
+                        # Mix 3 times
+                        mix_vol = 200.0
+                        e_mix_up = -1 * (air_gap_vol) * STEPS_PER_UL
+                        e_mix_down = -1 * (air_gap_vol + mix_vol) * STEPS_PER_UL
+
+                        cmds_col.append(f"G0 Z{plate_asp_z:.2f} F{JOG_SPEED_Z}")
+                        for _ in range(3):
+                            cmds_col.append(f"G1 E{e_mix_down:.3f} F{PIP_SPEED}")
+                            cmds_col.append(f"G1 E{e_mix_up:.3f} F{PIP_SPEED}")
+
+                        # Aspirate (wash_vol + 20uL overage to ensure empty)
+                        collect_vol = min(wash_vol + 50.0, 900.0)
+                        e_collected = -1 * (air_gap_vol + collect_vol) * STEPS_PER_UL
+                        cmds_col.append(f"G1 E{e_collected:.3f} F{PIP_SPEED}")
+                        cmds_col.append(f"G0 Z{plate_safe_z:.2f} F{JOG_SPEED_Z}")
+
+                        self._send_lines_with_ok(cmds_col)
+                        self.update_last_module("PLATE")
+                        current_sim_module = "PLATE"
+
+                        # Move to Dest Falcon
                         dx, dy = self.get_falcon_coordinates(dest_falcon)
+                        cmds_dest = []
+                        cmds_dest.extend(self._get_smart_travel_gcode("FALCON", dx, dy, falcon_safe_z,
+                                                                      start_module=current_sim_module))
 
-                        cmds.extend(
-                            self._get_smart_travel_gcode("FALCON", dx, dy, falcon_safe_z,
-                                                         start_module=current_sim_module))
+                        # Dispense
+                        cmds_dest.append(f"G0 Z{falcon_disp_z:.2f} F{JOG_SPEED_Z}")
+                        cmds_dest.append(f"G1 E{e_pos_blowout:.3f} F{PIP_SPEED}")
+                        cmds_dest.append(f"G0 Z{falcon_safe_z:.2f} F{JOG_SPEED_Z}")
+                        cmds_dest.append(f"G1 E{e_pos_air_gap:.3f} F{PIP_SPEED}")  # Reset plunger
 
-                        cmds.append(f"G0 Z{falcon_disp_z:.2f} F{JOG_SPEED_Z}")
-                        cmds.append(f"G1 E{e_pos_blowout:.3f} F{PIP_SPEED}")
-                        cmds.append(f"G0 Z{falcon_safe_z:.2f} F{JOG_SPEED_Z}")
-                        self._send_lines_with_ok(cmds)
+                        self._send_lines_with_ok(cmds_dest)
                         self.update_last_module("FALCON")
                         current_sim_module = "FALCON"
 
-                        self.current_pipette_volume = 100.0
-                        self.vol_display_var.set(f"{self.current_pipette_volume:.1f} uL")
-                        self.live_vol_var.set(f"{self.current_pipette_volume:.1f}")
+                    # 4. Eject Wash Tip (End of Cycle)
+                    self.log_line(f"[COMBINE] Line {line_num}: Ejecting wash tip (End of Cycle {cycle + 1})...")
+                    self._send_lines_with_ok(self._get_eject_tip_commands())
+                    self.update_last_module("EJECT")
+                    current_sim_module = "EJECT"
 
-                wash_vol = task["wash_vol"]
-                wash_times = task["wash_times"]
+            self.log_line(f"[COMBINE] Line {line_num} Complete.")
 
-                if wash_vol > 0:
-                    if current_sim_module != "EJECT":
-                        self.log_line(f"[COMBINE] Line {line_num}: Ejecting main transfer tip...")
-                        self._send_lines_with_ok(self._get_eject_tip_commands())
-                        self.update_last_module("EJECT")
-                        current_sim_module = "EJECT"
-
-                    for cycle in range(wash_times):
-                        tip_key = self._find_next_available_tip()
-                        if not tip_key:
-                            messagebox.showerror("No Tips", f"Ran out of tips for wash at Line {line_num}.")
-                            return
-
-                        self.log_line(f"[COMBINE] Line {line_num}: Picking Wash Tip {tip_key} (Cycle {cycle + 1})...")
-                        self._send_lines_with_ok(self._get_pick_tip_commands(tip_key, start_module=current_sim_module))
-                        self.tip_inventory[tip_key] = False
-                        self.update_last_module("TIPS")
-                        current_sim_module = "TIPS"
-                        self.root.after(0, self.update_tip_grid_colors)
-
-                        wash_src_str = task["wash_src"]
-                        w_mod, w_x, w_y, w_safe_z, w_asp_z, _ = self.get_coords_from_combo(wash_src_str)
-
-                        self.log_line(f"[COMBINE] Line {line_num}: Wash Cycle {cycle + 1}/{wash_times} (Batch Mode)...")
-
-                        for well in wells:
-                            self.log_line(f"  -> Distributing {wash_vol}uL Wash to {well}")
-                            cmds_dist = []
-                            cmds_dist.append(f"G1 E{e_pos_air_gap:.3f} F{PIP_SPEED}")
-                            cmds_dist.extend(
-                                self._get_smart_travel_gcode(w_mod, w_x, w_y, w_safe_z,
-                                                             start_module=current_sim_module))
-
-                            e_loaded = -1 * (air_gap_vol + wash_vol) * STEPS_PER_UL
-                            cmds_dist.append(f"G0 Z{w_asp_z:.2f} F{JOG_SPEED_Z}")
-                            cmds_dist.append(f"G1 E{e_loaded:.3f} F{PIP_SPEED}")
-                            cmds_dist.append(f"G0 Z{w_safe_z:.2f} F{JOG_SPEED_Z}")
-
-                            self._send_lines_with_ok(cmds_dist)
-                            self.update_last_module(w_mod)
-                            current_sim_module = w_mod
-
-                            wx, wy = self.get_well_coordinates(well)
-                            cmds_well = []
-                            cmds_well.extend(self._get_smart_travel_gcode("PLATE", wx, wy, plate_safe_z,
-                                                                          start_module=current_sim_module))
-
-                            cmds_well.append(f"G0 Z{plate_disp_z:.2f} F{JOG_SPEED_Z}")
-                            cmds_well.append(f"G1 E{e_pos_air_gap:.3f} F{PIP_SPEED}")
-                            cmds_well.append(f"G0 Z{plate_safe_z:.2f} F{JOG_SPEED_Z}")
-
-                            self._send_lines_with_ok(cmds_well)
-                            self.update_last_module("PLATE")
-                            current_sim_module = "PLATE"
-
-                        for well in wells:
-                            self.log_line(f"  -> Collecting Wash from {well}")
-                            wx, wy = self.get_well_coordinates(well)
-                            cmds_col = []
-                            cmds_col.extend(self._get_smart_travel_gcode("PLATE", wx, wy, plate_safe_z,
-                                                                         start_module=current_sim_module))
-
-                            mix_vol = 200.0
-                            e_mix_up = -1 * (air_gap_vol) * STEPS_PER_UL
-                            e_mix_down = -1 * (air_gap_vol + mix_vol) * STEPS_PER_UL
-
-                            cmds_col.append(f"G0 Z{plate_asp_z:.2f} F{JOG_SPEED_Z}")
-                            for _ in range(3):
-                                cmds_col.append(f"G1 E{e_mix_down:.3f} F{PIP_SPEED}")
-                                cmds_col.append(f"G1 E{e_mix_up:.3f} F{PIP_SPEED}")
-
-                            collect_vol = min(wash_vol + 50.0, 900.0)
-                            e_collected = -1 * (air_gap_vol + collect_vol) * STEPS_PER_UL
-                            cmds_col.append(f"G1 E{e_collected:.3f} F{PIP_SPEED}")
-                            cmds_col.append(f"G0 Z{plate_safe_z:.2f} F{JOG_SPEED_Z}")
-
-                            self._send_lines_with_ok(cmds_col)
-                            self.update_last_module("PLATE")
-                            current_sim_module = "PLATE"
-
-                            dx, dy = self.get_falcon_coordinates(dest_falcon)
-                            cmds_dest = []
-                            cmds_dest.extend(self._get_smart_travel_gcode("FALCON", dx, dy, falcon_safe_z,
-                                                                          start_module=current_sim_module))
-
-                            cmds_dest.append(f"G0 Z{falcon_disp_z:.2f} F{JOG_SPEED_Z}")
-                            cmds_dest.append(f"G1 E{e_pos_blowout:.3f} F{PIP_SPEED}")
-                            cmds_dest.append(f"G0 Z{falcon_safe_z:.2f} F{JOG_SPEED_Z}")
-                            cmds_dest.append(f"G1 E{e_pos_air_gap:.3f} F{PIP_SPEED}")
-
-                            self._send_lines_with_ok(cmds_dest)
-                            self.update_last_module("FALCON")
-                            current_sim_module = "FALCON"
-
-                        self.log_line(f"[COMBINE] Line {line_num}: Ejecting wash tip (End of Cycle {cycle + 1})...")
-                        self._send_lines_with_ok(self._get_eject_tip_commands())
-                        self.update_last_module("EJECT")
-                        current_sim_module = "EJECT"
-
-                self.log_line(f"[COMBINE] Line {line_num} Complete.")
-
-            self.log_command("[COMBINE] Sequence Finished. Parking.")
-            self.last_cmd_var.set("Parking...")
-            self._send_lines_with_ok(self._get_park_head_commands())
-            self.update_last_module("PARK")
-            self.last_cmd_var.set("Idle")
-
-        threading.Thread(target=run_seq, daemon=True).start()
+        self.log_command("[COMBINE] Sequence Finished. Parking.")
+        self.park_head_sequence()
 
     def start_pin_calibration_sequence(self):
         if not self.ser or not self.ser.is_open:
@@ -3103,6 +3147,7 @@ class LiquidHandlerApp:
                     cmds_xfer.append(f"G0 Z{plate_safe_z:.2f} F{JOG_SPEED_Z}")
 
                     dx, dy = self.get_well_coordinates(dst_well)
+                    # Already at PLATE, so start_module is PLATE
                     cmds_xfer.extend(self._get_smart_travel_gcode("PLATE", dx, dy, plate_safe_z, start_module="PLATE"))
                     cmds_xfer.append(f"G0 Z{plate_disp_z:.2f} F{JOG_SPEED_Z}")
                     cmds_xfer.append(f"G1 E{e_blowout_pos:.3f} F{PIP_SPEED}")
@@ -3174,6 +3219,7 @@ class LiquidHandlerApp:
                     cmds = []
                     cmds.append(f"G1 E{e_gap_pos:.3f} F{PIP_SPEED}")
 
+                    # Move to Source
                     cmds.extend(
                         self._get_smart_travel_gcode(src_mod, src_x, src_y, src_safe_z, start_module=current_sim_mod))
 
@@ -3190,6 +3236,7 @@ class LiquidHandlerApp:
                 dest_x, dest_y = self.get_well_coordinates(well)
                 cmds_disp = []
 
+                # Move to Plate
                 cmds_disp.extend(
                     self._get_smart_travel_gcode("PLATE", dest_x, dest_y, plate_safe_z, start_module=current_sim_mod))
 
@@ -3248,6 +3295,7 @@ class LiquidHandlerApp:
                 cmds = []
                 cmds.append(f"G1 E{e_gap_pos:.3f} F{PIP_SPEED}")
 
+                # Move to Source
                 cmds.extend(
                     self._get_smart_travel_gcode(src_mod, src_x, src_y, src_safe_z, start_module=current_sim_mod))
 
@@ -3260,6 +3308,7 @@ class LiquidHandlerApp:
 
                 dest_x, dest_y = self.get_well_coordinates(well)
 
+                # Move to Plate
                 cmds.extend(
                     self._get_smart_travel_gcode("PLATE", dest_x, dest_y, plate_safe_z, start_module=current_sim_mod))
 
@@ -3347,6 +3396,7 @@ class LiquidHandlerApp:
         self.log_line(f"[SYSTEM] Moving to {module_name} : {target_pos}...")
         self.log_command(f"Move: {module_name} {target_pos}")
 
+        # For manual moves, we rely on current state (start_module=None)
         commands = self._get_smart_travel_gcode(module_name, x, y, abs_safe_z)
 
         def run_seq():
