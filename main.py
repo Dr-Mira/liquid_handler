@@ -437,7 +437,7 @@ class LiquidHandlerApp:
         right_container.pack(side="right", padx=5, pady=2)
 
         # ABORT BUTTON
-        self.abort_btn = tk.Button(right_container, text="ABORT", font=("Arial", 10, "bold"), bg="red", fg="white",
+        self.abort_btn = tk.Button(right_container, text="Soft Stop", font=("Arial", 10, "bold"), fg="black",
                                    command=self.abort_sequence)
         self.abort_btn.pack(side="left", padx=10)
 
@@ -1473,7 +1473,7 @@ class LiquidHandlerApp:
 
     def _emergency_park(self):
         # Wait a moment for the main sequence thread to die/release lock
-        time.sleep(1.0)
+        time.sleep(5.0)
         self.log_line("[ABORT] Running Emergency Eject & Park...")
 
         # Reset flags for the new cleanup sequence
@@ -1483,16 +1483,8 @@ class LiquidHandlerApp:
         # Run Eject
         try:
             self.eject_tip_sequence()
-            # Wait for eject to finish (it runs in a thread, so we join it?
-            # No, eject_tip_sequence starts a thread. We need to run it synchronously here or chain them.)
-            # Since eject_tip_sequence spawns a thread, we should call the internal logic directly or wait.
-            # Ideally, we reconstruct the commands here to run in *this* thread.
         except:
             pass
-
-        # Since eject_tip_sequence is async, we can't easily chain park after it without refactoring.
-        # However, eject_tip_sequence ALREADY calls park at the end.
-        # So calling eject_tip_sequence is sufficient.
 
     def _send_lines_with_ok(self, lines):
         self.is_sequence_running = True
