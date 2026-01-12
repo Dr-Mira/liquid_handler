@@ -65,7 +65,7 @@ EJECT_STATION_CONFIG = {
     "APPROACH_X": 79.5,
     "APPROACH_Y": 71.1,
     "Z_SAFE": 57.2,
-    "Z_EJECT_START": 27.4,
+    "Z_EJECT_START": 27.0,
     "EJECT_TARGET_Y": 106.7,
     "Z_RETRACT": 57.2
 }
