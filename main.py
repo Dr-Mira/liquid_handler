@@ -239,7 +239,7 @@ class LiquidHandlerApp:
         self.last_cmd_var = tk.StringVar(value="Idle")
 
         # Calibration Variables
-        self.current_vol_var = DEFAULT_TARGET_UL
+        self.current_vol_var = tk.StringVar()
         self.target_vol_var = tk.StringVar(value=str(int(DEFAULT_TARGET_UL)))
 
         # Manual Control Variables
