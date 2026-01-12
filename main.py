@@ -190,7 +190,7 @@ class LiquidHandlerApp:
     def __init__(self, root):
         self.root = root
         self.root.title("Mira Liquid Handler")
-        self.root.geometry("1024x650")  # Slightly taller for abort button
+        self.root.geometry("1024x600")  # Slightly taller for abort button
         self.root.resizable(False, False)
 
         # --- LOGGING SETUP ---
