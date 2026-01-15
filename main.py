@@ -52,8 +52,8 @@ MIN_PIPETTE_VOL = 100.0
 MAX_PIPETTE_VOL = 1000.0
 
 # Manual Control Constants
-JOG_SPEED_XY = 4000
-JOG_SPEED_Z = 4000
+JOG_SPEED_XY = 8000
+JOG_SPEED_Z = 8000
 PIP_SPEED = 2000
 
 # Communication Polling Settings
