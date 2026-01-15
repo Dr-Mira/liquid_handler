@@ -82,9 +82,9 @@ TIP_RACK_CONFIG = {
 PLATE_CONFIG = {
     "A1_X": -104.8, "A1_Y": 112.7,
     "H12_X": -5.7, "H12_Y": 49.8,
-    "Z_SAFE": -22.8,
-    "Z_ASPIRATE": -55.5,
-    "Z_DISPENSE": -35.5
+    "Z_SAFE": 27.2,
+    "Z_ASPIRATE": -5.5,
+    "Z_DISPENSE": 14.5
 }
 
 # --- FALCON RACK CONFIGURATION (Relative Offsets) ---
@@ -110,54 +110,54 @@ WASH_RACK_CONFIG = {
 _4ML_RACK_CONFIG = {
     "A1_X": -113.2, "A1_Y": -34.6,
     "A8_X": 12.4, "A8_Y": -34.6,
-    "Z_SAFE": -11.2,
-    "Z_ASPIRATE": -56.5,
-    "Z_DISPENSE": -32.8
+    "Z_SAFE": 38.8,
+    "Z_ASPIRATE": -6.5,
+    "Z_DISPENSE": 17.2
 }
 
 # --- FILTER EPPI RACK CONFIGURATION (Row B) (Relative Offsets) ---
 FILTER_EPPI_RACK_CONFIG = {
     "B1_X": -113.2, "B1_Y": -51.2,
     "B8_X": 12.4, "B8_Y": -51.2,
-    "Z_SAFE": -11.2,
-    "Z_ASPIRATE": -39.2,
-    "Z_DISPENSE": -22.8
+    "Z_SAFE": 38.8,
+    "Z_ASPIRATE": 10.8,
+    "Z_DISPENSE": 27.2
 }
 
 # --- EPPI RACK CONFIGURATION (Row C) (Relative Offsets) ---
 EPPI_RACK_CONFIG = {
     "C1_X": -113.2, "C1_Y": -65.7,
     "C8_X": 12.4, "C8_Y": -65.7,
-    "Z_SAFE": -11.2,
-    "Z_ASPIRATE": -60.8,
-    "Z_DISPENSE": -27.8
+    "Z_SAFE": 38.8,
+    "Z_ASPIRATE": -10.8,
+    "Z_DISPENSE": 22.2
 }
 
 # --- HPLC VIAL RACK CONFIGURATION (Row D) (Relative Offsets) ---
 HPLC_VIAL_RACK_CONFIG = {
     "D1_X": -113.2, "D1_Y": -81.7,
     "D8_X": 12.4, "D8_Y": -81.7,
-    "Z_SAFE": -11.2,
-    "Z_ASPIRATE": -44.2,
-    "Z_DISPENSE": -22.8
+    "Z_SAFE": 38.8,
+    "Z_ASPIRATE": 5.8,
+    "Z_DISPENSE": 27.2
 }
 
 # --- HPLC VIAL INSERT RACK CONFIGURATION (Row E) (Relative Offsets) ---
 HPLC_VIAL_INSERT_RACK_CONFIG = {
     "E1_X": -113.1, "E1_Y": -97.3,
     "E8_X": 12.4, "E8_Y": -97.3,
-    "Z_SAFE": -11.2,
-    "Z_ASPIRATE": -27.3,
-    "Z_DISPENSE": -22.8
+    "Z_SAFE": 38.8,
+    "Z_ASPIRATE": 22.7,
+    "Z_DISPENSE": 27.2
 }
 
 # --- SCREWCAP VIAL RACK CONFIGURATION (Row F) (Relative Offsets) ---
 SCREWCAP_VIAL_RACK_CONFIG = {
     "F1_X": -113.2, "F1_Y": -112.8,
     "F8_X": 12.4, "F8_Y": -112.8,
-    "Z_SAFE": -11.2,
-    "Z_ASPIRATE": -58.9,
-    "Z_DISPENSE": -27.8
+    "Z_SAFE": 38.8,
+    "Z_ASPIRATE": -8.9,
+    "Z_DISPENSE": 22.2
 }
 
 # --- MODULE GROUPS FOR OPTIMIZATION ---
