@@ -933,21 +933,21 @@ class LiquidHandlerApp:
     def load_transfer_preset_1(self):
         preset = [
             {"execute": False, "src_mod": "4mL Rack", "src_pos": "A1", "dest": "Filter Eppi B1", "vol": 600,
-             "volatile": True, "wash_vol": 150, "wash_times": 2, "wash_src": "Wash C"},
+             "volatile": True, "wash_vol": 150, "wash_times": 2, "wash_src": "Wash B"},
             {"execute": False, "src_mod": "4mL Rack", "src_pos": "A2", "dest": "Filter Eppi B2", "vol": 600,
-             "volatile": True, "wash_vol": 150, "wash_times": 2, "wash_src": "Wash C"},
+             "volatile": True, "wash_vol": 150, "wash_times": 2, "wash_src": "Wash B"},
             {"execute": False, "src_mod": "4mL Rack", "src_pos": "A3", "dest": "Filter Eppi B3", "vol": 600,
-             "volatile": True, "wash_vol": 150, "wash_times": 2, "wash_src": "Wash C"},
+             "volatile": True, "wash_vol": 150, "wash_times": 2, "wash_src": "Wash B"},
             {"execute": False, "src_mod": "4mL Rack", "src_pos": "A4", "dest": "Filter Eppi B4", "vol": 600,
-             "volatile": True, "wash_vol": 150, "wash_times": 2, "wash_src": "Wash C"},
+             "volatile": True, "wash_vol": 150, "wash_times": 2, "wash_src": "Wash B"},
             {"execute": False, "src_mod": "4mL Rack", "src_pos": "A5", "dest": "Filter Eppi B5", "vol": 600,
-             "volatile": True, "wash_vol": 150, "wash_times": 2, "wash_src": "Wash C"},
+             "volatile": True, "wash_vol": 150, "wash_times": 2, "wash_src": "Wash B"},
             {"execute": False, "src_mod": "4mL Rack", "src_pos": "A6", "dest": "Filter Eppi B6", "vol": 600,
-             "volatile": True, "wash_vol": 150, "wash_times": 2, "wash_src": "Wash C"},
+             "volatile": True, "wash_vol": 150, "wash_times": 2, "wash_src": "Wash B"},
             {"execute": False, "src_mod": "4mL Rack", "src_pos": "A7", "dest": "Filter Eppi B7", "vol": 600,
-             "volatile": True, "wash_vol": 150, "wash_times": 2, "wash_src": "Wash C"},
+             "volatile": True, "wash_vol": 150, "wash_times": 2, "wash_src": "Wash B"},
             {"execute": False, "src_mod": "4mL Rack", "src_pos": "A8", "dest": "Filter Eppi B8", "vol": 600,
-             "volatile": True, "wash_vol": 150, "wash_times": 2, "wash_src": "Wash C"},
+             "volatile": True, "wash_vol": 150, "wash_times": 2, "wash_src": "Wash B"},
         ]
         self._apply_transfer_table_preset(preset, preset_name="Preset 1")
 
@@ -1850,7 +1850,7 @@ class LiquidHandlerApp:
         return self.resolve_coords(rx, ry)
 
     def get_wash_coordinates(self, wash_name):
-        mapping = {"Wash A": (0, 0), "Wash B": (0, 1), "Wash C": (1, 0), "Trash": (1, 1)}
+        mapping = {"Wash A": (0, 0), "Wash B": (1, 0), "Wash C": (0, 1), "Trash": (1, 1)}
         col_idx, row_idx = mapping.get(wash_name, (0, 0))
         rx, ry = self._get_interpolated_coords(col_idx, row_idx, 2, 2, WASH_RACK_CONFIG["A1_X"],
                                                WASH_RACK_CONFIG["A1_Y"],
