@@ -17,6 +17,9 @@ from datetime import datetime
 #           CONFIGURATION
 # ==========================================
 
+# --- DEFAULT CONFIGURATIONS ---
+# These are fallback values in case the config.json file is missing or corrupted
+
 # --- CALIBRATION PIN ANCHOR (The Reference Point) ---
 CALIBRATION_PIN_CONFIG_DEFAULT = {
     "PIN_X": 109.2,
@@ -24,44 +27,92 @@ CALIBRATION_PIN_CONFIG_DEFAULT = {
     "PIN_Z": 132.8
 }
 
-# Active Configuration (Will be overwritten by JSON if exists)
+# Center Default Configuration
+CENTER_CONFIG_DEFAULT = {
+    "GLOBAL_SAFE_Z_OFFSET": 62.2,
+    "SAFE_CENTER_X_OFFSET": 0.8,
+    "SAFE_CENTER_Y_OFFSET": -4.3
+}
+
+# Parking Default Configuration (Relative Coordinates)
+PARKING_CONFIG_DEFAULT = {
+    "PARK_HEAD_X": 79.5,
+    "PARK_HEAD_Y": 71.1,
+    "PARK_HEAD_Z": 27.4
+}
+
+# Pipette Constants Default Configuration
+PIPETTE_CONFIG_DEFAULT = {
+    "STEPS_PER_UL": 0.3019,
+    "DEFAULT_TARGET_UL": 200.0,
+    "MOVEMENT_SPEED": 1000,
+    "AIR_GAP_UL": 200,
+    "MIN_PIPETTE_VOL": 100.0,
+    "MAX_PIPETTE_VOL": 1000.0
+}
+
+# Volatile Logic Default Configuration
+VOLATILE_CONFIG_DEFAULT = {
+    "VOLATILE_DRIFT_RATE": 1000,
+    "VOLATILE_MOVE_SPEED": 1500
+}
+
+# Manual Control Constants Default Configuration
+MANUAL_CONTROL_CONFIG_DEFAULT = {
+    "JOG_SPEED_XY": 8000,
+    "JOG_SPEED_Z": 8000,
+    "PIP_SPEED": 2000
+}
+
+# Communication Polling Settings Default Configuration
+COMMUNICATION_CONFIG_DEFAULT = {
+    "POLL_INTERVAL_MS": 1000,
+    "IDLE_TIMEOUT_BEFORE_POLL": 2.0
+}
+
+# --- ACTIVE CONFIGURATIONS (Will be overwritten by JSON if exists) ---
 CALIBRATION_PIN_CONFIG = CALIBRATION_PIN_CONFIG_DEFAULT.copy()
+CENTER_CONFIG = CENTER_CONFIG_DEFAULT.copy()
+PARKING_CONFIG = PARKING_CONFIG_DEFAULT.copy()
+PIPETTE_CONFIG = PIPETTE_CONFIG_DEFAULT.copy()
+VOLATILE_CONFIG = VOLATILE_CONFIG_DEFAULT.copy()
+MANUAL_CONTROL_CONFIG = MANUAL_CONTROL_CONFIG_DEFAULT.copy()
+COMMUNICATION_CONFIG = COMMUNICATION_CONFIG_DEFAULT.copy()
 
+# --- CONVENIENCE VARIABLES (For backward compatibility) ---
 # Center
-GLOBAL_SAFE_Z_OFFSET = 62.2
-SAFE_CENTER_X_OFFSET = 0.8
-SAFE_CENTER_Y_OFFSET = -4.3
+GLOBAL_SAFE_Z_OFFSET = CENTER_CONFIG["GLOBAL_SAFE_Z_OFFSET"]
+SAFE_CENTER_X_OFFSET = CENTER_CONFIG["SAFE_CENTER_X_OFFSET"]
+SAFE_CENTER_Y_OFFSET = CENTER_CONFIG["SAFE_CENTER_Y_OFFSET"]
 
-# Parking (Relative Coordinates)
-PARK_HEAD_X = 79.5
-PARK_HEAD_Y = 71.1
-PARK_HEAD_Z = 27.4
+# Parking
+PARK_HEAD_X = PARKING_CONFIG["PARK_HEAD_X"]
+PARK_HEAD_Y = PARKING_CONFIG["PARK_HEAD_Y"]
+PARK_HEAD_Z = PARKING_CONFIG["PARK_HEAD_Z"]
 
 # Pipette Constants
-STEPS_PER_UL = 0.3019
-DEFAULT_TARGET_UL = 200.0
-MOVEMENT_SPEED = 1000
-AIR_GAP_UL = 200
+STEPS_PER_UL = PIPETTE_CONFIG["STEPS_PER_UL"]
+DEFAULT_TARGET_UL = PIPETTE_CONFIG["DEFAULT_TARGET_UL"]
+MOVEMENT_SPEED = PIPETTE_CONFIG["MOVEMENT_SPEED"]
+AIR_GAP_UL = PIPETTE_CONFIG["AIR_GAP_UL"]
+MIN_PIPETTE_VOL = PIPETTE_CONFIG["MIN_PIPETTE_VOL"]
+MAX_PIPETTE_VOL = PIPETTE_CONFIG["MAX_PIPETTE_VOL"]
 
-# Volatile Logic, rate of aspiration (uL/min) to counteract dripping
-VOLATILE_DRIFT_RATE = 1000
-VOLATILE_MOVE_SPEED = 1500
-
-# Limits
-MIN_PIPETTE_VOL = 100.0
-MAX_PIPETTE_VOL = 1000.0
+# Volatile Logic
+VOLATILE_DRIFT_RATE = VOLATILE_CONFIG["VOLATILE_DRIFT_RATE"]
+VOLATILE_MOVE_SPEED = VOLATILE_CONFIG["VOLATILE_MOVE_SPEED"]
 
 # Manual Control Constants
-JOG_SPEED_XY = 8000
-JOG_SPEED_Z = 8000
-PIP_SPEED = 2000
+JOG_SPEED_XY = MANUAL_CONTROL_CONFIG["JOG_SPEED_XY"]
+JOG_SPEED_Z = MANUAL_CONTROL_CONFIG["JOG_SPEED_Z"]
+PIP_SPEED = MANUAL_CONTROL_CONFIG["PIP_SPEED"]
 
 # Communication Polling Settings
-POLL_INTERVAL_MS = 1000
-IDLE_TIMEOUT_BEFORE_POLL = 2.0
+POLL_INTERVAL_MS = COMMUNICATION_CONFIG["POLL_INTERVAL_MS"]
+IDLE_TIMEOUT_BEFORE_POLL = COMMUNICATION_CONFIG["IDLE_TIMEOUT_BEFORE_POLL"]
 
-# --- EJECT STATION CONFIGURATION (Relative Offsets) ---
-EJECT_STATION_CONFIG = {
+# --- EJECT STATION CONFIGURATION DEFAULT (Relative Offsets) ---
+EJECT_STATION_CONFIG_DEFAULT = {
     "APPROACH_X": 79.5,
     "APPROACH_Y": 71.1,
     "Z_SAFE": 57.2,
@@ -70,16 +121,16 @@ EJECT_STATION_CONFIG = {
     "Z_RETRACT": 57.2
 }
 
-# --- TIP RACK CONFIGURATION (Relative Offsets) ---
-TIP_RACK_CONFIG = {
+# --- TIP RACK CONFIGURATION DEFAULT (Relative Offsets) ---
+TIP_RACK_CONFIG_DEFAULT = {
     "A1_X": 68.7, "A1_Y": 29.9,
     "F4_X": 99.0, "F4_Y": -19.9,
     "Z_TRAVEL": 52.2,
-    "Z_PICK": -37.8,
+    "Z_PICK": -37.8
 }
 
-# --- 96 WELL PLATE CONFIGURATION (Relative Offsets) ---
-PLATE_CONFIG = {
+# --- 96 WELL PLATE CONFIGURATION DEFAULT (Relative Offsets) ---
+PLATE_CONFIG_DEFAULT = {
     "A1_X": -104.8, "A1_Y": 112.7,
     "H12_X": -5.7, "H12_Y": 49.8,
     "Z_SAFE": 27.2,
@@ -87,8 +138,8 @@ PLATE_CONFIG = {
     "Z_DISPENSE": 14.5
 }
 
-# --- FALCON RACK CONFIGURATION (Relative Offsets) ---
-FALCON_RACK_CONFIG = {
+# --- FALCON RACK CONFIGURATION DEFAULT (Relative Offsets) ---
+FALCON_RACK_CONFIG_DEFAULT = {
     "15ML_A1_X": -93.6, "15ML_A1_Y": 15.8,
     "15ML_B3_X": -55.4, "15ML_B3_Y": -4.3,
     "50ML_X": -30.9, "50ML_Y": 6.2,
@@ -97,8 +148,8 @@ FALCON_RACK_CONFIG = {
     "Z_DISPENSE": 47.2
 }
 
-# --- WASH STATION CONFIGURATION (Relative Offsets) ---
-WASH_RACK_CONFIG = {
+# --- WASH STATION CONFIGURATION DEFAULT (Relative Offsets) ---
+WASH_RACK_CONFIG_DEFAULT = {
     "A1_X": 51.5, "A1_Y": -51.5,
     "B2_X": 86.9, "B2_Y": -85.9,
     "Z_SAFE": 62.2,
@@ -106,8 +157,8 @@ WASH_RACK_CONFIG = {
     "Z_DISPENSE": 37.2
 }
 
-# --- 4 ML RACK CONFIGURATION (Relative Offsets) ---
-_4ML_RACK_CONFIG = {
+# --- 4 ML RACK CONFIGURATION DEFAULT (Relative Offsets) ---
+_4ML_RACK_CONFIG_DEFAULT = {
     "A1_X": -113.2, "A1_Y": -34.6,
     "A8_X": 12.4, "A8_Y": -34.6,
     "Z_SAFE": 38.8,
@@ -115,8 +166,8 @@ _4ML_RACK_CONFIG = {
     "Z_DISPENSE": 17.2
 }
 
-# --- FILTER EPPI RACK CONFIGURATION (Row B) (Relative Offsets) ---
-FILTER_EPPI_RACK_CONFIG = {
+# --- FILTER EPPI RACK CONFIGURATION DEFAULT (Row B) (Relative Offsets) ---
+FILTER_EPPI_RACK_CONFIG_DEFAULT = {
     "B1_X": -113.2, "B1_Y": -51.2,
     "B8_X": 12.4, "B8_Y": -51.2,
     "Z_SAFE": 38.8,
@@ -124,8 +175,17 @@ FILTER_EPPI_RACK_CONFIG = {
     "Z_DISPENSE": 27.2
 }
 
-# --- EPPI RACK CONFIGURATION (Row C) (Relative Offsets) ---
-EPPI_RACK_CONFIG = {
+# --- ACTIVE CONFIGURATIONS (Will be overwritten by JSON if exists) ---
+EJECT_STATION_CONFIG = EJECT_STATION_CONFIG_DEFAULT.copy()
+TIP_RACK_CONFIG = TIP_RACK_CONFIG_DEFAULT.copy()
+PLATE_CONFIG = PLATE_CONFIG_DEFAULT.copy()
+FALCON_RACK_CONFIG = FALCON_RACK_CONFIG_DEFAULT.copy()
+WASH_RACK_CONFIG = WASH_RACK_CONFIG_DEFAULT.copy()
+_4ML_RACK_CONFIG = _4ML_RACK_CONFIG_DEFAULT.copy()
+FILTER_EPPI_RACK_CONFIG = FILTER_EPPI_RACK_CONFIG_DEFAULT.copy()
+
+# --- EPPI RACK CONFIGURATION DEFAULT (Row C) (Relative Offsets) ---
+EPPI_RACK_CONFIG_DEFAULT = {
     "C1_X": -113.2, "C1_Y": -65.7,
     "C8_X": 12.4, "C8_Y": -65.7,
     "Z_SAFE": 38.8,
@@ -133,8 +193,8 @@ EPPI_RACK_CONFIG = {
     "Z_DISPENSE": 22.2
 }
 
-# --- HPLC VIAL RACK CONFIGURATION (Row D) (Relative Offsets) ---
-HPLC_VIAL_RACK_CONFIG = {
+# --- HPLC VIAL RACK CONFIGURATION DEFAULT (Row D) (Relative Offsets) ---
+HPLC_VIAL_RACK_CONFIG_DEFAULT = {
     "D1_X": -113.2, "D1_Y": -81.7,
     "D8_X": 12.4, "D8_Y": -81.7,
     "Z_SAFE": 38.8,
@@ -142,8 +202,8 @@ HPLC_VIAL_RACK_CONFIG = {
     "Z_DISPENSE": 27.2
 }
 
-# --- HPLC VIAL INSERT RACK CONFIGURATION (Row E) (Relative Offsets) ---
-HPLC_VIAL_INSERT_RACK_CONFIG = {
+# --- HPLC VIAL INSERT RACK CONFIGURATION DEFAULT (Row E) (Relative Offsets) ---
+HPLC_VIAL_INSERT_RACK_CONFIG_DEFAULT = {
     "E1_X": -113.1, "E1_Y": -97.3,
     "E8_X": 12.4, "E8_Y": -97.3,
     "Z_SAFE": 38.8,
@@ -151,14 +211,20 @@ HPLC_VIAL_INSERT_RACK_CONFIG = {
     "Z_DISPENSE": 27.2
 }
 
-# --- SCREWCAP VIAL RACK CONFIGURATION (Row F) (Relative Offsets) ---
-SCREWCAP_VIAL_RACK_CONFIG = {
+# --- SCREWCAP VIAL RACK CONFIGURATION DEFAULT (Row F) (Relative Offsets) ---
+SCREWCAP_VIAL_RACK_CONFIG_DEFAULT = {
     "F1_X": -113.2, "F1_Y": -112.8,
     "F8_X": 12.4, "F8_Y": -112.8,
     "Z_SAFE": 38.8,
     "Z_ASPIRATE": -8.9,
     "Z_DISPENSE": 22.2
 }
+
+# --- ACTIVE CONFIGURATIONS (Will be overwritten by JSON if exists) ---
+EPPI_RACK_CONFIG = EPPI_RACK_CONFIG_DEFAULT.copy()
+HPLC_VIAL_RACK_CONFIG = HPLC_VIAL_RACK_CONFIG_DEFAULT.copy()
+HPLC_VIAL_INSERT_RACK_CONFIG = HPLC_VIAL_INSERT_RACK_CONFIG_DEFAULT.copy()
+SCREWCAP_VIAL_RACK_CONFIG = SCREWCAP_VIAL_RACK_CONFIG_DEFAULT.copy()
 
 # --- MODULE GROUPS FOR OPTIMIZATION ---
 SMALL_VIAL_MODULES = ["4ML", "FILTER_EPPI", "EPPI", "HPLC", "HPLC_INSERT", "SCREWCAP"]
@@ -355,14 +421,114 @@ class LiquidHandlerApp:
         self.pos_log_thread.start()
 
     def load_calibration_config(self):
-        global CALIBRATION_PIN_CONFIG
+        global CALIBRATION_PIN_CONFIG, CENTER_CONFIG, PARKING_CONFIG, PIPETTE_CONFIG, VOLATILE_CONFIG
+        global MANUAL_CONTROL_CONFIG, COMMUNICATION_CONFIG, EJECT_STATION_CONFIG, TIP_RACK_CONFIG
+        global PLATE_CONFIG, FALCON_RACK_CONFIG, WASH_RACK_CONFIG, _4ML_RACK_CONFIG, FILTER_EPPI_RACK_CONFIG
+        global EPPI_RACK_CONFIG, HPLC_VIAL_RACK_CONFIG, HPLC_VIAL_INSERT_RACK_CONFIG, SCREWCAP_VIAL_RACK_CONFIG
+        global GLOBAL_SAFE_Z_OFFSET, SAFE_CENTER_X_OFFSET, SAFE_CENTER_Y_OFFSET
+        global PARK_HEAD_X, PARK_HEAD_Y, PARK_HEAD_Z
+        global STEPS_PER_UL, DEFAULT_TARGET_UL, MOVEMENT_SPEED, AIR_GAP_UL, MIN_PIPETTE_VOL, MAX_PIPETTE_VOL
+        global VOLATILE_DRIFT_RATE, VOLATILE_MOVE_SPEED
+        global JOG_SPEED_XY, JOG_SPEED_Z, PIP_SPEED
+        global POLL_INTERVAL_MS, IDLE_TIMEOUT_BEFORE_POLL
+
         if os.path.exists(self.config_file):
             try:
                 with open(self.config_file, "r") as f:
                     config = json.load(f)
+
+                    # Load calibration pin config
                     if all(k in config for k in ["PIN_X", "PIN_Y", "PIN_Z"]):
-                        CALIBRATION_PIN_CONFIG.update(config)
-                        print(f"[CONFIG] Loaded from {self.config_file}")
+                        CALIBRATION_PIN_CONFIG.update({
+                            "PIN_X": config["PIN_X"],
+                            "PIN_Y": config["PIN_Y"],
+                            "PIN_Z": config["PIN_Z"]
+                        })
+
+                    # Load center config
+                    if "CENTER" in config:
+                        CENTER_CONFIG.update(config["CENTER"])
+                        # Update convenience variables
+                        GLOBAL_SAFE_Z_OFFSET = CENTER_CONFIG["GLOBAL_SAFE_Z_OFFSET"]
+                        SAFE_CENTER_X_OFFSET = CENTER_CONFIG["SAFE_CENTER_X_OFFSET"]
+                        SAFE_CENTER_Y_OFFSET = CENTER_CONFIG["SAFE_CENTER_Y_OFFSET"]
+
+                    # Load parking config
+                    if "PARKING" in config:
+                        PARKING_CONFIG.update(config["PARKING"])
+                        # Update convenience variables
+                        PARK_HEAD_X = PARKING_CONFIG["PARK_HEAD_X"]
+                        PARK_HEAD_Y = PARKING_CONFIG["PARK_HEAD_Y"]
+                        PARK_HEAD_Z = PARKING_CONFIG["PARK_HEAD_Z"]
+
+                    # Load pipette config
+                    if "PIPETTE" in config:
+                        PIPETTE_CONFIG.update(config["PIPETTE"])
+                        # Update convenience variables
+                        STEPS_PER_UL = PIPETTE_CONFIG["STEPS_PER_UL"]
+                        DEFAULT_TARGET_UL = PIPETTE_CONFIG["DEFAULT_TARGET_UL"]
+                        MOVEMENT_SPEED = PIPETTE_CONFIG["MOVEMENT_SPEED"]
+                        AIR_GAP_UL = PIPETTE_CONFIG["AIR_GAP_UL"]
+                        MIN_PIPETTE_VOL = PIPETTE_CONFIG["MIN_PIPETTE_VOL"]
+                        MAX_PIPETTE_VOL = PIPETTE_CONFIG["MAX_PIPETTE_VOL"]
+
+                    # Load volatile config
+                    if "VOLATILE" in config:
+                        VOLATILE_CONFIG.update(config["VOLATILE"])
+                        # Update convenience variables
+                        VOLATILE_DRIFT_RATE = VOLATILE_CONFIG["VOLATILE_DRIFT_RATE"]
+                        VOLATILE_MOVE_SPEED = VOLATILE_CONFIG["VOLATILE_MOVE_SPEED"]
+
+                    # Load manual control config
+                    if "MANUAL_CONTROL" in config:
+                        MANUAL_CONTROL_CONFIG.update(config["MANUAL_CONTROL"])
+                        # Update convenience variables
+                        JOG_SPEED_XY = MANUAL_CONTROL_CONFIG["JOG_SPEED_XY"]
+                        JOG_SPEED_Z = MANUAL_CONTROL_CONFIG["JOG_SPEED_Z"]
+                        PIP_SPEED = MANUAL_CONTROL_CONFIG["PIP_SPEED"]
+
+                    # Load communication config
+                    if "COMMUNICATION" in config:
+                        COMMUNICATION_CONFIG.update(config["COMMUNICATION"])
+                        # Update convenience variables
+                        POLL_INTERVAL_MS = COMMUNICATION_CONFIG["POLL_INTERVAL_MS"]
+                        IDLE_TIMEOUT_BEFORE_POLL = COMMUNICATION_CONFIG["IDLE_TIMEOUT_BEFORE_POLL"]
+
+                    # Load rack configurations
+                    if "EJECT_STATION_CONFIG" in config:
+                        EJECT_STATION_CONFIG.update(config["EJECT_STATION_CONFIG"])
+
+                    if "TIP_RACK_CONFIG" in config:
+                        TIP_RACK_CONFIG.update(config["TIP_RACK_CONFIG"])
+
+                    if "PLATE_CONFIG" in config:
+                        PLATE_CONFIG.update(config["PLATE_CONFIG"])
+
+                    if "FALCON_RACK_CONFIG" in config:
+                        FALCON_RACK_CONFIG.update(config["FALCON_RACK_CONFIG"])
+
+                    if "WASH_RACK_CONFIG" in config:
+                        WASH_RACK_CONFIG.update(config["WASH_RACK_CONFIG"])
+
+                    if "4ML_RACK_CONFIG" in config:
+                        _4ML_RACK_CONFIG.update(config["4ML_RACK_CONFIG"])
+
+                    if "FILTER_EPPI_RACK_CONFIG" in config:
+                        FILTER_EPPI_RACK_CONFIG.update(config["FILTER_EPPI_RACK_CONFIG"])
+
+                    if "EPPI_RACK_CONFIG" in config:
+                        EPPI_RACK_CONFIG.update(config["EPPI_RACK_CONFIG"])
+
+                    if "HPLC_VIAL_RACK_CONFIG" in config:
+                        HPLC_VIAL_RACK_CONFIG.update(config["HPLC_VIAL_RACK_CONFIG"])
+
+                    if "HPLC_VIAL_INSERT_RACK_CONFIG" in config:
+                        HPLC_VIAL_INSERT_RACK_CONFIG.update(config["HPLC_VIAL_INSERT_RACK_CONFIG"])
+
+                    if "SCREWCAP_VIAL_RACK_CONFIG" in config:
+                        SCREWCAP_VIAL_RACK_CONFIG.update(config["SCREWCAP_VIAL_RACK_CONFIG"])
+
+                    print(f"[CONFIG] Loaded from {self.config_file}")
             except Exception as e:
                 print(f"[CONFIG] Error loading JSON: {e}. Using defaults.")
 
