@@ -410,6 +410,9 @@ class LiquidHandlerApp:
         self.vial_b_var = tk.StringVar(value="A2")
         self.diluent_var = tk.StringVar(value="50mL")
 
+        # --- CALIBRATION VARIABLES ---
+        self.calibration_module_var = tk.StringVar(value="96 well plate")
+
         self._build_ui()
         self._poll_rx_queue()
         self.refresh_ports()
@@ -579,6 +582,10 @@ class LiquidHandlerApp:
         self.notebook.add(self.tab_testing, text=" Testing ")
         self._build_testing_tab(self.tab_testing)
 
+        self.tab_calibration = ttk.Frame(self.notebook)
+        self.notebook.add(self.tab_calibration, text=" Calibration ")
+        self._build_calibration_tab(self.tab_calibration)
+
         # Bottom Bar
         bottom_frame = ttk.Frame(self.root, relief="sunken", borderwidth=1)
         bottom_frame.pack(side="bottom", fill="x", padx=0, pady=0)
@@ -647,9 +654,6 @@ class LiquidHandlerApp:
         target_entry.pack(pady=2)
         ttk.Button(left_col, text="SYNC & MOVE", command=self.run_calibration_sequence).pack(fill="x", pady=5, ipady=3)
         ttk.Button(left_col, text="HOME ALL", command=lambda: self.send_home("All")).pack(fill="x", pady=5, ipady=3)
-        ttk.Separator(left_col, orient="horizontal").pack(fill="x", pady=10)
-        ttk.Label(left_col, text="Absolute Motion Calibration", font=("Arial", 10, "bold")).pack(pady=2)
-        ttk.Button(left_col, text="Calibrate", command=self.start_pin_calibration_sequence).pack(fill="x", pady=5)
 
         right_col = ttk.LabelFrame(bottom_container, text="Tip Inventory", padding=5)
         right_col.pack(side="right", fill="both", expand=True, padx=(2, 0))
@@ -1325,6 +1329,40 @@ class LiquidHandlerApp:
         ttk.Button(action_row, text="TEST: 96 Well Plate Mixing",
                    command=lambda: threading.Thread(target=self.test_96_mixing_sequence, daemon=True).start()
                    ).pack(side="left", fill="x", expand=True, padx=(0, 5))
+
+    def _build_calibration_tab(self, parent):
+        frame = ttk.Frame(parent, padding=20)
+        frame.pack(fill="both", expand=True)
+
+        # Absolute Motion Calibration (moved from initialization tab)
+        abs_calib_frame = ttk.LabelFrame(frame, text="Absolute Motion Calibration", padding=10)
+        abs_calib_frame.pack(fill="x", pady=(0, 10))
+        ttk.Label(abs_calib_frame, text="Calibrate the machine's absolute position using the calibration pin.", 
+                  font=("Arial", 9)).pack(pady=(0, 5))
+        ttk.Button(abs_calib_frame, text="Calibrate", command=self.start_pin_calibration_sequence).pack(fill="x", pady=5)
+
+        # Module Calibration
+        module_calib_frame = ttk.LabelFrame(frame, text="Module Calibration", padding=10)
+        module_calib_frame.pack(fill="x", pady=5)
+        ttk.Label(module_calib_frame, text="Calibrate the first and last positions of a selected module.", 
+                  font=("Arial", 9)).pack(pady=(0, 5))
+
+        # Module selection row
+        module_row = ttk.Frame(module_calib_frame)
+        module_row.pack(fill="x", pady=(0, 10))
+        ttk.Label(module_row, text="Module:").pack(side="left", padx=(0, 5))
+
+        module_options = [
+            "tip rack", "96 well plate", "15 mL falcon rack", "50 mL falcon rack", 
+            "wash rack", "4mL rack", "filter eppi rack", "eppi rack", 
+            "hplc vial insert rack", "screwcap vial rack"
+        ]
+
+        ttk.Combobox(module_row, textvariable=self.calibration_module_var, values=module_options, 
+                     width=20, state="readonly").pack(side="left", padx=(0, 10))
+
+        ttk.Button(module_row, text="Calibrate Module", 
+                   command=self.start_module_calibration_sequence).pack(side="left")
 
     # ==========================================
     #           LOGIC & COMMS
@@ -3148,6 +3186,282 @@ class LiquidHandlerApp:
         self.save_calibration_config(CALIBRATION_PIN_CONFIG)
         self.log_line("[CALIB] Reverted to Default Pin Config.")
         messagebox.showinfo("Reverted", "Calibration reverted to default values.")
+
+    def get_module_first_last_positions(self, module_name):
+        """Get the first and last positions for a given module"""
+        positions = {
+            "tip rack": ("A1", "F4"),
+            "96 well plate": ("A1", "H12"),
+            "15 mL falcon rack": ("A1", "B3"),
+            "50 mL falcon rack": ("50mL", "50mL"),  # Single position
+            "wash rack": ("Wash A", "Trash"),
+            "4mL rack": ("A1", "A8"),
+            "filter eppi rack": ("B1", "B8"),
+            "eppi rack": ("C1", "C8"),
+            "hplc vial insert rack": ("E1", "E8"),
+            "screwcap vial rack": ("F1", "F8")
+        }
+        return positions.get(module_name, ("A1", "A1"))
+
+    def start_module_calibration_sequence(self):
+        if not self.ser or not self.ser.is_open:
+            messagebox.showwarning("Not Connected", "Please connect to the printer first.")
+            return
+
+        module_name = self.calibration_module_var.get()
+        first_pos, last_pos = self.get_module_first_last_positions(module_name)
+
+        # Store calibration state
+        self.current_calibration_module = module_name
+        self.current_calibration_positions = [first_pos, last_pos]
+        self.current_calibration_step = 0  # 0 = first position, 1 = last position
+
+        self.log_line(f"[MODULE_CALIB] Starting {module_name} calibration sequence...")
+        self.log_line(f"[MODULE_CALIB] Will calibrate positions: {first_pos} and {last_pos}")
+
+        # Start with first position
+        self._calibrate_module_position(first_pos)
+
+    def _calibrate_module_position(self, position):
+        """Move to a specific position in the current module and show calibration dialog"""
+        module_name = self.current_calibration_module
+
+        # Get coordinates based on module type
+        try:
+            if module_name == "tip rack":
+                x, y = self.get_tip_coordinates(position)
+                safe_z = self.resolve_coords(0, 0, TIP_RACK_CONFIG["Z_TRAVEL"])[2]
+                asp_z = self.resolve_coords(0, 0, TIP_RACK_CONFIG["Z_PICK"])[2]
+            elif module_name == "96 well plate":
+                x, y = self.get_well_coordinates(position)
+                safe_z = self.resolve_coords(0, 0, PLATE_CONFIG["Z_SAFE"])[2]
+                asp_z = self.resolve_coords(0, 0, PLATE_CONFIG["Z_ASPIRATE"])[2]
+            elif module_name == "15 mL falcon rack":
+                x, y = self.get_falcon_coordinates(position)
+                safe_z = self.resolve_coords(0, 0, FALCON_RACK_CONFIG["Z_SAFE"])[2]
+                asp_z = self.resolve_coords(0, 0, FALCON_RACK_CONFIG["Z_ASPIRATE"])[2]
+            elif module_name == "50 mL falcon rack":
+                x, y = self.get_falcon_coordinates(position)
+                safe_z = self.resolve_coords(0, 0, FALCON_RACK_CONFIG["Z_SAFE"])[2]
+                asp_z = self.resolve_coords(0, 0, FALCON_RACK_CONFIG["Z_ASPIRATE"])[2]
+            elif module_name == "wash rack":
+                x, y = self.get_wash_coordinates(position)
+                safe_z = self.resolve_coords(0, 0, WASH_RACK_CONFIG["Z_SAFE"])[2]
+                asp_z = self.resolve_coords(0, 0, WASH_RACK_CONFIG["Z_ASPIRATE"])[2]
+            elif module_name == "4mL rack":
+                x, y = self.get_4ml_coordinates(position)
+                safe_z = self.resolve_coords(0, 0, _4ML_RACK_CONFIG["Z_SAFE"])[2]
+                asp_z = self.resolve_coords(0, 0, _4ML_RACK_CONFIG["Z_ASPIRATE"])[2]
+            elif module_name == "filter eppi rack":
+                x, y = self.get_1x8_rack_coordinates(position, FILTER_EPPI_RACK_CONFIG, "B")
+                safe_z = self.resolve_coords(0, 0, FILTER_EPPI_RACK_CONFIG["Z_SAFE"])[2]
+                asp_z = self.resolve_coords(0, 0, FILTER_EPPI_RACK_CONFIG["Z_ASPIRATE"])[2]
+            elif module_name == "eppi rack":
+                x, y = self.get_1x8_rack_coordinates(position, EPPI_RACK_CONFIG, "C")
+                safe_z = self.resolve_coords(0, 0, EPPI_RACK_CONFIG["Z_SAFE"])[2]
+                asp_z = self.resolve_coords(0, 0, EPPI_RACK_CONFIG["Z_ASPIRATE"])[2]
+            elif module_name == "hplc vial insert rack":
+                x, y = self.get_1x8_rack_coordinates(position, HPLC_VIAL_INSERT_RACK_CONFIG, "E")
+                safe_z = self.resolve_coords(0, 0, HPLC_VIAL_INSERT_RACK_CONFIG["Z_SAFE"])[2]
+                asp_z = self.resolve_coords(0, 0, HPLC_VIAL_INSERT_RACK_CONFIG["Z_ASPIRATE"])[2]
+            elif module_name == "screwcap vial rack":
+                x, y = self.get_1x8_rack_coordinates(position, SCREWCAP_VIAL_RACK_CONFIG, "F")
+                safe_z = self.resolve_coords(0, 0, SCREWCAP_VIAL_RACK_CONFIG["Z_SAFE"])[2]
+                asp_z = self.resolve_coords(0, 0, SCREWCAP_VIAL_RACK_CONFIG["Z_ASPIRATE"])[2]
+            else:
+                messagebox.showerror("Error", f"Unknown module: {module_name}")
+                return
+        except Exception as e:
+            messagebox.showerror("Error", f"Failed to get coordinates for {position}: {e}")
+            return
+
+        # Store current position being calibrated
+        self.current_calibration_position = position
+        self.current_calibration_coords = (x, y, asp_z)
+
+        # Move to position
+        cmds = []
+        global_safe_z = self.resolve_coords(0, 0, GLOBAL_SAFE_Z_OFFSET)[2]
+        cmds.append(f"G0 Z{global_safe_z:.2f} F{JOG_SPEED_Z}")
+        cmds.append(f"G0 X{x:.2f} Y{y:.2f} F{JOG_SPEED_XY}")
+        cmds.append(f"G0 Z{asp_z:.2f} F{JOG_SPEED_Z}")
+
+        def run_seq():
+            self.last_cmd_var.set(f"Calibrating: Moving to {module_name} {position}...")
+            self._send_lines_with_ok(cmds)
+            self._wait_for_finish()
+            self.last_cmd_var.set("Waiting for User...")
+            self.root.after(0, self._show_module_calibration_decision_popup)
+            self.last_cmd_var.set("Idle")
+
+        threading.Thread(target=run_seq, daemon=True).start()
+
+    def _show_module_calibration_decision_popup(self):
+        """Show popup asking user to accept or calibrate the current module position"""
+        popup = tk.Toplevel(self.root)
+        popup.title("Module Calibration Check")
+        popup.geometry("350x180")
+        popup.grab_set()
+
+        module_name = self.current_calibration_module
+        position = self.current_calibration_position
+        step = self.current_calibration_step
+        total_positions = len(self.current_calibration_positions)
+
+        ttk.Label(popup, text=f"Head is at {module_name} position {position}.", 
+                  font=("Arial", 10)).pack(pady=10)
+        ttk.Label(popup, text=f"Step {step + 1} of {total_positions}", 
+                  font=("Arial", 9, "italic")).pack(pady=5)
+        ttk.Label(popup, text="Is the position correct?", font=("Arial", 10)).pack(pady=5)
+
+        btn_frame = ttk.Frame(popup)
+        btn_frame.pack(pady=15)
+
+        def accept_position():
+            popup.destroy()
+            self._proceed_to_next_calibration_step()
+
+        def calibrate_position():
+            popup.destroy()
+            self._open_module_calibration_jog_window()
+
+        ttk.Button(btn_frame, text="ACCEPT (Done)", command=accept_position).pack(side="left", padx=10)
+        ttk.Button(btn_frame, text="CALIBRATE", command=calibrate_position).pack(side="left", padx=10)
+
+    def _open_module_calibration_jog_window(self):
+        """Open jog window for fine-tuning module position"""
+        jog_win = tk.Toplevel(self.root)
+        jog_win.title("Fine Tune Module Position")
+        jog_win.geometry("400x380")
+        jog_win.grab_set()
+
+        module_name = self.current_calibration_module
+        position = self.current_calibration_position
+
+        ttk.Label(jog_win, text=f"Jog head to correct {module_name} {position} position.", 
+                  font=("Arial", 10, "bold")).pack(pady=10)
+        ttk.Label(jog_win, text="Precision: 0.1 mm", font=("Arial", 9)).pack(pady=5)
+
+        ctrl_frame = ttk.Frame(jog_win)
+        ctrl_frame.pack(pady=10)
+
+        # Store original step size and set to 0.1mm
+        original_step = self.step_size_var.get()
+        self.step_size_var.set(0.1)
+
+        def close_and_restore():
+            self.step_size_var.set(original_step)
+            jog_win.destroy()
+
+        jog_win.protocol("WM_DELETE_WINDOW", close_and_restore)
+
+        # Jog buttons
+        btn_w = 6
+        ttk.Button(ctrl_frame, text="Y+", width=btn_w, command=lambda: self.send_jog("Y", 1)).grid(row=0, column=1, pady=5)
+        ttk.Button(ctrl_frame, text="Y-", width=btn_w, command=lambda: self.send_jog("Y", -1)).grid(row=2, column=1, pady=5)
+        ttk.Button(ctrl_frame, text="X-", width=btn_w, command=lambda: self.send_jog("X", -1)).grid(row=1, column=0, padx=5)
+        ttk.Button(ctrl_frame, text="X+", width=btn_w, command=lambda: self.send_jog("X", 1)).grid(row=1, column=2, padx=5)
+        ttk.Button(ctrl_frame, text="Z+ (Up)", width=btn_w, command=lambda: self.send_jog("Z", 1)).grid(row=0, column=4, padx=20)
+        ttk.Button(ctrl_frame, text="Z- (Dn)", width=btn_w, command=lambda: self.send_jog("Z", -1)).grid(row=2, column=4, padx=20)
+
+        # Bottom buttons
+        bot_frame = ttk.Frame(jog_win)
+        bot_frame.pack(side="bottom", fill="x", pady=10, padx=10)
+
+        def save_and_continue():
+            self.save_module_calibration_position()
+            close_and_restore()
+            self._proceed_to_next_calibration_step()
+
+        ttk.Button(bot_frame, text="ACCEPT & SAVE", command=save_and_continue).pack(side="right")
+
+    def save_module_calibration_position(self):
+        """Save the current calibrated position to config.json"""
+        module_name = self.current_calibration_module
+        position = self.current_calibration_position
+
+        # Get current coordinates
+        new_x = self.current_x
+        new_y = self.current_y
+
+        # Determine which config section to update based on module and position
+        config_updates = {}
+
+        try:
+            if module_name == "tip rack":
+                if position == "A1":
+                    config_updates["TIP_RACK_CONFIG"] = {"A1_X": new_x, "A1_Y": new_y}
+                elif position == "F4":
+                    config_updates["TIP_RACK_CONFIG"] = {"F4_X": new_x, "F4_Y": new_y}
+            elif module_name == "96 well plate":
+                if position == "A1":
+                    config_updates["PLATE_CONFIG"] = {"A1_X": new_x, "A1_Y": new_y}
+                elif position == "H12":
+                    config_updates["PLATE_CONFIG"] = {"H12_X": new_x, "H12_Y": new_y}
+            elif module_name == "15 mL falcon rack":
+                if position == "A1":
+                    config_updates["FALCON_RACK_CONFIG"] = {"15ML_A1_X": new_x, "15ML_A1_Y": new_y}
+                elif position == "B3":
+                    config_updates["FALCON_RACK_CONFIG"] = {"15ML_B3_X": new_x, "15ML_B3_Y": new_y}
+            elif module_name == "50 mL falcon rack":
+                config_updates["FALCON_RACK_CONFIG"] = {"50ML_X": new_x, "50ML_Y": new_y}
+            elif module_name == "wash rack":
+                if position == "Wash A":
+                    config_updates["WASH_RACK_CONFIG"] = {"A1_X": new_x, "A1_Y": new_y}
+                elif position == "Trash":
+                    config_updates["WASH_RACK_CONFIG"] = {"B2_X": new_x, "B2_Y": new_y}
+            elif module_name == "4mL rack":
+                if position == "A1":
+                    config_updates["4ML_RACK_CONFIG"] = {"A1_X": new_x, "A1_Y": new_y}
+                elif position == "A8":
+                    config_updates["4ML_RACK_CONFIG"] = {"A8_X": new_x, "A8_Y": new_y}
+            elif module_name == "filter eppi rack":
+                if position == "B1":
+                    config_updates["FILTER_EPPI_RACK_CONFIG"] = {"B1_X": new_x, "B1_Y": new_y}
+                elif position == "B8":
+                    config_updates["FILTER_EPPI_RACK_CONFIG"] = {"B8_X": new_x, "B8_Y": new_y}
+            elif module_name == "eppi rack":
+                if position == "C1":
+                    config_updates["EPPI_RACK_CONFIG"] = {"C1_X": new_x, "C1_Y": new_y}
+                elif position == "C8":
+                    config_updates["EPPI_RACK_CONFIG"] = {"C8_X": new_x, "C8_Y": new_y}
+            elif module_name == "hplc vial insert rack":
+                if position == "E1":
+                    config_updates["HPLC_VIAL_INSERT_RACK_CONFIG"] = {"E1_X": new_x, "E1_Y": new_y}
+                elif position == "E8":
+                    config_updates["HPLC_VIAL_INSERT_RACK_CONFIG"] = {"E8_X": new_x, "E8_Y": new_y}
+            elif module_name == "screwcap vial rack":
+                if position == "F1":
+                    config_updates["SCREWCAP_VIAL_RACK_CONFIG"] = {"F1_X": new_x, "F1_Y": new_y}
+                elif position == "F8":
+                    config_updates["SCREWCAP_VIAL_RACK_CONFIG"] = {"F8_X": new_x, "F8_Y": new_y}
+
+            # Save to config file
+            if config_updates:
+                self.save_calibration_config(config_updates)
+                self.log_line(f"[MODULE_CALIB] Saved {module_name} {position}: X={new_x:.2f}, Y={new_y:.2f}")
+                messagebox.showinfo("Saved", f"New {module_name} {position} coordinates saved to config.json")
+            else:
+                messagebox.showwarning("Warning", f"No config mapping found for {module_name} {position}")
+
+        except Exception as e:
+            messagebox.showerror("Error", f"Failed to save calibration: {e}")
+            self.log_line(f"[MODULE_CALIB] Error saving {module_name} {position}: {e}")
+
+    def _proceed_to_next_calibration_step(self):
+        """Move to the next position in the calibration sequence or finish"""
+        self.current_calibration_step += 1
+
+        if self.current_calibration_step < len(self.current_calibration_positions):
+            # Move to next position
+            next_position = self.current_calibration_positions[self.current_calibration_step]
+            self.log_line(f"[MODULE_CALIB] Moving to next position: {next_position}")
+            self._calibrate_module_position(next_position)
+        else:
+            # Calibration complete
+            module_name = self.current_calibration_module
+            self.log_line(f"[MODULE_CALIB] {module_name} calibration sequence complete!")
+            messagebox.showinfo("Complete", f"{module_name} calibration sequence completed successfully!")
 
     def test_rack_module_sequence(self):
         if not self.ser or not self.ser.is_open:

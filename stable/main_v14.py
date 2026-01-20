@@ -331,7 +331,7 @@ class LiquidHandlerApp:
         self.plate_wells = [f"{r}{c}" for r in self.plate_rows for c in self.plate_cols]
 
         self.falcon_positions = ["A1", "A2", "A3", "B1", "B2", "B3", "50mL"]
-        self.wash_positions = ["Wash A", "Wash B", "Waste A", "Waste B"]
+        self.wash_positions = ["Wash A", "Wash B", "Wash C", "Trash"]
         self._4ml_positions = [f"A{i}" for i in range(1, 9)]
         self.filter_eppi_positions = [f"B{i}" for i in range(1, 9)]
         self.eppi_positions = [f"C{i}" for i in range(1, 9)]
@@ -1850,7 +1850,7 @@ class LiquidHandlerApp:
         return self.resolve_coords(rx, ry)
 
     def get_wash_coordinates(self, wash_name):
-        mapping = {"Wash A": (0, 0), "Wash B": (1, 0), "Waste A": (0, 1), "Waste B": (1, 1)}
+        mapping = {"Wash A": (0, 0), "Wash B": (1, 0), "Wash C": (0, 1), "Trash": (1, 1)}
         col_idx, row_idx = mapping.get(wash_name, (0, 0))
         rx, ry = self._get_interpolated_coords(col_idx, row_idx, 2, 2, WASH_RACK_CONFIG["A1_X"],
                                                WASH_RACK_CONFIG["A1_Y"],
