@@ -3169,23 +3169,76 @@ class LiquidHandlerApp:
                    command=lambda: [self.save_calibration_position(), close_and_restore()]).pack(side="right")
 
     def save_calibration_position(self):
-        new_config = {
-            "PIN_X": self.current_x,
-            "PIN_Y": self.current_y,
-            "PIN_Z": self.current_z
-        }
-        global CALIBRATION_PIN_CONFIG
-        CALIBRATION_PIN_CONFIG.update(new_config)
-        self.save_calibration_config(new_config)
-        self.log_line(f"[CALIB] New Pin Config Saved: {new_config}")
-        messagebox.showinfo("Saved", "New calibration coordinates saved to config.json")
+        """Save the calibrated pin position to config.json"""
+        # Load existing full config from file
+        try:
+            if os.path.exists(self.config_file):
+                with open(self.config_file, "r") as f:
+                    full_config = json.load(f)
+            else:
+                full_config = {}
+        except Exception as e:
+            messagebox.showerror("Error", f"Could not load config file: {e}")
+            return
+
+        # Update only the PIN coordinates
+        full_config["PIN_X"] = self.current_x
+        full_config["PIN_Y"] = self.current_y
+        full_config["PIN_Z"] = self.current_z
+
+        # Save the complete config back to file
+        try:
+            with open(self.config_file, "w") as f:
+                json.dump(full_config, f, indent=4)
+
+            # Update the global config in memory
+            global CALIBRATION_PIN_CONFIG
+            CALIBRATION_PIN_CONFIG["PIN_X"] = self.current_x
+            CALIBRATION_PIN_CONFIG["PIN_Y"] = self.current_y
+            CALIBRATION_PIN_CONFIG["PIN_Z"] = self.current_z
+
+            self.log_line(
+                f"[CALIB] New Pin Config Saved: X={self.current_x:.2f}, Y={self.current_y:.2f}, Z={self.current_z:.2f}")
+            messagebox.showinfo("Saved",
+                                f"New calibration coordinates saved to config.json\nX={self.current_x:.2f}, Y={self.current_y:.2f}, Z={self.current_z:.2f}")
+
+        except Exception as e:
+            messagebox.showerror("Error", f"Could not save config: {e}")
+            self.log_line(f"[CALIB] Error saving pin config: {e}")
 
     def revert_calibration_default(self):
-        global CALIBRATION_PIN_CONFIG
-        CALIBRATION_PIN_CONFIG = CALIBRATION_PIN_CONFIG_DEFAULT.copy()
-        self.save_calibration_config(CALIBRATION_PIN_CONFIG)
-        self.log_line("[CALIB] Reverted to Default Pin Config.")
-        messagebox.showinfo("Reverted", "Calibration reverted to default values.")
+        """Revert pin calibration to default values"""
+        # Load existing full config from file
+        try:
+            if os.path.exists(self.config_file):
+                with open(self.config_file, "r") as f:
+                    full_config = json.load(f)
+            else:
+                full_config = {}
+        except Exception as e:
+            messagebox.showerror("Error", f"Could not load config file: {e}")
+            return
+
+        # Update only the PIN coordinates to defaults
+        full_config["PIN_X"] = CALIBRATION_PIN_CONFIG_DEFAULT["PIN_X"]
+        full_config["PIN_Y"] = CALIBRATION_PIN_CONFIG_DEFAULT["PIN_Y"]
+        full_config["PIN_Z"] = CALIBRATION_PIN_CONFIG_DEFAULT["PIN_Z"]
+
+        # Save the complete config back to file
+        try:
+            with open(self.config_file, "w") as f:
+                json.dump(full_config, f, indent=4)
+
+            # Update the global config in memory
+            global CALIBRATION_PIN_CONFIG
+            CALIBRATION_PIN_CONFIG = CALIBRATION_PIN_CONFIG_DEFAULT.copy()
+
+            self.log_line("[CALIB] Reverted to Default Pin Config.")
+            messagebox.showinfo("Reverted", "Calibration reverted to default values.")
+
+        except Exception as e:
+            messagebox.showerror("Error", f"Could not save config: {e}")
+            self.log_line(f"[CALIB] Error reverting pin config: {e}")
 
     def get_module_first_last_positions(self, module_name):
         """Get the first and last positions for a given module"""
