@@ -126,7 +126,8 @@ TIP_RACK_CONFIG_DEFAULT = {
     "A1_X": 68.7, "A1_Y": 29.9,
     "F4_X": 99.0, "F4_Y": -19.9,
     "Z_TRAVEL": 52.2,
-    "Z_PICK": -37.8
+    "Z_PICK": -37.8,
+    "Z_CALIBRATE": -37.8
 }
 
 # --- 96 WELL PLATE CONFIGURATION DEFAULT (Relative Offsets) ---
@@ -135,7 +136,8 @@ PLATE_CONFIG_DEFAULT = {
     "H12_X": -5.7, "H12_Y": 49.8,
     "Z_SAFE": 27.2,
     "Z_ASPIRATE": -5.5,
-    "Z_DISPENSE": 14.5
+    "Z_DISPENSE": 14.5,
+    "Z_CALIBRATE": 14.5
 }
 
 # --- FALCON RACK CONFIGURATION DEFAULT (Relative Offsets) ---
@@ -145,7 +147,8 @@ FALCON_RACK_CONFIG_DEFAULT = {
     "50ML_X": -30.9, "50ML_Y": 6.2,
     "Z_SAFE": 62.2,
     "Z_ASPIRATE": -58.5,
-    "Z_DISPENSE": 47.2
+    "Z_DISPENSE": 47.2,
+    "Z_CALIBRATE": 47.2
 }
 
 # --- WASH STATION CONFIGURATION DEFAULT (Relative Offsets) ---
@@ -154,7 +157,8 @@ WASH_RACK_CONFIG_DEFAULT = {
     "B2_X": 86.9, "B2_Y": -85.9,
     "Z_SAFE": 62.2,
     "Z_ASPIRATE": -27.8,
-    "Z_DISPENSE": 37.2
+    "Z_DISPENSE": 37.2,
+    "Z_CALIBRATE": 37.2
 }
 
 # --- 4 ML RACK CONFIGURATION DEFAULT (Relative Offsets) ---
@@ -163,7 +167,8 @@ _4ML_RACK_CONFIG_DEFAULT = {
     "A8_X": 12.4, "A8_Y": -34.6,
     "Z_SAFE": 38.8,
     "Z_ASPIRATE": -6.5,
-    "Z_DISPENSE": 17.2
+    "Z_DISPENSE": 17.2,
+    "Z_CALIBRATE": 17.2
 }
 
 # --- FILTER EPPI RACK CONFIGURATION DEFAULT (Row B) (Relative Offsets) ---
@@ -172,7 +177,8 @@ FILTER_EPPI_RACK_CONFIG_DEFAULT = {
     "B8_X": 12.4, "B8_Y": -51.2,
     "Z_SAFE": 38.8,
     "Z_ASPIRATE": 10.8,
-    "Z_DISPENSE": 27.2
+    "Z_DISPENSE": 27.2,
+    "Z_CALIBRATE": 27.2
 }
 
 # --- ACTIVE CONFIGURATIONS (Will be overwritten by JSON if exists) ---
@@ -190,7 +196,8 @@ EPPI_RACK_CONFIG_DEFAULT = {
     "C8_X": 12.4, "C8_Y": -65.7,
     "Z_SAFE": 38.8,
     "Z_ASPIRATE": -10.8,
-    "Z_DISPENSE": 22.2
+    "Z_DISPENSE": 22.2,
+    "Z_CALIBRATE": 22.2
 }
 
 # --- HPLC VIAL RACK CONFIGURATION DEFAULT (Row D) (Relative Offsets) ---
@@ -199,7 +206,8 @@ HPLC_VIAL_RACK_CONFIG_DEFAULT = {
     "D8_X": 12.4, "D8_Y": -81.7,
     "Z_SAFE": 38.8,
     "Z_ASPIRATE": 5.8,
-    "Z_DISPENSE": 27.2
+    "Z_DISPENSE": 27.2,
+    "Z_CALIBRATE": 27.2
 }
 
 # --- HPLC VIAL INSERT RACK CONFIGURATION DEFAULT (Row E) (Relative Offsets) ---
@@ -208,7 +216,8 @@ HPLC_VIAL_INSERT_RACK_CONFIG_DEFAULT = {
     "E8_X": 12.4, "E8_Y": -97.3,
     "Z_SAFE": 38.8,
     "Z_ASPIRATE": 22.7,
-    "Z_DISPENSE": 27.2
+    "Z_DISPENSE": 27.2,
+    "Z_CALIBRATE": 27.2
 }
 
 # --- SCREWCAP VIAL RACK CONFIGURATION DEFAULT (Row F) (Relative Offsets) ---
@@ -217,7 +226,8 @@ SCREWCAP_VIAL_RACK_CONFIG_DEFAULT = {
     "F8_X": 12.4, "F8_Y": -112.8,
     "Z_SAFE": 38.8,
     "Z_ASPIRATE": -8.9,
-    "Z_DISPENSE": 22.2
+    "Z_DISPENSE": 22.2,
+    "Z_CALIBRATE": 27.2
 }
 
 # --- ACTIVE CONFIGURATIONS (Will be overwritten by JSON if exists) ---
@@ -535,10 +545,26 @@ class LiquidHandlerApp:
             except Exception as e:
                 print(f"[CONFIG] Error loading JSON: {e}. Using defaults.")
 
-    def save_calibration_config(self, new_config):
+    def save_calibration_config(self, config_updates):
+        """Update specific fields in config.json without overwriting entire file"""
         try:
+            current_config = {}
+            if os.path.exists(self.config_file):
+                with open(self.config_file, "r") as f:
+                    current_config = json.load(f)
+
+            # Deep update: Merge sections
+            for section, updates in config_updates.items():
+                if section in current_config and isinstance(current_config[section], dict) and isinstance(updates, dict):
+                    current_config[section].update(updates)
+                else:
+                    current_config[section] = updates
+
             with open(self.config_file, "w") as f:
-                json.dump(new_config, f, indent=4)
+                json.dump(current_config, f, indent=4)
+
+            # Reload to update live global variables
+            self.load_calibration_config()
         except Exception as e:
             messagebox.showerror("Save Error", f"Could not save config: {e}")
 
@@ -3230,47 +3256,52 @@ class LiquidHandlerApp:
         try:
             if module_name == "tip rack":
                 x, y = self.get_tip_coordinates(position)
-                safe_z = self.resolve_coords(0, 0, TIP_RACK_CONFIG["Z_TRAVEL"])[2]
-                asp_z = self.resolve_coords(0, 0, TIP_RACK_CONFIG["Z_PICK"])[2]
+                cfg = TIP_RACK_CONFIG
+                z_fallback = cfg["Z_PICK"]
             elif module_name == "96 well plate":
                 x, y = self.get_well_coordinates(position)
-                safe_z = self.resolve_coords(0, 0, PLATE_CONFIG["Z_SAFE"])[2]
-                asp_z = self.resolve_coords(0, 0, PLATE_CONFIG["Z_ASPIRATE"])[2]
+                cfg = PLATE_CONFIG
+                z_fallback = cfg["Z_ASPIRATE"]
             elif module_name == "15 mL falcon rack":
                 x, y = self.get_falcon_coordinates(position)
-                safe_z = self.resolve_coords(0, 0, FALCON_RACK_CONFIG["Z_SAFE"])[2]
-                asp_z = self.resolve_coords(0, 0, FALCON_RACK_CONFIG["Z_ASPIRATE"])[2]
+                cfg = FALCON_RACK_CONFIG
+                z_fallback = cfg["Z_ASPIRATE"]
             elif module_name == "50 mL falcon rack":
                 x, y = self.get_falcon_coordinates(position)
-                safe_z = self.resolve_coords(0, 0, FALCON_RACK_CONFIG["Z_SAFE"])[2]
-                asp_z = self.resolve_coords(0, 0, FALCON_RACK_CONFIG["Z_ASPIRATE"])[2]
+                cfg = FALCON_RACK_CONFIG
+                z_fallback = cfg["Z_ASPIRATE"]
             elif module_name == "wash rack":
                 x, y = self.get_wash_coordinates(position)
-                safe_z = self.resolve_coords(0, 0, WASH_RACK_CONFIG["Z_SAFE"])[2]
-                asp_z = self.resolve_coords(0, 0, WASH_RACK_CONFIG["Z_ASPIRATE"])[2]
+                cfg = WASH_RACK_CONFIG
+                z_fallback = cfg["Z_ASPIRATE"]
             elif module_name == "4mL rack":
                 x, y = self.get_4ml_coordinates(position)
-                safe_z = self.resolve_coords(0, 0, _4ML_RACK_CONFIG["Z_SAFE"])[2]
-                asp_z = self.resolve_coords(0, 0, _4ML_RACK_CONFIG["Z_ASPIRATE"])[2]
+                cfg = _4ML_RACK_CONFIG
+                z_fallback = cfg["Z_ASPIRATE"]
             elif module_name == "filter eppi rack":
                 x, y = self.get_1x8_rack_coordinates(position, FILTER_EPPI_RACK_CONFIG, "B")
-                safe_z = self.resolve_coords(0, 0, FILTER_EPPI_RACK_CONFIG["Z_SAFE"])[2]
-                asp_z = self.resolve_coords(0, 0, FILTER_EPPI_RACK_CONFIG["Z_ASPIRATE"])[2]
+                cfg = FILTER_EPPI_RACK_CONFIG
+                z_fallback = cfg["Z_ASPIRATE"]
             elif module_name == "eppi rack":
                 x, y = self.get_1x8_rack_coordinates(position, EPPI_RACK_CONFIG, "C")
-                safe_z = self.resolve_coords(0, 0, EPPI_RACK_CONFIG["Z_SAFE"])[2]
-                asp_z = self.resolve_coords(0, 0, EPPI_RACK_CONFIG["Z_ASPIRATE"])[2]
+                cfg = EPPI_RACK_CONFIG
+                z_fallback = cfg["Z_ASPIRATE"]
             elif module_name == "hplc vial insert rack":
                 x, y = self.get_1x8_rack_coordinates(position, HPLC_VIAL_INSERT_RACK_CONFIG, "E")
-                safe_z = self.resolve_coords(0, 0, HPLC_VIAL_INSERT_RACK_CONFIG["Z_SAFE"])[2]
-                asp_z = self.resolve_coords(0, 0, HPLC_VIAL_INSERT_RACK_CONFIG["Z_ASPIRATE"])[2]
+                cfg = HPLC_VIAL_INSERT_RACK_CONFIG
+                z_fallback = cfg["Z_ASPIRATE"]
             elif module_name == "screwcap vial rack":
                 x, y = self.get_1x8_rack_coordinates(position, SCREWCAP_VIAL_RACK_CONFIG, "F")
-                safe_z = self.resolve_coords(0, 0, SCREWCAP_VIAL_RACK_CONFIG["Z_SAFE"])[2]
-                asp_z = self.resolve_coords(0, 0, SCREWCAP_VIAL_RACK_CONFIG["Z_ASPIRATE"])[2]
+                cfg = SCREWCAP_VIAL_RACK_CONFIG
+                z_fallback = cfg["Z_ASPIRATE"]
             else:
                 messagebox.showerror("Error", f"Unknown module: {module_name}")
                 return
+
+            # Resolve Z height: Prefer Z_CALIBRATE if available, fallback to Z_ASPIRATE/Z_PICK
+            z_rel = cfg.get("Z_CALIBRATE", z_fallback)
+            asp_z = self.resolve_coords(0, 0, z_rel)[2]
+
         except Exception as e:
             messagebox.showerror("Error", f"Failed to get coordinates for {position}: {e}")
             return
@@ -3380,67 +3411,103 @@ class LiquidHandlerApp:
         module_name = self.current_calibration_module
         position = self.current_calibration_position
 
-        # Get current coordinates
-        new_x = self.current_x
-        new_y = self.current_y
+        # Get current coordinates (absolute)
+        abs_x = self.current_x
+        abs_y = self.current_y
+        abs_z = self.current_z
+
+        # Convert to relative
+        rel_x = abs_x - CALIBRATION_PIN_CONFIG["PIN_X"]
+        rel_y = abs_y - CALIBRATION_PIN_CONFIG["PIN_Y"]
+        rel_z = CALIBRATION_PIN_CONFIG["PIN_Z"] - abs_z
 
         # Determine which config section to update based on module and position
         config_updates = {}
 
         try:
             if module_name == "tip rack":
+                sec = "TIP_RACK_CONFIG"
+                upd = {"Z_CALIBRATE": round(rel_z, 2)}
                 if position == "A1":
-                    config_updates["TIP_RACK_CONFIG"] = {"A1_X": new_x, "A1_Y": new_y}
+                    upd.update({"A1_X": round(rel_x, 2), "A1_Y": round(rel_y, 2)})
                 elif position == "F4":
-                    config_updates["TIP_RACK_CONFIG"] = {"F4_X": new_x, "F4_Y": new_y}
+                    upd.update({"F4_X": round(rel_x, 2), "F4_Y": round(rel_y, 2)})
+                config_updates[sec] = upd
             elif module_name == "96 well plate":
+                sec = "PLATE_CONFIG"
+                upd = {"Z_CALIBRATE": round(rel_z, 2)}
                 if position == "A1":
-                    config_updates["PLATE_CONFIG"] = {"A1_X": new_x, "A1_Y": new_y}
+                    upd.update({"A1_X": round(rel_x, 2), "A1_Y": round(rel_y, 2)})
                 elif position == "H12":
-                    config_updates["PLATE_CONFIG"] = {"H12_X": new_x, "H12_Y": new_y}
+                    upd.update({"H12_X": round(rel_x, 2), "H12_Y": round(rel_y, 2)})
+                config_updates[sec] = upd
             elif module_name == "15 mL falcon rack":
+                sec = "FALCON_RACK_CONFIG"
+                upd = {"Z_CALIBRATE": round(rel_z, 2)}
                 if position == "A1":
-                    config_updates["FALCON_RACK_CONFIG"] = {"15ML_A1_X": new_x, "15ML_A1_Y": new_y}
+                    upd.update({"15ML_A1_X": round(rel_x, 2), "15ML_A1_Y": round(rel_y, 2)})
                 elif position == "B3":
-                    config_updates["FALCON_RACK_CONFIG"] = {"15ML_B3_X": new_x, "15ML_B3_Y": new_y}
+                    upd.update({"15ML_B3_X": round(rel_x, 2), "15ML_B3_Y": round(rel_y, 2)})
+                config_updates[sec] = upd
             elif module_name == "50 mL falcon rack":
-                config_updates["FALCON_RACK_CONFIG"] = {"50ML_X": new_x, "50ML_Y": new_y}
+                sec = "FALCON_RACK_CONFIG"
+                upd = {"Z_CALIBRATE": round(rel_z, 2)}
+                upd.update({"50ML_X": round(rel_x, 2), "50ML_Y": round(rel_y, 2)})
+                config_updates[sec] = upd
             elif module_name == "wash rack":
+                sec = "WASH_RACK_CONFIG"
+                upd = {"Z_CALIBRATE": round(rel_z, 2)}
                 if position == "Wash A":
-                    config_updates["WASH_RACK_CONFIG"] = {"A1_X": new_x, "A1_Y": new_y}
+                    upd.update({"A1_X": round(rel_x, 2), "A1_Y": round(rel_y, 2)})
                 elif position == "Trash":
-                    config_updates["WASH_RACK_CONFIG"] = {"B2_X": new_x, "B2_Y": new_y}
+                    upd.update({"B2_X": round(rel_x, 2), "B2_Y": round(rel_y, 2)})
+                config_updates[sec] = upd
             elif module_name == "4mL rack":
+                sec = "4ML_RACK_CONFIG"
+                upd = {"Z_CALIBRATE": round(rel_z, 2)}
                 if position == "A1":
-                    config_updates["4ML_RACK_CONFIG"] = {"A1_X": new_x, "A1_Y": new_y}
+                    upd.update({"A1_X": round(rel_x, 2), "A1_Y": round(rel_y, 2)})
                 elif position == "A8":
-                    config_updates["4ML_RACK_CONFIG"] = {"A8_X": new_x, "A8_Y": new_y}
+                    upd.update({"A8_X": round(rel_x, 2), "A8_Y": round(rel_y, 2)})
+                config_updates[sec] = upd
             elif module_name == "filter eppi rack":
+                sec = "FILTER_EPPI_RACK_CONFIG"
+                upd = {"Z_CALIBRATE": round(rel_z, 2)}
                 if position == "B1":
-                    config_updates["FILTER_EPPI_RACK_CONFIG"] = {"B1_X": new_x, "B1_Y": new_y}
+                    upd.update({"B1_X": round(rel_x, 2), "B1_Y": round(rel_y, 2)})
                 elif position == "B8":
-                    config_updates["FILTER_EPPI_RACK_CONFIG"] = {"B8_X": new_x, "B8_Y": new_y}
+                    upd.update({"B8_X": round(rel_x, 2), "B8_Y": round(rel_y, 2)})
+                config_updates[sec] = upd
             elif module_name == "eppi rack":
+                sec = "EPPI_RACK_CONFIG"
+                upd = {"Z_CALIBRATE": round(rel_z, 2)}
                 if position == "C1":
-                    config_updates["EPPI_RACK_CONFIG"] = {"C1_X": new_x, "C1_Y": new_y}
+                    upd.update({"C1_X": round(rel_x, 2), "C1_Y": round(rel_y, 2)})
                 elif position == "C8":
-                    config_updates["EPPI_RACK_CONFIG"] = {"C8_X": new_x, "C8_Y": new_y}
+                    upd.update({"C8_X": round(rel_x, 2), "C8_Y": round(rel_y, 2)})
+                config_updates[sec] = upd
             elif module_name == "hplc vial insert rack":
+                sec = "HPLC_VIAL_INSERT_RACK_CONFIG"
+                upd = {"Z_CALIBRATE": round(rel_z, 2)}
                 if position == "E1":
-                    config_updates["HPLC_VIAL_INSERT_RACK_CONFIG"] = {"E1_X": new_x, "E1_Y": new_y}
+                    upd.update({"E1_X": round(rel_x, 2), "E1_Y": round(rel_y, 2)})
                 elif position == "E8":
-                    config_updates["HPLC_VIAL_INSERT_RACK_CONFIG"] = {"E8_X": new_x, "E8_Y": new_y}
+                    upd.update({"E8_X": round(rel_x, 2), "E8_Y": round(rel_y, 2)})
+                config_updates[sec] = upd
             elif module_name == "screwcap vial rack":
+                sec = "SCREWCAP_VIAL_RACK_CONFIG"
+                upd = {"Z_CALIBRATE": round(rel_z, 2)}
                 if position == "F1":
-                    config_updates["SCREWCAP_VIAL_RACK_CONFIG"] = {"F1_X": new_x, "F1_Y": new_y}
+                    upd.update({"F1_X": round(rel_x, 2), "F1_Y": round(rel_y, 2)})
                 elif position == "F8":
-                    config_updates["SCREWCAP_VIAL_RACK_CONFIG"] = {"F8_X": new_x, "F8_Y": new_y}
+                    upd.update({"F8_X": round(rel_x, 2), "F8_Y": round(rel_y, 2)})
+                config_updates[sec] = upd
 
             # Save to config file
             if config_updates:
                 self.save_calibration_config(config_updates)
-                self.log_line(f"[MODULE_CALIB] Saved {module_name} {position}: X={new_x:.2f}, Y={new_y:.2f}")
-                messagebox.showinfo("Saved", f"New {module_name} {position} coordinates saved to config.json")
+                self.log_line(f"[MODULE_CALIB] Saved {module_name} {position}: X={rel_x:.2f}, Y={rel_y:.2f}, Z={rel_z:.2f}")
+                messagebox.showinfo("Saved", f"New {module_name} {position} coordinates (relative) saved to config.json")
             else:
                 messagebox.showwarning("Warning", f"No config mapping found for {module_name} {position}")
 

@@ -55,7 +55,8 @@
         "F4_X": 99.0,
         "F4_Y": -19.9,
         "Z_TRAVEL": 52.2,
-        "Z_PICK": -37.8
+        "Z_PICK": -37.8,
+        "Z_CALIBRATE": -37.8
     },
 
     "PLATE_CONFIG": {
@@ -65,7 +66,8 @@
         "H12_Y": 49.8,
         "Z_SAFE": 27.2,
         "Z_ASPIRATE": -5.5,
-        "Z_DISPENSE": 14.5
+        "Z_DISPENSE": 14.5,
+        "Z_CALIBRATE": 14.5
     },
 
     "FALCON_RACK_CONFIG": {
@@ -77,7 +79,8 @@
         "50ML_Y": 6.2,
         "Z_SAFE": 62.2,
         "Z_ASPIRATE": -58.5,
-        "Z_DISPENSE": 47.2
+        "Z_DISPENSE": 47.2,
+        "Z_CALIBRATE": 47.2
     },
 
     "WASH_RACK_CONFIG": {
@@ -87,7 +90,8 @@
         "B2_Y": -85.9,
         "Z_SAFE": 62.2,
         "Z_ASPIRATE": -27.8,
-        "Z_DISPENSE": 37.2
+        "Z_DISPENSE": 37.2,
+        "Z_CALIBRATE": 37.2
     },
 
     "4ML_RACK_CONFIG": {
@@ -97,7 +101,8 @@
         "A8_Y": -34.6,
         "Z_SAFE": 38.8,
         "Z_ASPIRATE": -6.5,
-        "Z_DISPENSE": 17.2
+        "Z_DISPENSE": 17.2,
+        "Z_CALIBRATE": 17.2
     },
 
     "FILTER_EPPI_RACK_CONFIG": {
@@ -107,7 +112,8 @@
         "B8_Y": -51.2,
         "Z_SAFE": 38.8,
         "Z_ASPIRATE": 10.8,
-        "Z_DISPENSE": 27.2
+        "Z_DISPENSE": 27.2,
+        "Z_CALIBRATE": 27.2
     },
 
     "EPPI_RACK_CONFIG": {
@@ -117,7 +123,8 @@
         "C8_Y": -65.7,
         "Z_SAFE": 38.8,
         "Z_ASPIRATE": -10.8,
-        "Z_DISPENSE": 22.2
+        "Z_DISPENSE": 22.2,
+        "Z_CALIBRATE": 22.2
     },
 
     "HPLC_VIAL_RACK_CONFIG": {
@@ -127,7 +134,8 @@
         "D8_Y": -81.7,
         "Z_SAFE": 38.8,
         "Z_ASPIRATE": 5.8,
-        "Z_DISPENSE": 27.2
+        "Z_DISPENSE": 27.2,
+        "Z_CALIBRATE": 27.2
     },
 
     "HPLC_VIAL_INSERT_RACK_CONFIG": {
@@ -137,7 +145,8 @@
         "E8_Y": -97.3,
         "Z_SAFE": 38.8,
         "Z_ASPIRATE": 22.7,
-        "Z_DISPENSE": 27.2
+        "Z_DISPENSE": 27.2,
+        "Z_CALIBRATE": 27.2
     },
 
     "SCREWCAP_VIAL_RACK_CONFIG": {
@@ -147,6 +156,7 @@
         "F8_Y": -112.8,
         "Z_SAFE": 38.8,
         "Z_ASPIRATE": -8.9,
-        "Z_DISPENSE": 22.2
+        "Z_DISPENSE": 22.2,
+        "Z_CALIBRATE": 27.2
     }
 }
