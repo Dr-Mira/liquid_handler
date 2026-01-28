@@ -609,9 +609,9 @@ class LiquidHandlerApp:
         right_container = ttk.Frame(bottom_frame)
         right_container.pack(side="right", padx=5, pady=2)
 
-        # ABORT BUTTON (Modified: Initially Disabled)
+        # ABORT BUTTON
         self.abort_btn = tk.Button(right_container, text="Soft Stop", font=("Arial", 10, "bold"), fg="black",
-                                   command=self.abort_sequence, state="disabled")
+                                   command=self.abort_sequence)
         self.abort_btn.pack(side="left", padx=10)
 
         self.status_icon_lbl = tk.Label(right_container, text="✘", font=("Arial", 12, "bold"), fg="red")
@@ -1337,15 +1337,14 @@ class LiquidHandlerApp:
         # Absolute Motion Calibration (moved from initialization tab)
         abs_calib_frame = ttk.LabelFrame(frame, text="Absolute Motion Calibration", padding=10)
         abs_calib_frame.pack(fill="x", pady=(0, 10))
-        ttk.Label(abs_calib_frame, text="Calibrate the machine's absolute position using the calibration pin.",
+        ttk.Label(abs_calib_frame, text="Calibrate the machine's absolute position using the calibration pin.", 
                   font=("Arial", 9)).pack(pady=(0, 5))
-        ttk.Button(abs_calib_frame, text="Calibrate", command=self.start_pin_calibration_sequence).pack(fill="x",
-                                                                                                        pady=5)
+        ttk.Button(abs_calib_frame, text="Calibrate", command=self.start_pin_calibration_sequence).pack(fill="x", pady=5)
 
         # Module Calibration
         module_calib_frame = ttk.LabelFrame(frame, text="Module Calibration", padding=10)
         module_calib_frame.pack(fill="x", pady=5)
-        ttk.Label(module_calib_frame, text="Calibrate the first and last positions of a selected module.",
+        ttk.Label(module_calib_frame, text="Calibrate the first and last positions of a selected module.", 
                   font=("Arial", 9)).pack(pady=(0, 5))
 
         # Module selection row
@@ -1354,15 +1353,15 @@ class LiquidHandlerApp:
         ttk.Label(module_row, text="Module:").pack(side="left", padx=(0, 5))
 
         module_options = [
-            "tip rack", "96 well plate", "15 mL falcon rack", "50 mL falcon rack",
-            "wash rack", "4mL rack", "filter eppi rack", "eppi rack",
+            "tip rack", "96 well plate", "15 mL falcon rack", "50 mL falcon rack", 
+            "wash rack", "4mL rack", "filter eppi rack", "eppi rack", 
             "hplc vial insert rack", "screwcap vial rack"
         ]
 
-        ttk.Combobox(module_row, textvariable=self.calibration_module_var, values=module_options,
+        ttk.Combobox(module_row, textvariable=self.calibration_module_var, values=module_options, 
                      width=20, state="readonly").pack(side="left", padx=(0, 10))
 
-        ttk.Button(module_row, text="Calibrate Module",
+        ttk.Button(module_row, text="Calibrate Module", 
                    command=self.start_module_calibration_sequence).pack(side="left")
 
     # ==========================================
@@ -1645,16 +1644,12 @@ class LiquidHandlerApp:
         status = "RESUME" if self.is_paused else "PAUSE"
         self.transfer_pause_btn.config(text=status)
         self.combine_pause_btn.config(text=status)
-
-        # MODIFIED: Enable Soft Stop only when paused
         if self.is_paused:
             self.log_line("[USER] Paused sequence.")
             self.last_cmd_var.set("PAUSED")
-            self.abort_btn.config(state="normal")
         else:
             self.log_line("[USER] Resumed sequence.")
             self.last_cmd_var.set("Resuming...")
-            self.abort_btn.config(state="disabled")
 
     def send_resume(self):
         # This is for the manual resume button in maintenance tab,
@@ -1676,11 +1671,6 @@ class LiquidHandlerApp:
         self.is_aborted = True
         self.is_paused = False  # Unpause so loop breaks and exception raises
 
-        # MODIFIED: Disable button immediately and reset UI text
-        self.abort_btn.config(state="disabled")
-        self.transfer_pause_btn.config(text="PAUSE")
-        self.combine_pause_btn.config(text="PAUSE")
-
         # The running thread will catch SequenceAbortedError and exit.
         # We start a separate thread to handle the cleanup (Eject + Park)
         threading.Thread(target=self._emergency_park, daemon=True).start()
@@ -1694,16 +1684,9 @@ class LiquidHandlerApp:
         self.is_aborted = False
         self.is_paused = False
 
-        # Run Eject (which usually parks)
+        # Run Eject
         try:
             self.eject_tip_sequence()
-        except:
-            pass
-
-        # MODIFIED: Explicitly ensure head is parked at the defined parking space
-        # in case eject failed or didn't complete the park move.
-        try:
-            self.park_head_sequence()
         except:
             pass
 
@@ -3310,24 +3293,22 @@ class LiquidHandlerApp:
                 x, y = self.get_falcon_coordinates(position)
                 safe_z = self.resolve_coords(0, 0, FALCON_RACK_CONFIG["Z_SAFE"])[2]
                 calib_z = \
-                    self.resolve_coords(0, 0, FALCON_RACK_CONFIG.get("Z_CALIBRATE", FALCON_RACK_CONFIG["Z_DISPENSE"]))[
-                        2]
+                self.resolve_coords(0, 0, FALCON_RACK_CONFIG.get("Z_CALIBRATE", FALCON_RACK_CONFIG["Z_DISPENSE"]))[2]
             elif module_name == "50 mL falcon rack":
                 x, y = self.get_falcon_coordinates(position)
                 safe_z = self.resolve_coords(0, 0, FALCON_RACK_CONFIG["Z_SAFE"])[2]
                 calib_z = \
-                    self.resolve_coords(0, 0, FALCON_RACK_CONFIG.get("Z_CALIBRATE", FALCON_RACK_CONFIG["Z_DISPENSE"]))[
-                        2]
+                self.resolve_coords(0, 0, FALCON_RACK_CONFIG.get("Z_CALIBRATE", FALCON_RACK_CONFIG["Z_DISPENSE"]))[2]
             elif module_name == "wash rack":
                 x, y = self.get_wash_coordinates(position)
                 safe_z = self.resolve_coords(0, 0, WASH_RACK_CONFIG["Z_SAFE"])[2]
                 calib_z = \
-                    self.resolve_coords(0, 0, WASH_RACK_CONFIG.get("Z_CALIBRATE", WASH_RACK_CONFIG["Z_DISPENSE"]))[2]
+                self.resolve_coords(0, 0, WASH_RACK_CONFIG.get("Z_CALIBRATE", WASH_RACK_CONFIG["Z_DISPENSE"]))[2]
             elif module_name == "4mL rack":
                 x, y = self.get_4ml_coordinates(position)
                 safe_z = self.resolve_coords(0, 0, _4ML_RACK_CONFIG["Z_SAFE"])[2]
                 calib_z = \
-                    self.resolve_coords(0, 0, _4ML_RACK_CONFIG.get("Z_CALIBRATE", _4ML_RACK_CONFIG["Z_DISPENSE"]))[2]
+                self.resolve_coords(0, 0, _4ML_RACK_CONFIG.get("Z_CALIBRATE", _4ML_RACK_CONFIG["Z_DISPENSE"]))[2]
             elif module_name == "filter eppi rack":
                 x, y = self.get_1x8_rack_coordinates(position, FILTER_EPPI_RACK_CONFIG, "B")
                 safe_z = self.resolve_coords(0, 0, FILTER_EPPI_RACK_CONFIG["Z_SAFE"])[2]
@@ -3338,7 +3319,7 @@ class LiquidHandlerApp:
                 x, y = self.get_1x8_rack_coordinates(position, EPPI_RACK_CONFIG, "C")
                 safe_z = self.resolve_coords(0, 0, EPPI_RACK_CONFIG["Z_SAFE"])[2]
                 calib_z = \
-                    self.resolve_coords(0, 0, EPPI_RACK_CONFIG.get("Z_CALIBRATE", EPPI_RACK_CONFIG["Z_DISPENSE"]))[2]
+                self.resolve_coords(0, 0, EPPI_RACK_CONFIG.get("Z_CALIBRATE", EPPI_RACK_CONFIG["Z_DISPENSE"]))[2]
             elif module_name == "hplc vial insert rack":
                 x, y = self.get_1x8_rack_coordinates(position, HPLC_VIAL_INSERT_RACK_CONFIG, "E")
                 safe_z = self.resolve_coords(0, 0, HPLC_VIAL_INSERT_RACK_CONFIG["Z_SAFE"])[2]
@@ -3391,9 +3372,9 @@ class LiquidHandlerApp:
         step = self.current_calibration_step
         total_positions = len(self.current_calibration_positions)
 
-        ttk.Label(popup, text=f"Head is at {module_name} position {position}.",
+        ttk.Label(popup, text=f"Head is at {module_name} position {position}.", 
                   font=("Arial", 10)).pack(pady=10)
-        ttk.Label(popup, text=f"Step {step + 1} of {total_positions}",
+        ttk.Label(popup, text=f"Step {step + 1} of {total_positions}", 
                   font=("Arial", 9, "italic")).pack(pady=5)
         ttk.Label(popup, text="Is the position correct?", font=("Arial", 10)).pack(pady=5)
 
@@ -3421,7 +3402,7 @@ class LiquidHandlerApp:
         module_name = self.current_calibration_module
         position = self.current_calibration_position
 
-        ttk.Label(jog_win, text=f"Jog head to correct {module_name} {position} position.",
+        ttk.Label(jog_win, text=f"Jog head to correct {module_name} {position} position.", 
                   font=("Arial", 10, "bold")).pack(pady=10)
         ttk.Label(jog_win, text="Precision: 0.1 mm", font=("Arial", 9)).pack(pady=5)
 
@@ -3440,19 +3421,12 @@ class LiquidHandlerApp:
 
         # Jog buttons
         btn_w = 6
-        ttk.Button(ctrl_frame, text="Y+", width=btn_w, command=lambda: self.send_jog("Y", 1)).grid(row=0, column=1,
-                                                                                                   pady=5)
-        ttk.Button(ctrl_frame, text="Y-", width=btn_w, command=lambda: self.send_jog("Y", -1)).grid(row=2, column=1,
-                                                                                                    pady=5)
-        ttk.Button(ctrl_frame, text="X-", width=btn_w, command=lambda: self.send_jog("X", -1)).grid(row=1, column=0,
-                                                                                                    padx=5)
-        ttk.Button(ctrl_frame, text="X+", width=btn_w, command=lambda: self.send_jog("X", 1)).grid(row=1, column=2,
-                                                                                                   padx=5)
-        ttk.Button(ctrl_frame, text="Z+ (Up)", width=btn_w, command=lambda: self.send_jog("Z", 1)).grid(row=0, column=4,
-                                                                                                        padx=20)
-        ttk.Button(ctrl_frame, text="Z- (Dn)", width=btn_w, command=lambda: self.send_jog("Z", -1)).grid(row=2,
-                                                                                                         column=4,
-                                                                                                         padx=20)
+        ttk.Button(ctrl_frame, text="Y+", width=btn_w, command=lambda: self.send_jog("Y", 1)).grid(row=0, column=1, pady=5)
+        ttk.Button(ctrl_frame, text="Y-", width=btn_w, command=lambda: self.send_jog("Y", -1)).grid(row=2, column=1, pady=5)
+        ttk.Button(ctrl_frame, text="X-", width=btn_w, command=lambda: self.send_jog("X", -1)).grid(row=1, column=0, padx=5)
+        ttk.Button(ctrl_frame, text="X+", width=btn_w, command=lambda: self.send_jog("X", 1)).grid(row=1, column=2, padx=5)
+        ttk.Button(ctrl_frame, text="Z+ (Up)", width=btn_w, command=lambda: self.send_jog("Z", 1)).grid(row=0, column=4, padx=20)
+        ttk.Button(ctrl_frame, text="Z- (Dn)", width=btn_w, command=lambda: self.send_jog("Z", -1)).grid(row=2, column=4, padx=20)
 
         # Bottom buttons
         bot_frame = ttk.Frame(jog_win)
