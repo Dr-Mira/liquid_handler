@@ -53,7 +53,7 @@ PIPETTE_CONFIG_DEFAULT = {
 
 # Volatile Logic Default Configuration
 VOLATILE_CONFIG_DEFAULT = {
-    "VOLATILE_DRIFT_RATE": 1000,
+    "VOLATILE_DRIFT_RATE": 2000,
     "VOLATILE_MOVE_SPEED": 1500
 }
 
@@ -2429,9 +2429,9 @@ class LiquidHandlerApp:
 
         current_mod = start_module if start_module is not None else self.last_known_module
         max_collect_ul = MAX_PIPETTE_VOL - air_gap_ul
-        collect_ul = min(float(wash_vol_ul) + 50.0, max_collect_ul)
+        collect_ul = min(float(wash_vol_ul) + 200.0, max_collect_ul)
 
-        mix_vol = 200.0
+        mix_vol = 500.0
         mix_vol = min(mix_vol, max_collect_ul)
 
         e_mix_up = -1 * (air_gap_ul) * STEPS_PER_UL
