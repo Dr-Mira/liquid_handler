@@ -936,22 +936,22 @@ class LiquidHandlerApp:
 
     def load_transfer_preset_1(self):
         preset = [
-            {"execute": False, "src_mod": "4mL Rack", "src_pos": "A1", "dest": "Filter Eppi B1", "vol": 600,
-             "volatile": True, "wash_vol": 150, "wash_times": 2, "wash_src": "Wash B"},
-            {"execute": False, "src_mod": "4mL Rack", "src_pos": "A2", "dest": "Filter Eppi B2", "vol": 600,
-             "volatile": True, "wash_vol": 150, "wash_times": 2, "wash_src": "Wash B"},
-            {"execute": False, "src_mod": "4mL Rack", "src_pos": "A3", "dest": "Filter Eppi B3", "vol": 600,
-             "volatile": True, "wash_vol": 150, "wash_times": 2, "wash_src": "Wash B"},
-            {"execute": False, "src_mod": "4mL Rack", "src_pos": "A4", "dest": "Filter Eppi B4", "vol": 600,
-             "volatile": True, "wash_vol": 150, "wash_times": 2, "wash_src": "Wash B"},
-            {"execute": False, "src_mod": "4mL Rack", "src_pos": "A5", "dest": "Filter Eppi B5", "vol": 600,
-             "volatile": True, "wash_vol": 150, "wash_times": 2, "wash_src": "Wash B"},
-            {"execute": False, "src_mod": "4mL Rack", "src_pos": "A6", "dest": "Filter Eppi B6", "vol": 600,
-             "volatile": True, "wash_vol": 150, "wash_times": 2, "wash_src": "Wash B"},
-            {"execute": False, "src_mod": "4mL Rack", "src_pos": "A7", "dest": "Filter Eppi B7", "vol": 600,
-             "volatile": True, "wash_vol": 150, "wash_times": 2, "wash_src": "Wash B"},
-            {"execute": False, "src_mod": "4mL Rack", "src_pos": "A8", "dest": "Filter Eppi B8", "vol": 600,
-             "volatile": True, "wash_vol": 150, "wash_times": 2, "wash_src": "Wash B"},
+            {"execute": False, "src_mod": "4mL Rack", "src_pos": "A1", "dest": "Filter Eppi B1", "vol": 900,
+             "volatile": True, "wash_vol": 200, "wash_times": 2, "wash_src": "Wash B"},
+            {"execute": False, "src_mod": "4mL Rack", "src_pos": "A2", "dest": "Filter Eppi B2", "vol": 900,
+             "volatile": True, "wash_vol": 200, "wash_times": 2, "wash_src": "Wash B"},
+            {"execute": False, "src_mod": "4mL Rack", "src_pos": "A3", "dest": "Filter Eppi B3", "vol": 900,
+             "volatile": True, "wash_vol": 200, "wash_times": 2, "wash_src": "Wash B"},
+            {"execute": False, "src_mod": "4mL Rack", "src_pos": "A4", "dest": "Filter Eppi B4", "vol": 900,
+             "volatile": True, "wash_vol": 200, "wash_times": 2, "wash_src": "Wash B"},
+            {"execute": False, "src_mod": "4mL Rack", "src_pos": "A5", "dest": "Filter Eppi B5", "vol": 900,
+             "volatile": True, "wash_vol": 200, "wash_times": 2, "wash_src": "Wash B"},
+            {"execute": False, "src_mod": "4mL Rack", "src_pos": "A6", "dest": "Filter Eppi B6", "vol": 900,
+             "volatile": True, "wash_vol": 200, "wash_times": 2, "wash_src": "Wash B"},
+            {"execute": False, "src_mod": "4mL Rack", "src_pos": "A7", "dest": "Filter Eppi B7", "vol": 900,
+             "volatile": True, "wash_vol": 200, "wash_times": 2, "wash_src": "Wash B"},
+            {"execute": False, "src_mod": "4mL Rack", "src_pos": "A8", "dest": "Filter Eppi B8", "vol": 900,
+             "volatile": True, "wash_vol": 200, "wash_times": 2, "wash_src": "Wash B"},
         ]
         self._apply_transfer_table_preset(preset, preset_name="Preset 1")
 
@@ -2429,7 +2429,7 @@ class LiquidHandlerApp:
 
         current_mod = start_module if start_module is not None else self.last_known_module
         max_collect_ul = MAX_PIPETTE_VOL - air_gap_ul
-        collect_ul = min(float(wash_vol_ul) + 200.0, max_collect_ul)
+        collect_ul = min(float(wash_vol_ul) + 50.0, max_collect_ul)
 
         mix_vol = 500.0
         mix_vol = min(mix_vol, max_collect_ul)
@@ -2518,7 +2518,7 @@ class LiquidHandlerApp:
         air_gap_ul = float(AIR_GAP_UL)
         e_gap_pos = -1 * air_gap_ul * STEPS_PER_UL
         MAX_STD_BATCH = 800.0
-        MAX_VOLATILE_BATCH = 600.0
+        MAX_VOLATILE_BATCH = 500.0
         MAX_WASH_LOAD = MAX_PIPETTE_VOL - air_gap_ul
         REUSE_DISTRIBUTION_TIP_FOR_ONE_RECOVERY = True
 
