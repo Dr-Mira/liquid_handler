@@ -256,7 +256,7 @@ class LiquidHandlerApp:
     def __init__(self, root):
         self.root = root
         self.root.title("Mira Liquid Handler")
-        self.root.geometry("1024x600")  # Slightly taller for abort button
+        self.root.geometry("1024x600")
         self.root.resizable(False, False)
 
         # --- LOGGING SETUP ---
@@ -999,17 +999,17 @@ class LiquidHandlerApp:
 
     def load_transfer_preset_4(self):
         preset = [
-            {"execute": False, "src_mod": "Falcon Rack", "src_pos": "A1", "dest": "Filter Eppi A1", "vol": 800,
+            {"execute": False, "src_mod": "Falcon Rack", "src_pos": "A1", "dest": "Filter Eppi B1", "vol": 800,
              "volatile": False, "wash_vol": 200, "wash_times": 1, "wash_src": "Wash A"},
-            {"execute": False, "src_mod": "Falcon Rack", "src_pos": "A2", "dest": "Filter Eppi A2", "vol": 800,
+            {"execute": False, "src_mod": "Falcon Rack", "src_pos": "A2", "dest": "Filter Eppi B2", "vol": 800,
              "volatile": False, "wash_vol": 200, "wash_times": 1, "wash_src": "Wash A"},
-            {"execute": False, "src_mod": "Falcon Rack", "src_pos": "A3", "dest": "Filter Eppi A3", "vol": 800,
+            {"execute": False, "src_mod": "Falcon Rack", "src_pos": "A3", "dest": "Filter Eppi B3", "vol": 800,
              "volatile": False, "wash_vol": 200, "wash_times": 1, "wash_src": "Wash A"},
-            {"execute": False, "src_mod": "Falcon Rack", "src_pos": "A4", "dest": "Filter Eppi A4", "vol": 800,
+            {"execute": False, "src_mod": "Falcon Rack", "src_pos": "B1", "dest": "Filter Eppi B4", "vol": 800,
              "volatile": False, "wash_vol": 200, "wash_times": 1, "wash_src": "Wash A"},
-            {"execute": False, "src_mod": "Falcon Rack", "src_pos": "A5", "dest": "Filter Eppi A5", "vol": 800,
+            {"execute": False, "src_mod": "Falcon Rack", "src_pos": "B2", "dest": "Filter Eppi B5", "vol": 800,
              "volatile": False, "wash_vol": 200, "wash_times": 1, "wash_src": "Wash A"},
-            {"execute": False, "src_mod": "Falcon Rack", "src_pos": "A6", "dest": "Filter Eppi A6", "vol": 800,
+            {"execute": False, "src_mod": "Falcon Rack", "src_pos": "B3", "dest": "Filter Eppi B6", "vol": 800,
              "volatile": False, "wash_vol": 200, "wash_times": 1, "wash_src": "Wash A"},
             {"execute": False, "src_mod": "", "src_pos": "", "dest": "", "vol": 0, "volatile": False, "wash_vol": 0,
              "wash_times": 2, "wash_src": "Wash A"},
