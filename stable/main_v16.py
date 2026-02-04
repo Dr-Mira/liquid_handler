@@ -1048,8 +1048,7 @@ class LiquidHandlerApp:
         table.grid_anchor("w")
 
         cols = [
-            ("Execute", 8), ("Line", 6), ("Presat Tip", 10), ("Presat Src", 12),
-            ("Source Start", 12), ("Source End", 12),
+            ("Execute", 8), ("Line", 6), ("Source Start", 12), ("Source End", 12),
             ("Dest Falcon", 12), ("Vol (uL)", 10),
             ("Wash Vol", 8), ("Wash Times", 8), ("Wash Source", 12)
         ]
@@ -1073,13 +1072,10 @@ class LiquidHandlerApp:
         wash_vol_options = ["0"] + [str(x) for x in range(100, 900, 100)]
         wash_times_options = [str(x) for x in range(1, 6)]
         source_options = self.wash_positions + [f"Falcon {p}" for p in self.falcon_positions]
-        presat_options = ["Wash A", "Wash B", "Wash C"]
 
         for i in range(6):
             row_vars = {
                 "execute": tk.BooleanVar(value=False),
-                "presat": tk.BooleanVar(value=True),
-                "presat_src": tk.StringVar(value="Wash B"),
                 "start": tk.StringVar(),
                 "end": tk.StringVar(),
                 "dest": tk.StringVar(),
@@ -1094,40 +1090,21 @@ class LiquidHandlerApp:
             ttk.Checkbutton(table, variable=row_vars["execute"]).grid(row=r, column=0, padx=2, pady=2)
             ttk.Label(table, text=f"Line {i + 1}", width=6).grid(row=r, column=1, padx=2, pady=2, sticky="w")
 
-            # Presaturation Checkbox
-            ttk.Checkbutton(table, variable=row_vars["presat"]).grid(row=r, column=2, padx=2, pady=2)
-
-            # Presaturation Source Combobox
-            cb_presat = ttk.Combobox(
-                table, textvariable=row_vars["presat_src"],
-                values=presat_options, width=10, state="readonly"
-            )
-            cb_presat.grid(row=r, column=3, padx=2, pady=2)
-
-            def toggle_presat_combo(*_, rv=row_vars, cb=cb_presat):
-                if rv["presat"].get():
-                    cb.grid()
-                else:
-                    cb.grid_remove()
-
-            row_vars["presat"].trace_add("write", toggle_presat_combo)
-            toggle_presat_combo()
-
             ttk.Combobox(
                 table, textvariable=row_vars["start"],
                 values=self.plate_wells, width=10, state="readonly"
-            ).grid(row=r, column=4, padx=2, pady=2)
+            ).grid(row=r, column=2, padx=2, pady=2)
 
             ttk.Combobox(
                 table, textvariable=row_vars["end"],
                 values=self.plate_wells, width=10, state="readonly"
-            ).grid(row=r, column=5, padx=2, pady=2)
+            ).grid(row=r, column=3, padx=2, pady=2)
 
             cb_dest = ttk.Combobox(
                 table, textvariable=row_vars["dest"],
                 values=self.falcon_positions, width=10, state="readonly"
             )
-            cb_dest.grid(row=r, column=6, padx=2, pady=2)
+            cb_dest.grid(row=r, column=4, padx=2, pady=2)
 
             if i < len(default_falcons):
                 row_vars["dest"].set(default_falcons[i])
@@ -1137,25 +1114,25 @@ class LiquidHandlerApp:
             ttk.Combobox(
                 table, textvariable=row_vars["vol"],
                 values=vol_options, width=8, state="readonly"
-            ).grid(row=r, column=7, padx=2, pady=2)
+            ).grid(row=r, column=5, padx=2, pady=2)
 
             cb_wash_vol = ttk.Combobox(
                 table, textvariable=row_vars["wash_vol"],
                 values=wash_vol_options, width=8, state="readonly"
             )
-            cb_wash_vol.grid(row=r, column=8, padx=2, pady=2)
+            cb_wash_vol.grid(row=r, column=6, padx=2, pady=2)
 
             cb_wash_times = ttk.Combobox(
                 table, textvariable=row_vars["wash_times"],
                 values=wash_times_options, width=8, state="readonly"
             )
-            cb_wash_times.grid(row=r, column=9, padx=2, pady=2)
+            cb_wash_times.grid(row=r, column=7, padx=2, pady=2)
 
             cb_wash_src = ttk.Combobox(
                 table, textvariable=row_vars["wash_src"],
                 values=source_options, width=12, state="readonly"
             )
-            cb_wash_src.grid(row=r, column=10, padx=2, pady=2)
+            cb_wash_src.grid(row=r, column=8, padx=2, pady=2)
 
             def update_wash_visibility(*_, rv=row_vars, t_cb=cb_wash_times, s_cb=cb_wash_src):
                 enabled = wash_enabled(rv["wash_vol"].get())
@@ -2901,9 +2878,6 @@ class LiquidHandlerApp:
             wash_times_str = row["vars"]["wash_times"].get()
             wash_src = row["vars"]["wash_src"].get()
 
-            presat = row["vars"]["presat"].get()
-            presat_src = row["vars"]["presat_src"].get()
-
             if not start_well or not end_well or not dest_falcon or not vol_str:
                 continue
             try:
@@ -2929,9 +2903,7 @@ class LiquidHandlerApp:
                 "vol": vol_per_well,
                 "wash_vol": wash_vol,
                 "wash_times": wash_times,
-                "wash_src": wash_src,
-                "presat": presat,
-                "presat_src": presat_src
+                "wash_src": wash_src
             })
         if not tasks:
             messagebox.showinfo("No Tasks", "No valid lines configured or selected.")
@@ -2968,34 +2940,6 @@ class LiquidHandlerApp:
                 self.tip_inventory[tip_key] = False
                 self.update_last_module("TIPS")
                 current_sim_module = "TIPS"
-
-                # --- PRESATURATION LOGIC ---
-                if task["presat"]:
-                    p_src = task["presat_src"]
-                    self.log_line(f"[COMBINE] Presaturating tip at {p_src}...")
-                    w_mod, w_x, w_y, w_safe_z, w_asp_z, _ = self.get_coords_from_combo(p_src)
-
-                    cmds_presat = []
-                    # Move to Wash Source
-                    cmds_presat.extend(
-                        self._get_smart_travel_gcode(w_mod, w_x, w_y, w_safe_z, start_module=current_sim_module))
-
-                    # Mix 3x 800uL
-                    mix_vol = 800.0
-                    e_mix_down = -1 * (air_gap_vol + mix_vol) * STEPS_PER_UL
-                    e_mix_up = -1 * (air_gap_vol) * STEPS_PER_UL  # Back to air gap
-
-                    cmds_presat.append(f"G0 Z{w_asp_z:.2f} F{JOG_SPEED_Z}")
-                    for _ in range(3):
-                        cmds_presat.append(f"G1 E{e_mix_down:.3f} F{PIP_SPEED}")
-                        cmds_presat.append(f"G1 E{e_mix_up:.3f} F{PIP_SPEED}")
-
-                    cmds_presat.append(f"G0 Z{w_safe_z:.2f} F{JOG_SPEED_Z}")
-
-                    self._send_lines_with_ok(cmds_presat)
-                    self.update_last_module(w_mod)
-                    current_sim_module = w_mod
-                # ---------------------------
 
                 self.root.after(0, self.update_tip_grid_colors)
                 for well in wells:
