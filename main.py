@@ -566,6 +566,11 @@ class LiquidHandlerApp:
         self.notebook.add(self.tab_combine, text=" Combine Fractions ")
         self._build_combine_fractions_tab(self.tab_combine)
 
+        # NEW ALIQUOTS TAB
+        self.tab_aliquots = ttk.Frame(self.notebook)
+        self.notebook.add(self.tab_aliquots, text=" Aliquots ")
+        self._build_aliquots_tab(self.tab_aliquots)
+
         self.tab_movement = ttk.Frame(self.notebook)
         self.notebook.add(self.tab_movement, text=" Movement / XYZ ")
         self._build_movement_tab(self.tab_movement)
@@ -1226,6 +1231,114 @@ class LiquidHandlerApp:
             font=("Arial", 8, "italic")
         ).pack(pady=5)
 
+    def _build_aliquots_tab(self, parent):
+        frame = ttk.Frame(parent, padding=10)
+        frame.pack(fill="both", expand=True)
+
+        table = ttk.Frame(frame)
+        table.pack(fill="x", pady=(0, 5))
+        table.grid_anchor("w")
+
+        cols = [
+            ("Execute", 8), ("Line", 4), ("Source Vial", 14), ("Volume (uL)", 10),
+            ("Dest Start", 15), ("Dest End", 15)  # INCREASED from 12 to 15
+        ]
+
+        for c, (text, w) in enumerate(cols):
+            ttk.Label(
+                table, text=text, width=w,
+                font=("Arial", 9, "bold"),
+                anchor="center"
+            ).grid(row=0, column=c, padx=2, pady=(0, 4), sticky="ew")
+
+        # SOURCE OPTIONS: All small vial modules + Falcon
+        source_vial_positions = []
+        source_vial_positions.extend([f"Falcon {p}" for p in self.falcon_positions])
+        source_vial_positions.extend([f"4mL {p}" for p in self._4ml_positions])
+        source_vial_positions.extend([f"Filter Eppi {p}" for p in self.filter_eppi_positions])
+        source_vial_positions.extend([f"Eppi {p}" for p in self.eppi_positions])
+        source_vial_positions.extend([f"HPLC {p}" for p in self.hplc_positions])
+        source_vial_positions.extend([f"HPLC Insert {p}" for p in self.hplc_insert_positions])
+        source_vial_positions.extend([f"Screwcap {p}" for p in self.screwcap_positions])
+
+        # Destination options: only small vial modules (A1 to F8)
+        small_vial_positions = []
+        small_vial_positions.extend([f"4mL {p}" for p in self._4ml_positions])
+        small_vial_positions.extend([f"Filter Eppi {p}" for p in self.filter_eppi_positions])
+        small_vial_positions.extend([f"Eppi {p}" for p in self.eppi_positions])
+        small_vial_positions.extend([f"HPLC {p}" for p in self.hplc_positions])
+        small_vial_positions.extend([f"HPLC Insert {p}" for p in self.hplc_insert_positions])
+        small_vial_positions.extend([f"Screwcap {p}" for p in self.screwcap_positions])
+
+        # Volume options (capped at 800)
+        vol_options = ["10", "50"] + [str(x) for x in range(100, 900, 100)]
+
+        self.aliquot_rows = []
+
+        for i in range(8):
+            row_vars = {
+                "execute": tk.BooleanVar(value=False),
+                "source": tk.StringVar(value=""),
+                "volume": tk.StringVar(value="800"),
+                "dest_start": tk.StringVar(value=""),
+                "dest_end": tk.StringVar(value=""),
+            }
+
+            r = i + 1
+
+            ttk.Checkbutton(table, variable=row_vars["execute"]).grid(row=r, column=0, padx=2, pady=2)
+            ttk.Label(table, text=f"{i + 1}", width=4, anchor="center").grid(row=r, column=1, padx=2, pady=2)
+
+            # Source Vial (ALL SMALL VIAL MODULES + FALCON)
+            ttk.Combobox(
+                table, textvariable=row_vars["source"],
+                values=source_vial_positions, width=14, state="readonly"
+            ).grid(row=r, column=2, padx=2, pady=2)
+
+            # Volume
+            ttk.Combobox(
+                table, textvariable=row_vars["volume"],
+                values=vol_options, width=10, state="readonly"
+            ).grid(row=r, column=3, padx=2, pady=2)
+
+            # Dest Start (WIDER)
+            ttk.Combobox(
+                table, textvariable=row_vars["dest_start"],
+                values=small_vial_positions, width=15, state="readonly"
+            ).grid(row=r, column=4, padx=2, pady=2)
+
+            # Dest End (WIDER)
+            ttk.Combobox(
+                table, textvariable=row_vars["dest_end"],
+                values=small_vial_positions, width=15, state="readonly"
+            ).grid(row=r, column=5, padx=2, pady=2)
+
+            self.aliquot_rows.append(row_vars)
+
+        btn_frame = ttk.Frame(frame, padding=10)
+        btn_frame.pack(fill="x", pady=10)
+
+        # EXECUTE AND PAUSE BUTTONS ROW
+        exec_row = ttk.Frame(btn_frame)
+        exec_row.pack(fill="x", pady=5)
+
+        self.aliquot_exec_btn = ttk.Button(
+            exec_row, text="EXECUTE ALIQUOT SEQUENCE",
+            command=lambda: threading.Thread(target=self.aliquots_sequence, daemon=True).start()
+        )
+        self.aliquot_exec_btn.pack(side="left", fill="x", expand=True, padx=(0, 5), ipady=5)
+
+        self.aliquot_pause_btn = ttk.Button(
+            exec_row, text="PAUSE",
+            command=self.toggle_pause
+        )
+        self.aliquot_pause_btn.pack(side="left", fill="x", padx=(5, 0), ipady=5)
+
+        ttk.Label(
+            btn_frame,
+            text="Check 'Execute' box for rows you want to run. Robot will pick fresh tip for each row.",
+            font=("Arial", 8, "italic")
+        ).pack(pady=5)
 
     def _update_falcon_exclusivity(self):
         all_falcons = set(self.falcon_positions)
@@ -1693,8 +1806,9 @@ class LiquidHandlerApp:
         status = "RESUME" if self.is_paused else "PAUSE"
         self.transfer_pause_btn.config(text=status)
         self.combine_pause_btn.config(text=status)
+        self.aliquot_pause_btn.config(text=status)
 
-        # MODIFIED: Enable Soft Stop only when paused
+        # Enable Soft Stop only when paused
         if self.is_paused:
             self.log_line("[USER] Paused sequence.")
             self.last_cmd_var.set("PAUSED")
@@ -3177,6 +3291,208 @@ class LiquidHandlerApp:
             self.last_cmd_var.set("Idle")
 
         threading.Thread(target=run_seq, daemon=True).start()
+
+    def aliquots_sequence(self):
+        if not self.ser or not self.ser.is_open:
+            messagebox.showwarning("Not Connected", "Please connect to the printer first.")
+            return
+
+        tasks = []
+        for idx, row in enumerate(self.aliquot_rows):
+            if not row["execute"].get():
+                continue
+
+            source = row["source"].get()
+            volume_str = row["volume"].get()
+            dest_start_str = row["dest_start"].get()
+            dest_end_str = row["dest_end"].get()
+
+            if not source or not volume_str or not dest_start_str or not dest_end_str:
+                self.log_line(f"[ALIQUOT] Skipping line {idx + 1}: missing configuration.")
+                continue
+
+            try:
+                volume = float(volume_str)
+            except ValueError:
+                self.log_line(f"[ALIQUOT] Skipping line {idx + 1}: invalid volume.")
+                continue
+
+            # Parse destination range
+            dest_list = self._parse_dest_range(dest_start_str, dest_end_str)
+            if not dest_list:
+                self.log_line(f"[ALIQUOT] Skipping line {idx + 1}: invalid destination range.")
+                continue
+
+            tasks.append({
+                "line": idx + 1,
+                "source": source,
+                "volume": volume,
+                "destinations": dest_list,
+            })
+
+        if not tasks:
+            messagebox.showinfo("No Tasks", "No lines selected for execution.")
+            return
+
+        self.log_command(f"[ALIQUOT] Starting sequence with {len(tasks)} lines.")
+
+        air_gap_ul = float(AIR_GAP_UL)
+        e_gap_pos = -1 * air_gap_ul * STEPS_PER_UL
+
+        def run_seq():
+            current_simulated_module = self.last_known_module
+
+            # Ensure no tip is loaded at start
+            self.log_line("[ALIQUOT] Ensuring no tip is loaded at start...")
+            self._send_lines_with_ok(self._get_eject_tip_commands())
+            self.update_last_module("EJECT")
+            current_simulated_module = "EJECT"
+
+            for task in tasks:
+                line_num = task["line"]
+                source_falcon = task["source"]
+                total_volume = task["volume"]
+                destinations = task["destinations"]
+                num_destinations = len(destinations)
+
+                if num_destinations == 0:
+                    continue
+
+                # Calculate volume per destination
+                vol_per_dest = total_volume / num_destinations
+
+                self.log_line(
+                    f"[ALIQUOT] Line {line_num}: Distributing {total_volume}uL from Falcon {source_falcon} to {num_destinations} vials ({vol_per_dest:.2f}uL each)")
+                self.last_cmd_var.set(f"L{line_num}: Aliquot...")
+
+                # Pick fresh tip
+                tip_key = self._find_next_available_tip()
+                if not tip_key:
+                    messagebox.showerror("No Tips", f"Ran out of tips at Line {line_num}.")
+                    return
+
+                self.log_line(f"[ALIQUOT L{line_num}] Picking Tip {tip_key}...")
+                self._send_lines_with_ok(self._get_pick_tip_commands(tip_key, start_module=current_simulated_module))
+                self.tip_inventory[tip_key] = False
+                self.root.after(0, self.update_tip_grid_colors)
+                self.update_last_module("TIPS")
+                current_simulated_module = "TIPS"
+
+                # Aspirate full volume from source
+                self.log_line(f"[ALIQUOT L{line_num}] Aspirating {total_volume}uL from Falcon {source_falcon}...")
+                src_mod, src_x, src_y, src_safe_z, src_asp_z, _ = self.get_coords_from_combo(f"Falcon {source_falcon}")
+
+                cmds = []
+                cmds.append(f"G1 E{e_gap_pos:.3f} F{PIP_SPEED}")
+                cmds.extend(self._get_smart_travel_gcode(src_mod, src_x, src_y, src_safe_z,
+                                                         start_module=current_simulated_module))
+
+                e_loaded = -1 * (air_gap_ul + total_volume) * STEPS_PER_UL
+                cmds.append(f"G0 Z{src_asp_z:.2f} F{JOG_SPEED_Z}")
+                cmds.append(f"G1 E{e_loaded:.3f} F{PIP_SPEED}")
+                cmds.append(f"G0 Z{src_safe_z:.2f} F{JOG_SPEED_Z}")
+
+                self._send_lines_with_ok(cmds)
+                self.update_last_module(src_mod)
+                current_simulated_module = src_mod
+
+                # Distribute to each destination
+                remaining_volume = total_volume
+                for dest_str in destinations:
+                    self.log_line(f"[ALIQUOT L{line_num}] Dispensing {vol_per_dest:.2f}uL into {dest_str}...")
+                    self.last_cmd_var.set(f"L{line_num}: {vol_per_dest:.2f}uL -> {dest_str}")
+
+                    dest_mod, dest_x, dest_y, dest_safe_z, _, dest_disp_z = self.get_coords_from_combo(dest_str)
+
+                    cmds_disp = []
+                    cmds_disp.extend(self._get_smart_travel_gcode(dest_mod, dest_x, dest_y, dest_safe_z,
+                                                                  start_module=current_simulated_module))
+
+                    remaining_volume -= vol_per_dest
+                    e_after_disp = -1 * (air_gap_ul + remaining_volume) * STEPS_PER_UL
+
+                    cmds_disp.append(f"G0 Z{dest_disp_z:.2f} F{JOG_SPEED_Z}")
+                    cmds_disp.append(f"G1 E{e_after_disp:.3f} F{PIP_SPEED}")
+                    cmds_disp.append(f"G0 Z{dest_safe_z:.2f} F{JOG_SPEED_Z}")
+
+                    self._send_lines_with_ok(cmds_disp)
+                    self.update_last_module(dest_mod)
+                    current_simulated_module = dest_mod
+
+                # Update volume display
+                self.current_pipette_volume = air_gap_ul
+                self.vol_display_var.set(f"{self.current_pipette_volume:.1f} uL")
+                self.live_vol_var.set(f"{self.current_pipette_volume:.1f}")
+
+                # Eject tip
+                self.log_line(f"[ALIQUOT L{line_num}] Ejecting tip...")
+                self._send_lines_with_ok(self._get_eject_tip_commands())
+                self.update_last_module("EJECT")
+                current_simulated_module = "EJECT"
+
+            # Park at end
+            self.log_command("[ALIQUOT] All lines complete. Parking.")
+            self.last_cmd_var.set("Parking...")
+            self._send_lines_with_ok(self._get_park_head_commands())
+            self.update_last_module("PARK")
+            self.last_cmd_var.set("Idle")
+
+        threading.Thread(target=run_seq, daemon=True).start()
+
+    def _parse_dest_range(self, start_str, end_str):
+        """
+        Parse destination range from combo strings like "4mL A1" to "4mL A3"
+        Returns list of full combo strings in order
+        """
+        # Parse module and position from start
+        start_mod, start_pos = self._parse_combo_string(start_str)
+        end_mod, end_pos = self._parse_combo_string(end_str)
+
+        # Must be same module
+        if start_mod != end_mod:
+            return []
+
+        # Get the position list for this module
+        if start_mod == "FALCON":
+            positions = self.falcon_positions
+            prefix = "Falcon "
+        elif start_mod == "4ML":
+            positions = self._4ml_positions
+            prefix = "4mL "
+        elif start_mod == "FILTER_EPPI":
+            positions = self.filter_eppi_positions
+            prefix = "Filter Eppi "
+        elif start_mod == "EPPI":
+            positions = self.eppi_positions
+            prefix = "Eppi "
+        elif start_mod == "HPLC":
+            positions = self.hplc_positions
+            prefix = "HPLC "
+        elif start_mod == "HPLC_INSERT":
+            positions = self.hplc_insert_positions
+            prefix = "HPLC Insert "
+        elif start_mod == "SCREWCAP":
+            positions = self.screwcap_positions
+            prefix = "Screwcap "
+        else:
+            return []
+
+        # Find indices
+        try:
+            start_idx = positions.index(start_pos)
+            end_idx = positions.index(end_pos)
+        except ValueError:
+            return []
+
+        if start_idx > end_idx:
+            return []
+
+        # Build list of combo strings
+        result = []
+        for i in range(start_idx, end_idx + 1):
+            result.append(f"{prefix}{positions[i]}")
+
+        return result
 
     def start_pin_calibration_sequence(self):
         if not self.ser or not self.ser.is_open:

@@ -1113,15 +1113,39 @@ class LiquidHandlerApp:
             row_vars["presat"].trace_add("write", toggle_presat_combo)
             toggle_presat_combo()
 
-            ttk.Combobox(
+            # Source Start - Hybrid Combobox (writable with auto-capitalization)
+            cb_start = ttk.Combobox(
                 table, textvariable=row_vars["start"],
-                values=self.plate_wells, width=10, state="readonly"
-            ).grid(row=r, column=4, padx=2, pady=2)
+                values=self.plate_wells, width=10, state="normal"
+            )
+            cb_start.grid(row=r, column=4, padx=2, pady=2)
 
-            ttk.Combobox(
+            # Auto-capitalize function for start
+            def auto_capitalize_start(*_, var=row_vars["start"]):
+                value = var.get()
+                if value and len(value) > 0:
+                    # Capitalize the first character if it's a letter
+                    if value[0].isalpha() and value[0].islower():
+                        var.set(value[0].upper() + value[1:])
+
+            row_vars["start"].trace_add("write", auto_capitalize_start)
+
+            # Source End - Hybrid Combobox (writable with auto-capitalization)
+            cb_end = ttk.Combobox(
                 table, textvariable=row_vars["end"],
-                values=self.plate_wells, width=10, state="readonly"
-            ).grid(row=r, column=5, padx=2, pady=2)
+                values=self.plate_wells, width=10, state="normal"
+            )
+            cb_end.grid(row=r, column=5, padx=2, pady=2)
+
+            # Auto-capitalize function for end
+            def auto_capitalize_end(*_, var=row_vars["end"]):
+                value = var.get()
+                if value and len(value) > 0:
+                    # Capitalize the first character if it's a letter
+                    if value[0].isalpha() and value[0].islower():
+                        var.set(value[0].upper() + value[1:])
+
+            row_vars["end"].trace_add("write", auto_capitalize_end)
 
             cb_dest = ttk.Combobox(
                 table, textvariable=row_vars["dest"],
@@ -1201,6 +1225,7 @@ class LiquidHandlerApp:
             text="Check 'Execute' box for lines you want to run.",
             font=("Arial", 8, "italic")
         ).pack(pady=5)
+
 
     def _update_falcon_exclusivity(self):
         all_falcons = set(self.falcon_positions)
