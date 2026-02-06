@@ -1025,21 +1025,21 @@ class LiquidHandlerApp:
 
     def load_transfer_preset_5(self):
         preset = [
-            {"execute": False, "src_mod": "Screwcap Vial", "src_pos": "F1", "dest": "HPLC Insert E1", "vol": 20,
+            {"execute": False, "src_mod": "Screwcap Vial", "src_pos": "F1", "dest": "HPLC Insert E1", "vol": 35,
              "volatile": False, "wash_vol": 0, "wash_times": 0, "wash_src": "Wash A"},
-            {"execute": False, "src_mod": "Screwcap Vial", "src_pos": "F2", "dest": "HPLC Insert E2", "vol": 20,
+            {"execute": False, "src_mod": "Screwcap Vial", "src_pos": "F2", "dest": "HPLC Insert E2", "vol": 35,
              "volatile": False, "wash_vol": 0, "wash_times": 0, "wash_src": "Wash A"},
-            {"execute": False, "src_mod": "Screwcap Vial", "src_pos": "F3", "dest": "HPLC Insert E3", "vol": 20,
+            {"execute": False, "src_mod": "Screwcap Vial", "src_pos": "F3", "dest": "HPLC Insert E3", "vol": 35,
              "volatile": False, "wash_vol": 0, "wash_times": 0, "wash_src": "Wash A"},
-            {"execute": False, "src_mod": "Screwcap Vial", "src_pos": "F4", "dest": "HPLC Insert E4", "vol": 20,
+            {"execute": False, "src_mod": "Screwcap Vial", "src_pos": "F4", "dest": "HPLC Insert E4", "vol": 35,
              "volatile": False, "wash_vol": 0, "wash_times": 0, "wash_src": "Wash A"},
-            {"execute": False, "src_mod": "Screwcap Vial", "src_pos": "F5", "dest": "HPLC Insert E5", "vol": 20,
+            {"execute": False, "src_mod": "Screwcap Vial", "src_pos": "F5", "dest": "HPLC Insert E5", "vol": 35,
              "volatile": False, "wash_vol": 0, "wash_times": 0, "wash_src": "Wash A"},
-            {"execute": False, "src_mod": "Screwcap Vial", "src_pos": "F6", "dest": "HPLC Insert E6", "vol": 20,
+            {"execute": False, "src_mod": "Screwcap Vial", "src_pos": "F6", "dest": "HPLC Insert E6", "vol": 35,
              "volatile": False, "wash_vol": 0, "wash_times": 0, "wash_src": "Wash A"},
-            {"execute": False, "src_mod": "Screwcap Vial", "src_pos": "F7", "dest": "HPLC Insert E7", "vol": 20,
+            {"execute": False, "src_mod": "Screwcap Vial", "src_pos": "F7", "dest": "HPLC Insert E7", "vol": 35,
              "volatile": False, "wash_vol": 0, "wash_times": 0, "wash_src": "Wash A"},
-            {"execute": False, "src_mod": "Screwcap Vial", "src_pos": "F8", "dest": "HPLC Insert E8", "vol": 20,
+            {"execute": False, "src_mod": "Screwcap Vial", "src_pos": "F8", "dest": "HPLC Insert E8", "vol": 35,
              "volatile": False, "wash_vol": 0, "wash_times": 0, "wash_src": "Wash A"},
         ]
         self._apply_transfer_table_preset(preset, preset_name="Preset 5")
