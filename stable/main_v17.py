@@ -1256,9 +1256,8 @@ class LiquidHandlerApp:
                 anchor="center"
             ).grid(row=0, column=c, padx=2, pady=(0, 4), sticky="ew")
 
-        # SOURCE OPTIONS: All small vial modules + Falcon + 96-well plate
+        # SOURCE OPTIONS: All small vial modules + Falcon
         source_vial_positions = []
-        source_vial_positions.extend([f"PLATE {p}" for p in self.plate_wells])
         source_vial_positions.extend([f"Falcon {p}" for p in self.falcon_positions])
         source_vial_positions.extend([f"4mL {p}" for p in self._4ml_positions])
         source_vial_positions.extend([f"Filter Eppi {p}" for p in self.filter_eppi_positions])
@@ -3766,7 +3765,7 @@ class LiquidHandlerApp:
 
             for task in tasks:
                 line_num = task["line"]
-                source_str = task["source"]
+                source_falcon = task["source"]
                 total_volume = task["volume"]
                 destinations = task["destinations"]
                 num_destinations = len(destinations)
@@ -3778,8 +3777,7 @@ class LiquidHandlerApp:
                 vol_per_dest = total_volume / num_destinations
 
                 self.log_line(
-                    f"[ALIQUOT] Line {line_num}: Distributing {total_volume}uL from {source_str} to "
-                    f"{num_destinations} vials ({vol_per_dest:.2f}uL each)")
+                    f"[ALIQUOT] Line {line_num}: Distributing {total_volume}uL from Falcon {source_falcon} to {num_destinations} vials ({vol_per_dest:.2f}uL each)")
                 self.last_cmd_var.set(f"L{line_num}: Aliquot...")
 
                 # Pick fresh tip
@@ -3797,8 +3795,7 @@ class LiquidHandlerApp:
 
                 # Aspirate full volume from source
                 self.log_line(f"[ALIQUOT L{line_num}] Aspirating {total_volume}uL from Falcon {source_falcon}...")
-                src_mod, src_x, src_y, src_safe_z, src_asp_z, _ = self.get_coords_from_combo(source_str)
-
+                src_mod, src_x, src_y, src_safe_z, src_asp_z, _ = self.get_coords_from_combo(f"Falcon {source_falcon}")
 
                 cmds = []
                 cmds.append(f"G1 E{e_gap_pos:.3f} F{PIP_SPEED}")
