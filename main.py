@@ -1246,7 +1246,7 @@ class LiquidHandlerApp:
 
         cols = [
             ("Execute", 8), ("Line", 4), ("Source Vial", 14), ("Volume (uL)", 10),
-            ("Dest Start", 15), ("Dest End", 15)  # INCREASED from 12 to 15
+            ("Dest Start", 15), ("Dest End", 15)
         ]
 
         for c, (text, w) in enumerate(cols):
@@ -1256,9 +1256,8 @@ class LiquidHandlerApp:
                 anchor="center"
             ).grid(row=0, column=c, padx=2, pady=(0, 4), sticky="ew")
 
-        # SOURCE OPTIONS: All small vial modules + Falcon + 96-well plate
+        # SOURCE OPTIONS: All small vial modules + Falcon + 96 Well Plate
         source_vial_positions = []
-        source_vial_positions.extend([f"PLATE {p}" for p in self.plate_wells])
         source_vial_positions.extend([f"Falcon {p}" for p in self.falcon_positions])
         source_vial_positions.extend([f"4mL {p}" for p in self._4ml_positions])
         source_vial_positions.extend([f"Filter Eppi {p}" for p in self.filter_eppi_positions])
@@ -1266,6 +1265,7 @@ class LiquidHandlerApp:
         source_vial_positions.extend([f"HPLC {p}" for p in self.hplc_positions])
         source_vial_positions.extend([f"HPLC Insert {p}" for p in self.hplc_insert_positions])
         source_vial_positions.extend([f"Screwcap {p}" for p in self.screwcap_positions])
+        source_vial_positions.extend([f"96Well {p}" for p in self.plate_wells])  # NEW: 96 Well Plate A1-H12
 
         # Destination options: only small vial modules (A1 to F8)
         small_vial_positions = []
@@ -1295,7 +1295,7 @@ class LiquidHandlerApp:
             ttk.Checkbutton(table, variable=row_vars["execute"]).grid(row=r, column=0, padx=2, pady=2)
             ttk.Label(table, text=f"{i + 1}", width=4, anchor="center").grid(row=r, column=1, padx=2, pady=2)
 
-            # Source Vial (ALL SMALL VIAL MODULES + FALCON)
+            # Source Vial (ALL SMALL VIAL MODULES + FALCON + 96 WELL PLATE)
             ttk.Combobox(
                 table, textvariable=row_vars["source"],
                 values=source_vial_positions, width=14, state="readonly"
@@ -2369,6 +2369,7 @@ class LiquidHandlerApp:
             return "Unknown", parts[0]
         prefix = parts[0]
         suffix = parts[1]
+        if combo_str.startswith("96Well"): return "PLATE", combo_str.replace("96Well ", "")
         if combo_str.startswith("Filter Eppi"): return "FILTER_EPPI", combo_str.replace("Filter Eppi ", "")
         if combo_str.startswith("Eppi"): return "EPPI", combo_str.replace("Eppi ", "")
         if combo_str.startswith("HPLC Insert"): return "HPLC_INSERT", combo_str.replace("HPLC Insert ", "")
@@ -3778,8 +3779,7 @@ class LiquidHandlerApp:
                 vol_per_dest = total_volume / num_destinations
 
                 self.log_line(
-                    f"[ALIQUOT] Line {line_num}: Distributing {total_volume}uL from {source_str} to "
-                    f"{num_destinations} vials ({vol_per_dest:.2f}uL each)")
+                    f"[ALIQUOT] Line {line_num}: Distributing {total_volume}uL from {source_str} to {num_destinations} vials ({vol_per_dest:.2f}uL each)")
                 self.last_cmd_var.set(f"L{line_num}: Aliquot...")
 
                 # Pick fresh tip
@@ -3795,10 +3795,9 @@ class LiquidHandlerApp:
                 self.update_last_module("TIPS")
                 current_simulated_module = "TIPS"
 
-                # Aspirate full volume from source
-                self.log_line(f"[ALIQUOT L{line_num}] Aspirating {total_volume}uL from Falcon {source_falcon}...")
+                # Aspirate full volume from source (generic — works with any module)
+                self.log_line(f"[ALIQUOT L{line_num}] Aspirating {total_volume}uL from {source_str}...")
                 src_mod, src_x, src_y, src_safe_z, src_asp_z, _ = self.get_coords_from_combo(source_str)
-
 
                 cmds = []
                 cmds.append(f"G1 E{e_gap_pos:.3f} F{PIP_SPEED}")
