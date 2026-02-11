@@ -1327,6 +1327,31 @@ class LiquidHandlerApp:
 
             self.aliquot_rows.append(row_vars)
 
+        btn_frame = ttk.Frame(frame, padding=10)
+        btn_frame.pack(fill="x", pady=10)
+
+        # EXECUTE AND PAUSE BUTTONS ROW
+        exec_row = ttk.Frame(btn_frame)
+        exec_row.pack(fill="x", pady=5)
+
+        self.aliquot_exec_btn = ttk.Button(
+            exec_row, text="EXECUTE ALIQUOT SEQUENCE",
+            command=lambda: threading.Thread(target=self.aliquots_sequence, daemon=True).start()
+        )
+        self.aliquot_exec_btn.pack(side="left", fill="x", expand=True, padx=(0, 5), ipady=5)
+
+        self.aliquot_pause_btn = ttk.Button(
+            exec_row, text="PAUSE",
+            command=self.toggle_pause
+        )
+        self.aliquot_pause_btn.pack(side="left", fill="x", padx=(5, 0), ipady=5)
+
+        ttk.Label(
+            btn_frame,
+            text="Check 'Execute' box for rows you want to run. Robot will pick fresh tip for each row.",
+            font=("Arial", 8, "italic")
+        ).pack(pady=5)
+
     def _build_dilution_tab(self, parent):
         frame = ttk.Frame(parent, padding=5)
         frame.pack(fill="both", expand=True)
