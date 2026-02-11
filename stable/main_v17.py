@@ -566,15 +566,13 @@ class LiquidHandlerApp:
         self.notebook.add(self.tab_combine, text=" Combine Fractions ")
         self._build_combine_fractions_tab(self.tab_combine)
 
-        # NEW ALIQUOTS TAB
-        self.tab_aliquots = ttk.Frame(self.notebook)
-        self.notebook.add(self.tab_aliquots, text=" Aliquots ")
-        self._build_aliquots_tab(self.tab_aliquots)
-
-        # DILUTION TAB
         self.tab_dilution = ttk.Frame(self.notebook)
         self.notebook.add(self.tab_dilution, text=" Dilution ")
         self._build_dilution_tab(self.tab_dilution)
+
+        self.tab_aliquots = ttk.Frame(self.notebook)
+        self.notebook.add(self.tab_aliquots, text=" Aliquots ")
+        self._build_aliquots_tab(self.tab_aliquots)
 
         self.tab_movement = ttk.Frame(self.notebook)
         self.notebook.add(self.tab_movement, text=" Movement / XYZ ")
@@ -1246,7 +1244,7 @@ class LiquidHandlerApp:
 
         cols = [
             ("Execute", 8), ("Line", 4), ("Source Vial", 14), ("Volume (uL)", 10),
-            ("Dest Start", 15), ("Dest End", 15)  # INCREASED from 12 to 15
+            ("Dest Start", 15), ("Dest End", 15)
         ]
 
         for c, (text, w) in enumerate(cols):
@@ -1256,7 +1254,7 @@ class LiquidHandlerApp:
                 anchor="center"
             ).grid(row=0, column=c, padx=2, pady=(0, 4), sticky="ew")
 
-        # SOURCE OPTIONS: All small vial modules + Falcon
+        # SOURCE OPTIONS: All small vial modules + Falcon + 96 Well Plate
         source_vial_positions = []
         source_vial_positions.extend([f"Falcon {p}" for p in self.falcon_positions])
         source_vial_positions.extend([f"4mL {p}" for p in self._4ml_positions])
@@ -1265,6 +1263,7 @@ class LiquidHandlerApp:
         source_vial_positions.extend([f"HPLC {p}" for p in self.hplc_positions])
         source_vial_positions.extend([f"HPLC Insert {p}" for p in self.hplc_insert_positions])
         source_vial_positions.extend([f"Screwcap {p}" for p in self.screwcap_positions])
+        source_vial_positions.extend([f"96Well {p}" for p in self.plate_wells])
 
         # Destination options: only small vial modules (A1 to F8)
         small_vial_positions = []
@@ -1275,8 +1274,14 @@ class LiquidHandlerApp:
         small_vial_positions.extend([f"HPLC Insert {p}" for p in self.hplc_insert_positions])
         small_vial_positions.extend([f"Screwcap {p}" for p in self.screwcap_positions])
 
-        # Volume options (capped at 800)
-        vol_options = ["10", "50"] + [str(x) for x in range(100, 900, 100)]
+        # ---- NEW: float validation for volume entry (allows "585.4") ----
+        float_re = re.compile(r"^\d*([.]\d*)?$")  # allows "", "123", "123.", "123.4"
+
+        def validate_float(P: str) -> bool:
+            return bool(float_re.match(P))
+
+        vcmd = (self.root.register(validate_float), "%P")
+        # ---------------------------------------------------------------
 
         self.aliquot_rows = []
 
@@ -1284,7 +1289,7 @@ class LiquidHandlerApp:
             row_vars = {
                 "execute": tk.BooleanVar(value=False),
                 "source": tk.StringVar(value=""),
-                "volume": tk.StringVar(value="800"),
+                "volume": tk.StringVar(value="800.0"),  # default can be float string
                 "dest_start": tk.StringVar(value=""),
                 "dest_end": tk.StringVar(value=""),
             }
@@ -1294,25 +1299,27 @@ class LiquidHandlerApp:
             ttk.Checkbutton(table, variable=row_vars["execute"]).grid(row=r, column=0, padx=2, pady=2)
             ttk.Label(table, text=f"{i + 1}", width=4, anchor="center").grid(row=r, column=1, padx=2, pady=2)
 
-            # Source Vial (ALL SMALL VIAL MODULES + FALCON)
             ttk.Combobox(
                 table, textvariable=row_vars["source"],
                 values=source_vial_positions, width=14, state="readonly"
             ).grid(row=r, column=2, padx=2, pady=2)
 
-            # Volume
-            ttk.Combobox(
-                table, textvariable=row_vars["volume"],
-                values=vol_options, width=10, state="readonly"
+            # ---- CHANGED: Volume is now a writable Entry (float-capable) ----
+            ttk.Entry(
+                table,
+                textvariable=row_vars["volume"],
+                width=10,
+                justify="center",
+                validate="key",
+                validatecommand=vcmd
             ).grid(row=r, column=3, padx=2, pady=2)
+            # ---------------------------------------------------------------
 
-            # Dest Start (WIDER)
             ttk.Combobox(
                 table, textvariable=row_vars["dest_start"],
                 values=small_vial_positions, width=15, state="readonly"
             ).grid(row=r, column=4, padx=2, pady=2)
 
-            # Dest End (WIDER)
             ttk.Combobox(
                 table, textvariable=row_vars["dest_end"],
                 values=small_vial_positions, width=15, state="readonly"
@@ -2368,6 +2375,7 @@ class LiquidHandlerApp:
             return "Unknown", parts[0]
         prefix = parts[0]
         suffix = parts[1]
+        if combo_str.startswith("96Well"): return "PLATE", combo_str.replace("96Well ", "")
         if combo_str.startswith("Filter Eppi"): return "FILTER_EPPI", combo_str.replace("Filter Eppi ", "")
         if combo_str.startswith("Eppi"): return "EPPI", combo_str.replace("Eppi ", "")
         if combo_str.startswith("HPLC Insert"): return "HPLC_INSERT", combo_str.replace("HPLC Insert ", "")
@@ -3765,7 +3773,7 @@ class LiquidHandlerApp:
 
             for task in tasks:
                 line_num = task["line"]
-                source_falcon = task["source"]
+                source_str = task["source"]
                 total_volume = task["volume"]
                 destinations = task["destinations"]
                 num_destinations = len(destinations)
@@ -3777,7 +3785,7 @@ class LiquidHandlerApp:
                 vol_per_dest = total_volume / num_destinations
 
                 self.log_line(
-                    f"[ALIQUOT] Line {line_num}: Distributing {total_volume}uL from Falcon {source_falcon} to {num_destinations} vials ({vol_per_dest:.2f}uL each)")
+                    f"[ALIQUOT] Line {line_num}: Distributing {total_volume}uL from {source_str} to {num_destinations} vials ({vol_per_dest:.2f}uL each)")
                 self.last_cmd_var.set(f"L{line_num}: Aliquot...")
 
                 # Pick fresh tip
@@ -3793,9 +3801,9 @@ class LiquidHandlerApp:
                 self.update_last_module("TIPS")
                 current_simulated_module = "TIPS"
 
-                # Aspirate full volume from source
-                self.log_line(f"[ALIQUOT L{line_num}] Aspirating {total_volume}uL from Falcon {source_falcon}...")
-                src_mod, src_x, src_y, src_safe_z, src_asp_z, _ = self.get_coords_from_combo(f"Falcon {source_falcon}")
+                # Aspirate full volume from source (generic — works with any module)
+                self.log_line(f"[ALIQUOT L{line_num}] Aspirating {total_volume}uL from {source_str}...")
+                src_mod, src_x, src_y, src_safe_z, src_asp_z, _ = self.get_coords_from_combo(source_str)
 
                 cmds = []
                 cmds.append(f"G1 E{e_gap_pos:.3f} F{PIP_SPEED}")
