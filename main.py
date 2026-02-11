@@ -3740,7 +3740,6 @@ class LiquidHandlerApp:
                 self.log_line(f"[ALIQUOT] Skipping line {idx + 1}: invalid volume.")
                 continue
 
-            # Parse destination range
             dest_list = self._parse_dest_range(dest_start_str, dest_end_str)
             if not dest_list:
                 self.log_line(f"[ALIQUOT] Skipping line {idx + 1}: invalid destination range.")
@@ -3762,6 +3761,13 @@ class LiquidHandlerApp:
         air_gap_ul = float(AIR_GAP_UL)
         e_gap_pos = -1 * air_gap_ul * STEPS_PER_UL
 
+        # --- NEW: disposal volume (extra aspirated and NOT dispensed) ---
+        DISPOSAL_UL_TARGET = 100.0  # << change this if you want
+        EPS = 1e-6
+
+        # Max liquid capacity excluding air gap
+        max_liquid_ul = float(MAX_PIPETTE_VOL) - air_gap_ul
+
         def run_seq():
             current_simulated_module = self.last_known_module
 
@@ -3771,21 +3777,49 @@ class LiquidHandlerApp:
             self.update_last_module("EJECT")
             current_simulated_module = "EJECT"
 
+            if max_liquid_ul <= 0:
+                self.log_line(
+                    f"[ALIQUOT] ERROR: MAX_PIPETTE_VOL ({MAX_PIPETTE_VOL}) <= AIR_GAP_UL ({air_gap_ul})."
+                )
+                self.last_cmd_var.set("Idle")
+                return
+
             for task in tasks:
                 line_num = task["line"]
                 source_str = task["source"]
-                total_volume = task["volume"]
+                total_volume = float(task["volume"])
                 destinations = task["destinations"]
                 num_destinations = len(destinations)
 
                 if num_destinations == 0:
                     continue
 
-                # Calculate volume per destination
                 vol_per_dest = total_volume / num_destinations
+                if vol_per_dest <= 0:
+                    self.log_line(
+                        f"[ALIQUOT] Line {line_num}: invalid per-destination volume ({vol_per_dest}). Skipping.")
+                    continue
+
+                # If a single dispense cannot fit (even with ZERO disposal), skip
+                if vol_per_dest > max_liquid_ul + EPS:
+                    self.log_line(
+                        f"[ALIQUOT] Line {line_num}: {vol_per_dest:.2f}uL per destination exceeds max liquid capacity "
+                        f"{max_liquid_ul:.1f}uL (MAX {MAX_PIPETTE_VOL} - AIRGAP {air_gap_ul}). Skipping."
+                    )
+                    continue
+
+                # Disposal volume may need reduction to fit capacity
+                disposal_ul = float(DISPOSAL_UL_TARGET)
+                if vol_per_dest + disposal_ul > max_liquid_ul:
+                    disposal_ul = max(0.0, max_liquid_ul - vol_per_dest)
+                    self.log_line(
+                        f"[ALIQUOT] Line {line_num}: disposal reduced to {disposal_ul:.1f}uL (capacity limit)."
+                    )
 
                 self.log_line(
-                    f"[ALIQUOT] Line {line_num}: Distributing {total_volume}uL from {source_str} to {num_destinations} vials ({vol_per_dest:.2f}uL each)")
+                    f"[ALIQUOT] Line {line_num}: Distributing {total_volume:.1f}uL from {source_str} to "
+                    f"{num_destinations} vials ({vol_per_dest:.2f}uL each) with disposal {disposal_ul:.1f}uL"
+                )
                 self.last_cmd_var.set(f"L{line_num}: Aliquot...")
 
                 # Pick fresh tip
@@ -3801,41 +3835,79 @@ class LiquidHandlerApp:
                 self.update_last_module("TIPS")
                 current_simulated_module = "TIPS"
 
-                # Aspirate full volume from source (generic — works with any module)
-                self.log_line(f"[ALIQUOT L{line_num}] Aspirating {total_volume}uL from {source_str}...")
+                # Set to air gap baseline (important if anything left E axis offset)
+                self._send_lines_with_ok([f"G1 E{e_gap_pos:.3f} F{PIP_SPEED}"])
+
+                # Cache source coords once
                 src_mod, src_x, src_y, src_safe_z, src_asp_z, _ = self.get_coords_from_combo(source_str)
 
-                cmds = []
-                cmds.append(f"G1 E{e_gap_pos:.3f} F{PIP_SPEED}")
-                cmds.extend(self._get_smart_travel_gcode(src_mod, src_x, src_y, src_safe_z,
-                                                         start_module=current_simulated_module))
+                # Track liquid only (excluding air gap)
+                liquid_in_tip_ul = 0.0
+                dest_idx = 0
 
-                e_loaded = -1 * (air_gap_ul + total_volume) * STEPS_PER_UL
-                cmds.append(f"G0 Z{src_asp_z:.2f} F{JOG_SPEED_Z}")
-                cmds.append(f"G1 E{e_loaded:.3f} F{PIP_SPEED}")
-                cmds.append(f"G0 Z{src_safe_z:.2f} F{JOG_SPEED_Z}")
+                while dest_idx < num_destinations:
+                    remaining_dests = num_destinations - dest_idx
+                    min_before_disp = vol_per_dest + disposal_ul  # keep disposal after dispense
 
-                self._send_lines_with_ok(cmds)
-                self.update_last_module(src_mod)
-                current_simulated_module = src_mod
+                    # Refill if we cannot dispense next aliquot while keeping disposal volume
+                    if liquid_in_tip_ul < (min_before_disp - EPS):
+                        target_liquid_ul = disposal_ul + (remaining_dests * vol_per_dest)
+                        if target_liquid_ul > max_liquid_ul:
+                            target_liquid_ul = max_liquid_ul
 
-                remaining_volume = total_volume
-                for dest_str in destinations:
+                        # Should always be possible after disposal adjustment, but keep a guard
+                        if target_liquid_ul < (min_before_disp - EPS):
+                            self.log_line(
+                                f"[ALIQUOT L{line_num}] ERROR: Cannot load enough for next dispense "
+                                f"(need >= {min_before_disp:.2f}uL, can load {target_liquid_ul:.2f}uL). Aborting line."
+                            )
+                            break
+
+                        self.log_line(
+                            f"[ALIQUOT L{line_num}] Refill from {source_str}: "
+                            f"{liquid_in_tip_ul:.1f} -> {target_liquid_ul:.1f}uL"
+                        )
+
+                        cmds_refill = []
+                        cmds_refill.extend(
+                            self._get_smart_travel_gcode(
+                                src_mod, src_x, src_y, src_safe_z,
+                                start_module=current_simulated_module
+                            )
+                        )
+                        e_target = -1 * (air_gap_ul + target_liquid_ul) * STEPS_PER_UL
+                        cmds_refill.append(f"G0 Z{src_asp_z:.2f} F{JOG_SPEED_Z}")
+                        cmds_refill.append(f"G1 E{e_target:.3f} F{PIP_SPEED}")
+                        cmds_refill.append(f"G0 Z{src_safe_z:.2f} F{JOG_SPEED_Z}")
+
+                        self._send_lines_with_ok(cmds_refill)
+                        self.update_last_module(src_mod)
+                        current_simulated_module = src_mod
+                        liquid_in_tip_ul = target_liquid_ul
+
+                    # Dispense one destination
+                    dest_str = destinations[dest_idx]
                     self.log_line(f"[ALIQUOT L{line_num}] Dispensing {vol_per_dest:.2f}uL into {dest_str}...")
                     self.last_cmd_var.set(f"L{line_num}: {vol_per_dest:.2f}uL -> {dest_str}")
 
                     dest_mod, dest_x, dest_y, dest_safe_z, dest_asp_z, dest_disp_z = self.get_coords_from_combo(
                         dest_str)
 
+                    liquid_in_tip_ul = liquid_in_tip_ul - vol_per_dest
+                    if liquid_in_tip_ul < 0.0 and abs(liquid_in_tip_ul) < 0.0001:
+                        liquid_in_tip_ul = 0.0
+
+                    e_after_disp = -1 * (air_gap_ul + liquid_in_tip_ul) * STEPS_PER_UL
+
                     cmds_disp = []
-                    cmds_disp.extend(self._get_smart_travel_gcode(
-                        dest_mod, dest_x, dest_y, dest_safe_z,
-                        start_module=current_simulated_module
-                    ))
+                    cmds_disp.extend(
+                        self._get_smart_travel_gcode(
+                            dest_mod, dest_x, dest_y, dest_safe_z,
+                            start_module=current_simulated_module
+                        )
+                    )
 
-                    remaining_volume -= vol_per_dest
-                    e_after_disp = -1 * (air_gap_ul + remaining_volume) * STEPS_PER_UL
-
+                    # Keep original behavior: dispense at "aspirate Z" (your code did this)
                     dispense_z = dest_asp_z
                     cmds_disp.append(f"G0 Z{dispense_z:.2f} F{JOG_SPEED_Z}")
                     cmds_disp.append(f"G1 E{e_after_disp:.3f} F{PIP_SPEED}")
@@ -3845,16 +3917,26 @@ class LiquidHandlerApp:
                     self.update_last_module(dest_mod)
                     current_simulated_module = dest_mod
 
-                # Update volume display
-                self.current_pipette_volume = air_gap_ul
-                self.vol_display_var.set(f"{self.current_pipette_volume:.1f} uL")
-                self.live_vol_var.set(f"{self.current_pipette_volume:.1f}")
+                    dest_idx += 1
 
-                # Eject tip
+                if disposal_ul > 0:
+                    self.log_line(
+                        f"[ALIQUOT L{line_num}] Disposal remaining in tip: ~{liquid_in_tip_ul:.1f}uL "
+                        f"(discarded with tip)."
+                    )
+
+                # Eject tip (disposal stays in tip)
                 self.log_line(f"[ALIQUOT L{line_num}] Ejecting tip...")
                 self._send_lines_with_ok(self._get_eject_tip_commands())
                 self.update_last_module("EJECT")
                 current_simulated_module = "EJECT"
+
+                # Reset plunger back to air gap AFTER tip is ejected (keeps internal state consistent)
+                self._send_lines_with_ok([f"G1 E{e_gap_pos:.3f} F{PIP_SPEED}"])
+
+                self.current_pipette_volume = air_gap_ul
+                self.vol_display_var.set(f"{self.current_pipette_volume:.1f} uL")
+                self.live_vol_var.set(f"{self.current_pipette_volume:.1f}")
 
             # Park at end
             self.log_command("[ALIQUOT] All lines complete. Parking.")

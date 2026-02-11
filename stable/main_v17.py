@@ -3819,22 +3819,25 @@ class LiquidHandlerApp:
                 self.update_last_module(src_mod)
                 current_simulated_module = src_mod
 
-                # Distribute to each destination
                 remaining_volume = total_volume
                 for dest_str in destinations:
                     self.log_line(f"[ALIQUOT L{line_num}] Dispensing {vol_per_dest:.2f}uL into {dest_str}...")
                     self.last_cmd_var.set(f"L{line_num}: {vol_per_dest:.2f}uL -> {dest_str}")
 
-                    dest_mod, dest_x, dest_y, dest_safe_z, _, dest_disp_z = self.get_coords_from_combo(dest_str)
+                    dest_mod, dest_x, dest_y, dest_safe_z, dest_asp_z, dest_disp_z = self.get_coords_from_combo(
+                        dest_str)
 
                     cmds_disp = []
-                    cmds_disp.extend(self._get_smart_travel_gcode(dest_mod, dest_x, dest_y, dest_safe_z,
-                                                                  start_module=current_simulated_module))
+                    cmds_disp.extend(self._get_smart_travel_gcode(
+                        dest_mod, dest_x, dest_y, dest_safe_z,
+                        start_module=current_simulated_module
+                    ))
 
                     remaining_volume -= vol_per_dest
                     e_after_disp = -1 * (air_gap_ul + remaining_volume) * STEPS_PER_UL
 
-                    cmds_disp.append(f"G0 Z{dest_disp_z:.2f} F{JOG_SPEED_Z}")
+                    dispense_z = dest_asp_z
+                    cmds_disp.append(f"G0 Z{dispense_z:.2f} F{JOG_SPEED_Z}")
                     cmds_disp.append(f"G1 E{e_after_disp:.3f} F{PIP_SPEED}")
                     cmds_disp.append(f"G0 Z{dest_safe_z:.2f} F{JOG_SPEED_Z}")
 
