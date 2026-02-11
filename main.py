@@ -566,15 +566,13 @@ class LiquidHandlerApp:
         self.notebook.add(self.tab_combine, text=" Combine Fractions ")
         self._build_combine_fractions_tab(self.tab_combine)
 
-        # NEW ALIQUOTS TAB
-        self.tab_aliquots = ttk.Frame(self.notebook)
-        self.notebook.add(self.tab_aliquots, text=" Aliquots ")
-        self._build_aliquots_tab(self.tab_aliquots)
-
-        # DILUTION TAB
         self.tab_dilution = ttk.Frame(self.notebook)
         self.notebook.add(self.tab_dilution, text=" Dilution ")
         self._build_dilution_tab(self.tab_dilution)
+
+        self.tab_aliquots = ttk.Frame(self.notebook)
+        self.notebook.add(self.tab_aliquots, text=" Aliquots ")
+        self._build_aliquots_tab(self.tab_aliquots)
 
         self.tab_movement = ttk.Frame(self.notebook)
         self.notebook.add(self.tab_movement, text=" Movement / XYZ ")
@@ -1265,7 +1263,7 @@ class LiquidHandlerApp:
         source_vial_positions.extend([f"HPLC {p}" for p in self.hplc_positions])
         source_vial_positions.extend([f"HPLC Insert {p}" for p in self.hplc_insert_positions])
         source_vial_positions.extend([f"Screwcap {p}" for p in self.screwcap_positions])
-        source_vial_positions.extend([f"96Well {p}" for p in self.plate_wells])  # NEW: 96 Well Plate A1-H12
+        source_vial_positions.extend([f"96Well {p}" for p in self.plate_wells])
 
         # Destination options: only small vial modules (A1 to F8)
         small_vial_positions = []
@@ -1276,8 +1274,14 @@ class LiquidHandlerApp:
         small_vial_positions.extend([f"HPLC Insert {p}" for p in self.hplc_insert_positions])
         small_vial_positions.extend([f"Screwcap {p}" for p in self.screwcap_positions])
 
-        # Volume options (capped at 800)
-        vol_options = ["10", "50"] + [str(x) for x in range(100, 900, 100)]
+        # ---- NEW: float validation for volume entry (allows "585.4") ----
+        float_re = re.compile(r"^\d*([.]\d*)?$")  # allows "", "123", "123.", "123.4"
+
+        def validate_float(P: str) -> bool:
+            return bool(float_re.match(P))
+
+        vcmd = (self.root.register(validate_float), "%P")
+        # ---------------------------------------------------------------
 
         self.aliquot_rows = []
 
@@ -1285,7 +1289,7 @@ class LiquidHandlerApp:
             row_vars = {
                 "execute": tk.BooleanVar(value=False),
                 "source": tk.StringVar(value=""),
-                "volume": tk.StringVar(value="800"),
+                "volume": tk.StringVar(value="800.0"),  # default can be float string
                 "dest_start": tk.StringVar(value=""),
                 "dest_end": tk.StringVar(value=""),
             }
@@ -1295,56 +1299,33 @@ class LiquidHandlerApp:
             ttk.Checkbutton(table, variable=row_vars["execute"]).grid(row=r, column=0, padx=2, pady=2)
             ttk.Label(table, text=f"{i + 1}", width=4, anchor="center").grid(row=r, column=1, padx=2, pady=2)
 
-            # Source Vial (ALL SMALL VIAL MODULES + FALCON + 96 WELL PLATE)
             ttk.Combobox(
                 table, textvariable=row_vars["source"],
                 values=source_vial_positions, width=14, state="readonly"
             ).grid(row=r, column=2, padx=2, pady=2)
 
-            # Volume
-            ttk.Combobox(
-                table, textvariable=row_vars["volume"],
-                values=vol_options, width=10, state="readonly"
+            # ---- CHANGED: Volume is now a writable Entry (float-capable) ----
+            ttk.Entry(
+                table,
+                textvariable=row_vars["volume"],
+                width=10,
+                justify="center",
+                validate="key",
+                validatecommand=vcmd
             ).grid(row=r, column=3, padx=2, pady=2)
+            # ---------------------------------------------------------------
 
-            # Dest Start (WIDER)
             ttk.Combobox(
                 table, textvariable=row_vars["dest_start"],
                 values=small_vial_positions, width=15, state="readonly"
             ).grid(row=r, column=4, padx=2, pady=2)
 
-            # Dest End (WIDER)
             ttk.Combobox(
                 table, textvariable=row_vars["dest_end"],
                 values=small_vial_positions, width=15, state="readonly"
             ).grid(row=r, column=5, padx=2, pady=2)
 
             self.aliquot_rows.append(row_vars)
-
-        btn_frame = ttk.Frame(frame, padding=10)
-        btn_frame.pack(fill="x", pady=10)
-
-        # EXECUTE AND PAUSE BUTTONS ROW
-        exec_row = ttk.Frame(btn_frame)
-        exec_row.pack(fill="x", pady=5)
-
-        self.aliquot_exec_btn = ttk.Button(
-            exec_row, text="EXECUTE ALIQUOT SEQUENCE",
-            command=lambda: threading.Thread(target=self.aliquots_sequence, daemon=True).start()
-        )
-        self.aliquot_exec_btn.pack(side="left", fill="x", expand=True, padx=(0, 5), ipady=5)
-
-        self.aliquot_pause_btn = ttk.Button(
-            exec_row, text="PAUSE",
-            command=self.toggle_pause
-        )
-        self.aliquot_pause_btn.pack(side="left", fill="x", padx=(5, 0), ipady=5)
-
-        ttk.Label(
-            btn_frame,
-            text="Check 'Execute' box for rows you want to run. Robot will pick fresh tip for each row.",
-            font=("Arial", 8, "italic")
-        ).pack(pady=5)
 
     def _build_dilution_tab(self, parent):
         frame = ttk.Frame(parent, padding=5)
