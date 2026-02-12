@@ -1631,10 +1631,7 @@ class LiquidHandlerApp:
                         cmds.append(f"G0 X{src_x:.2f} Y{src_y:.2f} F{JOG_SPEED_XY}")
                         cmds.append(f"G0 Z{src_safe_z:.2f} F{JOG_SPEED_Z}")
 
-                    # Overdraw 10% for small transfers (<100 uL) to compensate
-                    # for pipette under-delivery at low volumes (e.g. 80 uL -> 88 uL)
-                    asp_vol = transfer_vol * 1.10 if transfer_vol < 100 else transfer_vol
-                    e_loaded_pos = -1 * (air_gap_ul + asp_vol) * STEPS_PER_UL
+                    e_loaded_pos = -1 * (air_gap_ul + transfer_vol) * STEPS_PER_UL
                     cmds.append(f"G0 Z{src_asp_z:.2f} F{JOG_SPEED_Z}")
                     cmds.append(f"G1 E{e_loaded_pos:.3f} F{PIP_SPEED}")
                     self._send_lines_with_ok(cmds)
