@@ -1581,6 +1581,8 @@ class LiquidHandlerApp:
 
                 self.log_line(f"=== DILUTION Line {line_num}: {task['src_conc']} -> {task['final_conc']} ug/mL, {len(steps)} steps ===")
 
+                sample_already_transferred = False  # Flag: True when mixing tip already moved sample to next well
+
                 for step_idx, step in enumerate(steps):
                     transfer_vol = step["transfer_vol"]
                     diluent_vol = step["diluent_vol"]
@@ -1597,65 +1599,73 @@ class LiquidHandlerApp:
                     self.last_cmd_var.set(f"L{line_num} Step {step_idx + 1}/{len(steps)}: {dest_well}")
 
                     # === PHASE A: Transfer sample to well ===
-                    tip_key = self._find_next_available_tip()
-                    if not tip_key:
-                        messagebox.showerror("No Tips", f"Ran out of tips at Line {line_num} step {step_idx + 1}.")
-                        self.last_cmd_var.set("Idle")
-                        return
+                    # Skip if the previous mixing tip already transferred the sample here
+                    if not sample_already_transferred:
+                        tip_key = self._find_next_available_tip()
+                        if not tip_key:
+                            messagebox.showerror("No Tips", f"Ran out of tips at Line {line_num} step {step_idx + 1}.")
+                            self.last_cmd_var.set("Idle")
+                            return
 
-                    self.log_line(f"[L{line_num}] Picking tip {tip_key} for sample transfer...")
-                    self._send_lines_with_ok(self._get_pick_tip_commands(tip_key, start_module=current_simulated_module))
-                    self.tip_inventory[tip_key] = False
-                    self.root.after(0, self.update_tip_grid_colors)
-                    self.update_last_module("TIPS")
-                    current_simulated_module = "TIPS"
+                        self.log_line(f"[L{line_num}] Picking tip {tip_key} for sample transfer...")
+                        self._send_lines_with_ok(self._get_pick_tip_commands(tip_key, start_module=current_simulated_module))
+                        self.tip_inventory[tip_key] = False
+                        self.root.after(0, self.update_tip_grid_colors)
+                        self.update_last_module("TIPS")
+                        current_simulated_module = "TIPS"
 
-                    # Aspirate from source
-                    src_mod, src_x, src_y, src_safe_z, src_asp_z, _ = self.get_coords_from_combo(asp_source)
+                        # Aspirate from source
+                        src_mod, src_x, src_y, src_safe_z, src_asp_z, _ = self.get_coords_from_combo(asp_source)
 
-                    use_opt_z_src = (current_simulated_module in SMALL_VIAL_MODULES and src_mod in SMALL_VIAL_MODULES)
-                    travel_z_src = self.resolve_coords(0, 0, _4ML_RACK_CONFIG["Z_SAFE"])[2] if use_opt_z_src else global_safe_z
+                        use_opt_z_src = (current_simulated_module in SMALL_VIAL_MODULES and src_mod in SMALL_VIAL_MODULES)
+                        travel_z_src = self.resolve_coords(0, 0, _4ML_RACK_CONFIG["Z_SAFE"])[2] if use_opt_z_src else global_safe_z
 
-                    cmds = []
-                    cmds.append(f"G1 E{e_gap_pos:.3f} F{PIP_SPEED}")
-                    if current_simulated_module == src_mod:
-                        cmds.append(f"G0 Z{src_safe_z:.2f} F{JOG_SPEED_Z}")
-                        cmds.append(f"G0 X{src_x:.2f} Y{src_y:.2f} F{JOG_SPEED_XY}")
+                        cmds = []
+                        cmds.append(f"G1 E{e_gap_pos:.3f} F{PIP_SPEED}")
+                        if current_simulated_module == src_mod:
+                            cmds.append(f"G0 Z{src_safe_z:.2f} F{JOG_SPEED_Z}")
+                            cmds.append(f"G0 X{src_x:.2f} Y{src_y:.2f} F{JOG_SPEED_XY}")
+                        else:
+                            cmds.append(f"G0 Z{travel_z_src:.2f} F{JOG_SPEED_Z}")
+                            cmds.append(f"G0 X{src_x:.2f} Y{src_y:.2f} F{JOG_SPEED_XY}")
+                            cmds.append(f"G0 Z{src_safe_z:.2f} F{JOG_SPEED_Z}")
+
+                        e_loaded_pos = -1 * (air_gap_ul + transfer_vol) * STEPS_PER_UL
+                        cmds.append(f"G0 Z{src_asp_z:.2f} F{JOG_SPEED_Z}")
+                        cmds.append(f"G1 E{e_loaded_pos:.3f} F{PIP_SPEED}")
+                        self._send_lines_with_ok(cmds)
+                        self.update_last_module(src_mod)
+                        current_simulated_module = src_mod
+
+                        # Dispense into dest well
+                        dest_mod, dest_x, dest_y, dest_safe_z, _, dest_disp_z = self.get_coords_from_combo(dest_str)
+
+                        use_opt_z_dest = (current_simulated_module in SMALL_VIAL_MODULES and dest_mod in SMALL_VIAL_MODULES)
+                        travel_z_dest = self.resolve_coords(0, 0, _4ML_RACK_CONFIG["Z_SAFE"])[2] if use_opt_z_dest else global_safe_z
+
+                        cmds_disp = []
+                        cmds_disp.append(f"G0 Z{src_safe_z:.2f} F{JOG_SPEED_Z}")
+                        cmds_disp.append(f"G0 Z{travel_z_dest:.2f} F{JOG_SPEED_Z}")
+                        cmds_disp.append(f"G0 X{dest_x:.2f} Y{dest_y:.2f} F{JOG_SPEED_XY}")
+                        cmds_disp.append(f"G0 Z{dest_safe_z:.2f} F{JOG_SPEED_Z}")
+                        cmds_disp.append(f"G0 Z{dest_disp_z:.2f} F{JOG_SPEED_Z}")
+                        cmds_disp.append(f"G1 E{e_blowout_pos:.3f} F{PIP_SPEED}")
+                        cmds_disp.append(f"G0 Z{dest_safe_z:.2f} F{JOG_SPEED_Z}")
+                        self._send_lines_with_ok(cmds_disp)
+                        self.update_last_module(dest_mod)
+                        current_simulated_module = dest_mod
+
+                        # Eject sample tip
+                        self.log_line(f"[L{line_num}] Ejecting sample tip...")
+                        self._send_lines_with_ok(self._get_eject_tip_commands())
+                        self.update_last_module("EJECT")
+                        current_simulated_module = "EJECT"
                     else:
-                        cmds.append(f"G0 Z{travel_z_src:.2f} F{JOG_SPEED_Z}")
-                        cmds.append(f"G0 X{src_x:.2f} Y{src_y:.2f} F{JOG_SPEED_XY}")
-                        cmds.append(f"G0 Z{src_safe_z:.2f} F{JOG_SPEED_Z}")
-
-                    e_loaded_pos = -1 * (air_gap_ul + transfer_vol) * STEPS_PER_UL
-                    cmds.append(f"G0 Z{src_asp_z:.2f} F{JOG_SPEED_Z}")
-                    cmds.append(f"G1 E{e_loaded_pos:.3f} F{PIP_SPEED}")
-                    self._send_lines_with_ok(cmds)
-                    self.update_last_module(src_mod)
-                    current_simulated_module = src_mod
-
-                    # Dispense into dest well
-                    dest_mod, dest_x, dest_y, dest_safe_z, _, dest_disp_z = self.get_coords_from_combo(dest_str)
-
-                    use_opt_z_dest = (current_simulated_module in SMALL_VIAL_MODULES and dest_mod in SMALL_VIAL_MODULES)
-                    travel_z_dest = self.resolve_coords(0, 0, _4ML_RACK_CONFIG["Z_SAFE"])[2] if use_opt_z_dest else global_safe_z
-
-                    cmds_disp = []
-                    cmds_disp.append(f"G0 Z{src_safe_z:.2f} F{JOG_SPEED_Z}")
-                    cmds_disp.append(f"G0 Z{travel_z_dest:.2f} F{JOG_SPEED_Z}")
-                    cmds_disp.append(f"G0 X{dest_x:.2f} Y{dest_y:.2f} F{JOG_SPEED_XY}")
-                    cmds_disp.append(f"G0 Z{dest_safe_z:.2f} F{JOG_SPEED_Z}")
-                    cmds_disp.append(f"G0 Z{dest_disp_z:.2f} F{JOG_SPEED_Z}")
-                    cmds_disp.append(f"G1 E{e_blowout_pos:.3f} F{PIP_SPEED}")
-                    cmds_disp.append(f"G0 Z{dest_safe_z:.2f} F{JOG_SPEED_Z}")
-                    self._send_lines_with_ok(cmds_disp)
-                    self.update_last_module(dest_mod)
-                    current_simulated_module = dest_mod
-
-                    # Eject sample tip
-                    self.log_line(f"[L{line_num}] Ejecting sample tip...")
-                    self._send_lines_with_ok(self._get_eject_tip_commands())
-                    self.update_last_module("EJECT")
-                    current_simulated_module = "EJECT"
+                        # Sample was already transferred by previous mixing tip
+                        self.log_line(f"[L{line_num}] Sample already transferred to {dest_well} by mixing tip.")
+                        # Resolve dest coords (needed for Phase B dispense and Phase C mix)
+                        dest_mod, dest_x, dest_y, dest_safe_z, _, dest_disp_z = self.get_coords_from_combo(dest_str)
+                        sample_already_transferred = False  # Reset flag
 
                     # === PHASE B: Add diluent to well ===
                     tip_key = self._find_next_available_tip()
@@ -1716,7 +1726,6 @@ class LiquidHandlerApp:
                     self.log_line(f"[L{line_num}] Mixing {dest_well} {mix_times} time(s) with diluent tip...")
 
                     abs_plate_asp_z = self.resolve_coords(0, 0, PLATE_CONFIG["Z_ASPIRATE"])[2]
-                    abs_plate_disp_z = self.resolve_coords(0, 0, PLATE_CONFIG["Z_DISPENSE"])[2]
                     abs_plate_safe_z = self.resolve_coords(0, 0, PLATE_CONFIG["Z_SAFE"])[2]
 
                     e_mix_start = -1 * 200.0 * STEPS_PER_UL
@@ -1728,29 +1737,55 @@ class LiquidHandlerApp:
                     cmds_mix.append(f"G0 Z{abs_plate_asp_z:.2f} F{JOG_SPEED_Z}")
                     for _ in range(mix_times):
                         cmds_mix.append(f"G1 E{e_mix_asp:.3f} F{PIP_SPEED}")
-                        cmds_mix.append(f"G0 Z{abs_plate_disp_z:.2f} F{JOG_SPEED_Z}")
                         cmds_mix.append(f"G1 E{e_mix_disp:.3f} F{PIP_SPEED}")
-                        cmds_mix.append(f"G0 Z{abs_plate_asp_z:.2f} F{JOG_SPEED_Z}")
-                    cmds_mix.append(f"G0 Z{abs_plate_safe_z:.2f} F{JOG_SPEED_Z}")
-                    cmds_mix.append("M18 E")
-                    self._send_lines_with_ok(cmds_mix)
 
-                    self.current_pipette_volume = 100.0
-                    self.vol_display_var.set(f"{self.current_pipette_volume:.1f} uL")
-                    self.live_vol_var.set(f"{self.current_pipette_volume:.1f}")
-
-                    # If this is NOT the last step, use the mixing tip to transfer to next well
+                    # === After mixing: reuse tip for next transfer or eject ===
                     if step_idx < len(steps) - 1:
-                        self.log_line(f"[L{line_num}] Ejecting diluent/mix tip...")
+                        # Reuse mixing tip: aspirate next step's transfer volume from this well
+                        next_transfer_vol = steps[step_idx + 1]["transfer_vol"]
+                        next_dest_well = wells[step_idx + 1]
+                        self.log_line(f"[L{line_num}] Reusing mix tip to transfer {next_transfer_vol}uL from {dest_well} -> {next_dest_well}...")
+
+                        e_transfer_pos = -1 * (air_gap_ul + next_transfer_vol) * STEPS_PER_UL
+                        cmds_mix.append(f"G1 E{e_gap_pos:.3f} F{PIP_SPEED}")
+                        cmds_mix.append(f"G1 E{e_transfer_pos:.3f} F{PIP_SPEED}")
+
+                        # Lift to plate local Z_safe (Change 3) and move to next well
+                        cmds_mix.append(f"G0 Z{abs_plate_safe_z:.2f} F{JOG_SPEED_Z}")
+
+                        next_dest_str = f"PLATE {next_dest_well}"
+                        next_mod, next_x, next_y, next_safe_z, _, next_disp_z = self.get_coords_from_combo(next_dest_str)
+                        cmds_mix.append(f"G0 X{next_x:.2f} Y{next_y:.2f} F{JOG_SPEED_XY}")
+                        cmds_mix.append(f"G0 Z{next_disp_z:.2f} F{JOG_SPEED_Z}")
+                        cmds_mix.append(f"G1 E{e_blowout_pos:.3f} F{PIP_SPEED}")
+                        cmds_mix.append(f"G0 Z{next_safe_z:.2f} F{JOG_SPEED_Z}")
+                        cmds_mix.append("M18 E")
+                        self._send_lines_with_ok(cmds_mix)
+
+                        self.update_last_module(dest_mod)
+                        current_simulated_module = dest_mod
+
+                        # Eject this tip now
+                        self.log_line(f"[L{line_num}] Ejecting mix/transfer tip...")
                         self._send_lines_with_ok(self._get_eject_tip_commands())
                         self.update_last_module("EJECT")
                         current_simulated_module = "EJECT"
+
+                        sample_already_transferred = True  # Next iteration skips Phase A
                     else:
-                        # Last step - eject tip
+                        # Last step - lift and eject tip
+                        cmds_mix.append(f"G0 Z{abs_plate_safe_z:.2f} F{JOG_SPEED_Z}")
+                        cmds_mix.append("M18 E")
+                        self._send_lines_with_ok(cmds_mix)
+
                         self.log_line(f"[L{line_num}] Ejecting final tip...")
                         self._send_lines_with_ok(self._get_eject_tip_commands())
                         self.update_last_module("EJECT")
                         current_simulated_module = "EJECT"
+
+                    self.current_pipette_volume = 100.0
+                    self.vol_display_var.set(f"{self.current_pipette_volume:.1f} uL")
+                    self.live_vol_var.set(f"{self.current_pipette_volume:.1f}")
 
                 self.log_line(f"=== DILUTION Line {line_num} COMPLETE ===")
 
