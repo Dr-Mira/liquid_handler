@@ -1047,116 +1047,6 @@ class LiquidHandlerApp:
         ]
         self._apply_transfer_table_preset(preset, preset_name="Preset 5")
 
-    def _apply_aliquot_preset(self, preset_rows, preset_name=""):
-        if not hasattr(self, "aliquot_rows") or not self.aliquot_rows:
-            return
-        defaults = {
-            "execute": False,
-            "source": "",
-            "volume": "",
-            "dest_start": "",
-            "dest_end": "",
-        }
-        for i, row_vars in enumerate(self.aliquot_rows):
-            spec = preset_rows[i] if i < len(preset_rows) else {}
-            if spec is None: spec = {}
-            row_vars["execute"].set(bool(spec.get("execute", defaults["execute"])))
-            row_vars["source"].set(spec.get("source", defaults["source"]))
-            row_vars["volume"].set(self._preset_val_to_str(spec.get("volume", defaults["volume"])))
-            row_vars["dest_start"].set(spec.get("dest_start", defaults["dest_start"]))
-            row_vars["dest_end"].set(spec.get("dest_end", defaults["dest_end"]))
-        if preset_name:
-            self.log_line(f"[UI] Aliquot preset loaded: {preset_name}")
-
-    def load_aliquot_preset_1(self):
-        preset = [
-            {"execute": True, "source": "96Well A1", "volume": 640, "dest_start": "Eppi C1", "dest_end": "Eppi C4"},
-            {"execute": True, "source": "96Well B1", "volume": 640, "dest_start": "Eppi C5", "dest_end": "Eppi C8"},
-            {"execute": True, "source": "96Well C1", "volume": 640, "dest_start": "Screwcap F1", "dest_end": "Screwcap F4"},
-            {"execute": True, "source": "96Well D1", "volume": 640, "dest_start": "Screwcap F5", "dest_end": "Screwcap F8"},
-            {"execute": False, "source": "96Well E1", "volume": 640, "dest_start": "Eppi C1", "dest_end": "Eppi C4"},
-            {"execute": False, "source": "96Well F1", "volume": 640, "dest_start": "Eppi C5", "dest_end": "Eppi C8"},
-            {"execute": False, "source": "96Well G1", "volume": 640, "dest_start": "Screwcap F1", "dest_end": "Screwcap F4"},
-            {"execute": False, "source": "96Well H1", "volume": 640, "dest_start": "Screwcap F5", "dest_end": "Screwcap F8"},
-        ]
-        self._apply_aliquot_preset(preset, preset_name="P1")
-
-    def load_aliquot_preset_2(self):
-        preset = [
-            {"execute": True, "source": "96Well A5", "volume": 640, "dest_start": "Eppi C1", "dest_end": "Eppi C4"},
-            {"execute": True, "source": "96Well B5", "volume": 640, "dest_start": "Eppi C5", "dest_end": "Eppi C8"},
-            {"execute": True, "source": "96Well C5", "volume": 640, "dest_start": "Screwcap F1", "dest_end": "Screwcap F4"},
-            {"execute": True, "source": "96Well D5", "volume": 640, "dest_start": "Screwcap F5", "dest_end": "Screwcap F8"},
-            {"execute": False, "source": "96Well E5", "volume": 640, "dest_start": "Eppi C1", "dest_end": "Eppi C4"},
-            {"execute": False, "source": "96Well F5", "volume": 640, "dest_start": "Eppi C5", "dest_end": "Eppi C8"},
-            {"execute": False, "source": "96Well G5", "volume": 640, "dest_start": "Screwcap F1", "dest_end": "Screwcap F4"},
-            {"execute": False, "source": "96Well H5", "volume": 640, "dest_start": "Screwcap F5", "dest_end": "Screwcap F8"},
-        ]
-        self._apply_aliquot_preset(preset, preset_name="P2")
-
-    def load_aliquot_preset_3(self):
-        preset = [
-            {"execute": True, "source": "96Well A9", "volume": 640, "dest_start": "Eppi C1", "dest_end": "Eppi C4"},
-            {"execute": True, "source": "96Well B9", "volume": 640, "dest_start": "Eppi C5", "dest_end": "Eppi C8"},
-            {"execute": True, "source": "96Well C9", "volume": 640, "dest_start": "Screwcap F1", "dest_end": "Screwcap F4"},
-            {"execute": True, "source": "96Well D9", "volume": 640, "dest_start": "Screwcap F5", "dest_end": "Screwcap F8"},
-            {"execute": False, "source": "96Well E9", "volume": 640, "dest_start": "Eppi C1", "dest_end": "Eppi C4"},
-            {"execute": False, "source": "96Well F9", "volume": 640, "dest_start": "Eppi C5", "dest_end": "Eppi C8"},
-            {"execute": False, "source": "96Well G9", "volume": 640, "dest_start": "Screwcap F1", "dest_end": "Screwcap F4"},
-            {"execute": False, "source": "96Well H9", "volume": 640, "dest_start": "Screwcap F5", "dest_end": "Screwcap F8"},
-        ]
-        self._apply_aliquot_preset(preset, preset_name="P3")
-
-    def _apply_dilution_preset(self, preset_rows, preset_name=""):
-        if not hasattr(self, "dilution_rows") or not self.dilution_rows:
-            return
-        defaults = {
-            "execute": False,
-            "src_mod": "",
-            "src_pos": "",
-            "src_conc": "",
-            "diluent": "",
-            "plate_col": "",
-            "final_conc": "",
-        }
-        for i, row_vars in enumerate(self.dilution_rows):
-            spec = preset_rows[i] if i < len(preset_rows) else {}
-            if spec is None: spec = {}
-            row_vars["execute"].set(bool(spec.get("execute", defaults["execute"])))
-            self._set_transfer_row_source(row_vars, spec.get("src_mod", defaults["src_mod"]), spec.get("src_pos", defaults["src_pos"]))
-            row_vars["src_conc"].set(self._preset_val_to_str(spec.get("src_conc", defaults["src_conc"])))
-            row_vars["diluent"].set(spec.get("diluent", defaults["diluent"]))
-            row_vars["plate_col"].set(self._preset_val_to_str(spec.get("plate_col", defaults["plate_col"])))
-            row_vars["final_conc"].set(self._preset_val_to_str(spec.get("final_conc", defaults["final_conc"])))
-        if preset_name:
-            self.log_line(f"[UI] Dilution preset loaded: {preset_name}")
-
-    def load_dilution_preset_1(self):
-        preset = [
-            {"execute": False, "src_mod": "Screwcap Vial", "src_pos": "F1", "src_conc": 0, "diluent": "Wash A", "plate_col": 1, "final_conc": 1.25},
-            {"execute": False, "src_mod": "Screwcap Vial", "src_pos": "F2", "src_conc": 0, "diluent": "Wash A", "plate_col": 1, "final_conc": 1.25},
-            {"execute": False, "src_mod": "Screwcap Vial", "src_pos": "F3", "src_conc": 0, "diluent": "Wash A", "plate_col": 1, "final_conc": 1.25},
-            {"execute": False, "src_mod": "Screwcap Vial", "src_pos": "F4", "src_conc": 0, "diluent": "Wash A", "plate_col": 1, "final_conc": 1.25},
-            {"execute": False, "src_mod": "Screwcap Vial", "src_pos": "F5", "src_conc": 0, "diluent": "Wash A", "plate_col": 1, "final_conc": 1.25},
-            {"execute": False, "src_mod": "Screwcap Vial", "src_pos": "F6", "src_conc": 0, "diluent": "Wash A", "plate_col": 1, "final_conc": 1.25},
-            {"execute": False, "src_mod": "Screwcap Vial", "src_pos": "F7", "src_conc": 0, "diluent": "Wash A", "plate_col": 1, "final_conc": 1.25},
-            {"execute": False, "src_mod": "Screwcap Vial", "src_pos": "F8", "src_conc": 0, "diluent": "Wash A", "plate_col": 1, "final_conc": 1.25},
-
-        ]
-        self._apply_dilution_preset(preset, preset_name="P1")
-
-    def load_dilution_preset_2(self):
-        preset = [
-            {"execute": True, "src_mod": "Falcon Rack", "src_pos": "A1", "src_conc": 500, "diluent": "Wash B", "plate_col": 1, "final_conc": 5},
-        ]
-        self._apply_dilution_preset(preset, preset_name="P2")
-
-    def load_dilution_preset_3(self):
-        preset = [
-            {"execute": True, "src_mod": "Eppi Rack", "src_pos": "C1", "src_conc": 100, "diluent": "Wash C", "plate_col": 1, "final_conc": 0.1},
-        ]
-        self._apply_dilution_preset(preset, preset_name="P3")
-
     def _build_combine_fractions_tab(self, parent):
         frame = ttk.Frame(parent, padding=10)
         frame.pack(fill="both", expand=True)
@@ -1399,7 +1289,7 @@ class LiquidHandlerApp:
             row_vars = {
                 "execute": tk.BooleanVar(value=False),
                 "source": tk.StringVar(value=""),
-                "volume": tk.StringVar(value=""),  # default can be float string
+                "volume": tk.StringVar(value="800.0"),  # default can be float string
                 "dest_start": tk.StringVar(value=""),
                 "dest_end": tk.StringVar(value=""),
             }
@@ -1455,21 +1345,6 @@ class LiquidHandlerApp:
             command=self.toggle_pause
         )
         self.aliquot_pause_btn.pack(side="left", fill="x", padx=(5, 0), ipady=5)
-
-        ttk.Label(btn_frame, text="Presets:", font=("Arial", 8, "italic")).pack(anchor="w", pady=(8, 2))
-
-        presets_row = ttk.Frame(btn_frame)
-        presets_row.pack(fill="x")
-
-        ttk.Button(presets_row, text="P1", command=self.load_aliquot_preset_1).pack(
-            side="left", expand=True, fill="x", padx=2, ipady=2
-        )
-        ttk.Button(presets_row, text="P2", command=self.load_aliquot_preset_2).pack(
-            side="left", expand=True, fill="x", padx=2, ipady=2
-        )
-        ttk.Button(presets_row, text="P3", command=self.load_aliquot_preset_3).pack(
-            side="left", expand=True, fill="x", padx=2, ipady=2
-        )
 
         ttk.Label(
             btn_frame,
@@ -1581,21 +1456,6 @@ class LiquidHandlerApp:
         )
         self.dilution_pause_btn.pack(side="left", fill="x", padx=(5, 0), ipady=5)
 
-        ttk.Label(btn_frame, text="Presets:", font=("Arial", 8, "italic")).pack(anchor="w", pady=(8, 2))
-
-        presets_row = ttk.Frame(btn_frame)
-        presets_row.pack(fill="x")
-
-        ttk.Button(presets_row, text="P1", command=self.load_dilution_preset_1).pack(
-            side="left", expand=True, fill="x", padx=2, ipady=2
-        )
-        ttk.Button(presets_row, text="P2", command=self.load_dilution_preset_2).pack(
-            side="left", expand=True, fill="x", padx=2, ipady=2
-        )
-        ttk.Button(presets_row, text="P3", command=self.load_dilution_preset_3).pack(
-            side="left", expand=True, fill="x", padx=2, ipady=2
-        )
-
         ttk.Label(
             btn_frame,
             text="Serial dilution via 96-well plate. Each row uses one plate row (A-H). "
@@ -1681,7 +1541,8 @@ class LiquidHandlerApp:
 
             cols_needed = len(steps)
             if plate_col + cols_needed - 1 > 12:
-                self.log_line(f"[DILUTION] Skipping line {idx + 1}: needs {cols_needed} columns starting at {plate_col}, exceeds plate.")
+                self.log_line(
+                    f"[DILUTION] Skipping line {idx + 1}: needs {cols_needed} columns starting at {plate_col}, exceeds plate.")
                 continue
 
             plate_row_char = plate_rows[idx]
@@ -1719,7 +1580,8 @@ class LiquidHandlerApp:
                 source_str = task["source"]
                 diluent_str = task["diluent"]
 
-                self.log_line(f"=== DILUTION Line {line_num}: {task['src_conc']} -> {task['final_conc']} ug/mL, {len(steps)} steps ===")
+                self.log_line(
+                    f"=== DILUTION Line {line_num}: {task['src_conc']} -> {task['final_conc']} ug/mL, {len(steps)} steps ===")
 
                 for step_idx, step in enumerate(steps):
                     transfer_vol = step["transfer_vol"]
@@ -1733,7 +1595,8 @@ class LiquidHandlerApp:
                     else:
                         asp_source = f"PLATE {wells[step_idx - 1]}"
 
-                    self.log_line(f"--- Step {step_idx + 1}/{len(steps)}: {transfer_vol}uL from {asp_source} + {diluent_vol}uL diluent -> {dest_well} ({result_conc} ug/mL) ---")
+                    self.log_line(
+                        f"--- Step {step_idx + 1}/{len(steps)}: {transfer_vol}uL from {asp_source} + {diluent_vol}uL diluent -> {dest_well} ({result_conc} ug/mL) ---")
                     self.last_cmd_var.set(f"L{line_num} Step {step_idx + 1}/{len(steps)}: {dest_well}")
 
                     # === PHASE A: Transfer sample to well ===
@@ -1746,7 +1609,8 @@ class LiquidHandlerApp:
                             return
 
                         self.log_line(f"[L{line_num}] Picking tip {tip_key} for sample transfer...")
-                        self._send_lines_with_ok(self._get_pick_tip_commands(tip_key, start_module=current_simulated_module))
+                        self._send_lines_with_ok(
+                            self._get_pick_tip_commands(tip_key, start_module=current_simulated_module))
                         self.tip_inventory[tip_key] = False
                         self.root.after(0, self.update_tip_grid_colors)
                         self.update_last_module("TIPS")
@@ -1759,7 +1623,8 @@ class LiquidHandlerApp:
                     src_mod, src_x, src_y, src_safe_z, src_asp_z, _ = self.get_coords_from_combo(asp_source)
 
                     use_opt_z_src = (current_simulated_module in SMALL_VIAL_MODULES and src_mod in SMALL_VIAL_MODULES)
-                    travel_z_src = self.resolve_coords(0, 0, _4ML_RACK_CONFIG["Z_SAFE"])[2] if use_opt_z_src else global_safe_z
+                    travel_z_src = self.resolve_coords(0, 0, _4ML_RACK_CONFIG["Z_SAFE"])[
+                        2] if use_opt_z_src else global_safe_z
 
                     cmds = []
                     cmds.append(f"G1 E{e_gap_pos:.3f} F{PIP_SPEED}")
@@ -1785,7 +1650,8 @@ class LiquidHandlerApp:
                     dest_mod, dest_x, dest_y, dest_safe_z, _, dest_disp_z = self.get_coords_from_combo(dest_str)
 
                     use_opt_z_dest = (current_simulated_module in SMALL_VIAL_MODULES and dest_mod in SMALL_VIAL_MODULES)
-                    travel_z_dest = self.resolve_coords(0, 0, _4ML_RACK_CONFIG["Z_SAFE"])[2] if use_opt_z_dest else global_safe_z
+                    travel_z_dest = self.resolve_coords(0, 0, _4ML_RACK_CONFIG["Z_SAFE"])[
+                        2] if use_opt_z_dest else global_safe_z
 
                     cmds_disp = []
                     cmds_disp.append(f"G0 Z{src_safe_z:.2f} F{JOG_SPEED_Z}")
@@ -1808,12 +1674,14 @@ class LiquidHandlerApp:
                     # === PHASE B: Add diluent to well ===
                     tip_key = self._find_next_available_tip()
                     if not tip_key:
-                        messagebox.showerror("No Tips", f"Ran out of tips at Line {line_num} step {step_idx + 1} (diluent).")
+                        messagebox.showerror("No Tips",
+                                             f"Ran out of tips at Line {line_num} step {step_idx + 1} (diluent).")
                         self.last_cmd_var.set("Idle")
                         return
 
                     self.log_line(f"[L{line_num}] Picking tip {tip_key} for diluent...")
-                    self._send_lines_with_ok(self._get_pick_tip_commands(tip_key, start_module=current_simulated_module))
+                    self._send_lines_with_ok(
+                        self._get_pick_tip_commands(tip_key, start_module=current_simulated_module))
                     self.tip_inventory[tip_key] = False
                     self.root.after(0, self.update_tip_grid_colors)
                     self.update_last_module("TIPS")
@@ -1823,7 +1691,8 @@ class LiquidHandlerApp:
                     dil_mod, dil_x, dil_y, dil_safe_z, dil_asp_z, _ = self.get_coords_from_combo(diluent_str)
 
                     use_opt_z_dil = (current_simulated_module in SMALL_VIAL_MODULES and dil_mod in SMALL_VIAL_MODULES)
-                    travel_z_dil = self.resolve_coords(0, 0, _4ML_RACK_CONFIG["Z_SAFE"])[2] if use_opt_z_dil else global_safe_z
+                    travel_z_dil = self.resolve_coords(0, 0, _4ML_RACK_CONFIG["Z_SAFE"])[
+                        2] if use_opt_z_dil else global_safe_z
 
                     cmds_dil = []
                     cmds_dil.append(f"G1 E{e_gap_pos:.3f} F{PIP_SPEED}")
@@ -1847,7 +1716,8 @@ class LiquidHandlerApp:
                     cmds_dil_disp.append(f"G0 Z{dil_safe_z:.2f} F{JOG_SPEED_Z}")
 
                     use_opt_z_dil2 = (current_simulated_module in SMALL_VIAL_MODULES and dest_mod in SMALL_VIAL_MODULES)
-                    travel_z_dil2 = self.resolve_coords(0, 0, _4ML_RACK_CONFIG["Z_SAFE"])[2] if use_opt_z_dil2 else global_safe_z
+                    travel_z_dil2 = self.resolve_coords(0, 0, _4ML_RACK_CONFIG["Z_SAFE"])[
+                        2] if use_opt_z_dil2 else global_safe_z
 
                     cmds_dil_disp.append(f"G0 Z{travel_z_dil2:.2f} F{JOG_SPEED_Z}")
                     cmds_dil_disp.append(f"G0 X{dest_x:.2f} Y{dest_y:.2f} F{JOG_SPEED_XY}")
@@ -2295,8 +2165,8 @@ class LiquidHandlerApp:
     def _poll_position_loop(self):
         time_since_last_cmd = time.time() - self.last_action_time
         should_poll = (
-            not self.is_sequence_running and
-            time_since_last_cmd > IDLE_TIMEOUT_BEFORE_POLL
+                not self.is_sequence_running and
+                time_since_last_cmd > IDLE_TIMEOUT_BEFORE_POLL
         )
         if self.ser and self.ser.is_open and should_poll:
             if self.ok_event.is_set() or self.rx_queue.empty():
@@ -2950,8 +2820,8 @@ class LiquidHandlerApp:
         global_safe_z = self.resolve_coords(0, 0, GLOBAL_SAFE_Z_OFFSET)[2]
         current_mod = start_module if start_module is not None else self.last_known_module
         use_optimized_z = (
-            current_mod in SMALL_VIAL_MODULES and
-            target_module in SMALL_VIAL_MODULES
+                current_mod in SMALL_VIAL_MODULES and
+                target_module in SMALL_VIAL_MODULES
         )
         if use_optimized_z:
             travel_z = self.resolve_coords(0, 0, _4ML_RACK_CONFIG["Z_SAFE"])[2]
@@ -3053,13 +2923,13 @@ class LiquidHandlerApp:
         return [(k, groups[k]) for k in order]
 
     def _perform_batch_wash_distribution(
-        self,
-        wash_src_str: str,
-        tasks_for_this_wash: list,
-        e_gap_pos: float,
-        air_gap_ul: float,
-        max_liquid_ul: float = 800.0,
-        start_module: str | None = None
+            self,
+            wash_src_str: str,
+            tasks_for_this_wash: list,
+            e_gap_pos: float,
+            air_gap_ul: float,
+            max_liquid_ul: float = 800.0,
+            start_module: str | None = None
     ):
         if not wash_src_str:
             self.log_line("[WASH-BATCH] ERROR: wash_src_str is empty.")
@@ -3147,13 +3017,13 @@ class LiquidHandlerApp:
         return current_mod
 
     def _perform_wash_mix_and_transfer(
-        self,
-        source_str: str,
-        dest_str: str,
-        wash_vol_ul: float,
-        e_gap_pos: float,
-        air_gap_ul: float,
-        start_module: str | None = None
+            self,
+            source_str: str,
+            dest_str: str,
+            wash_vol_ul: float,
+            e_gap_pos: float,
+            air_gap_ul: float,
+            start_module: str | None = None
     ):
         s_mod, s_x, s_y, s_safe_z, s_asp_z, _ = self.get_coords_from_combo(source_str)
         d_mod, d_x, d_y, d_safe_z, _, d_disp_z = self.get_coords_from_combo(dest_str)
@@ -3950,8 +3820,9 @@ class LiquidHandlerApp:
                 # --- MODIFIED: Aspirate user volume + 100uL trash ---
                 TRASH_VOL_UL = 100.0
                 vol_to_aspirate = total_volume + TRASH_VOL_UL
-                
-                self.log_line(f"[ALIQUOT L{line_num}] Aspirating {vol_to_aspirate}uL ({total_volume} + 100 trash) from {source_str}...")
+
+                self.log_line(
+                    f"[ALIQUOT L{line_num}] Aspirating {vol_to_aspirate}uL ({total_volume} + 100 trash) from {source_str}...")
                 src_mod, src_x, src_y, src_safe_z, src_asp_z, _ = self.get_coords_from_combo(source_str)
 
                 cmds = []
