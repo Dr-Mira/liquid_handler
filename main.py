@@ -1047,6 +1047,89 @@ class LiquidHandlerApp:
         ]
         self._apply_transfer_table_preset(preset, preset_name="Preset 5")
 
+    def _apply_aliquot_preset(self, preset_rows, preset_name=""):
+        if not hasattr(self, "aliquot_rows") or not self.aliquot_rows:
+            return
+        defaults = {
+            "execute": False,
+            "source": "Falcon A1",
+            "volume": "800.0",
+            "dest_start": "Eppi C1",
+            "dest_end": "Eppi C8",
+        }
+        for i, row_vars in enumerate(self.aliquot_rows):
+            spec = preset_rows[i] if i < len(preset_rows) else {}
+            if spec is None: spec = {}
+            row_vars["execute"].set(bool(spec.get("execute", defaults["execute"])))
+            row_vars["source"].set(spec.get("source", defaults["source"]))
+            row_vars["volume"].set(self._preset_val_to_str(spec.get("volume", defaults["volume"])))
+            row_vars["dest_start"].set(spec.get("dest_start", defaults["dest_start"]))
+            row_vars["dest_end"].set(spec.get("dest_end", defaults["dest_end"]))
+        if preset_name:
+            self.log_line(f"[UI] Aliquot preset loaded: {preset_name}")
+
+    def load_aliquot_preset_1(self):
+        preset = [
+            {"execute": True, "source": "Falcon A1", "volume": 500.0, "dest_start": "Eppi C1", "dest_end": "Eppi C8"},
+            {"execute": True, "source": "Falcon A2", "volume": 500.0, "dest_start": "HPLC D1", "dest_end": "HPLC D8"},
+        ]
+        self._apply_aliquot_preset(preset, preset_name="P1")
+
+    def load_aliquot_preset_2(self):
+        preset = [
+            {"execute": True, "source": "4mL A1", "volume": 200.0, "dest_start": "HPLC Insert E1", "dest_end": "HPLC Insert E8"},
+        ]
+        self._apply_aliquot_preset(preset, preset_name="P2")
+
+    def load_aliquot_preset_3(self):
+        preset = [
+            {"execute": True, "source": "96Well A1", "volume": 100.0, "dest_start": "Screwcap F1", "dest_end": "Screwcap F8"},
+        ]
+        self._apply_aliquot_preset(preset, preset_name="P3")
+
+    def _apply_dilution_preset(self, preset_rows, preset_name=""):
+        if not hasattr(self, "dilution_rows") or not self.dilution_rows:
+            return
+        defaults = {
+            "execute": False,
+            "src_mod": "4mL Rack",
+            "src_pos": "A1",
+            "src_conc": "1000",
+            "diluent": "Wash A",
+            "plate_col": "1",
+            "final_conc": "10",
+        }
+        for i, row_vars in enumerate(self.dilution_rows):
+            spec = preset_rows[i] if i < len(preset_rows) else {}
+            if spec is None: spec = {}
+            row_vars["execute"].set(bool(spec.get("execute", defaults["execute"])))
+            self._set_transfer_row_source(row_vars, spec.get("src_mod", defaults["src_mod"]), spec.get("src_pos", defaults["src_pos"]))
+            row_vars["src_conc"].set(self._preset_val_to_str(spec.get("src_conc", defaults["src_conc"])))
+            row_vars["diluent"].set(spec.get("diluent", defaults["diluent"]))
+            row_vars["plate_col"].set(self._preset_val_to_str(spec.get("plate_col", defaults["plate_col"])))
+            row_vars["final_conc"].set(self._preset_val_to_str(spec.get("final_conc", defaults["final_conc"])))
+        if preset_name:
+            self.log_line(f"[UI] Dilution preset loaded: {preset_name}")
+
+    def load_dilution_preset_1(self):
+        preset = [
+            {"execute": True, "src_mod": "4mL Rack", "src_pos": "A1", "src_conc": 1000, "diluent": "Wash A", "plate_col": 1, "final_conc": 1},
+            {"execute": True, "src_mod": "4mL Rack", "src_pos": "A2", "src_conc": 1000, "diluent": "Wash A", "plate_col": 1, "final_conc": 1},
+        ]
+        self._apply_dilution_preset(preset, preset_name="P1")
+
+    def load_dilution_preset_2(self):
+        preset = [
+            {"execute": True, "src_mod": "Falcon Rack", "src_pos": "A1", "src_conc": 500, "diluent": "Wash B", "plate_col": 1, "final_conc": 5},
+        ]
+        self._apply_dilution_preset(preset, preset_name="P2")
+
+    def load_dilution_preset_3(self):
+        preset = [
+            {"execute": True, "src_mod": "Eppi Rack", "src_pos": "C1", "src_conc": 100, "diluent": "Wash C", "plate_col": 1, "final_conc": 0.1},
+        ]
+        self._apply_dilution_preset(preset, preset_name="P3")
+
     def _build_combine_fractions_tab(self, parent):
         frame = ttk.Frame(parent, padding=10)
         frame.pack(fill="both", expand=True)
@@ -1346,6 +1429,21 @@ class LiquidHandlerApp:
         )
         self.aliquot_pause_btn.pack(side="left", fill="x", padx=(5, 0), ipady=5)
 
+        ttk.Label(btn_frame, text="Presets:", font=("Arial", 8, "italic")).pack(anchor="w", pady=(8, 2))
+
+        presets_row = ttk.Frame(btn_frame)
+        presets_row.pack(fill="x")
+
+        ttk.Button(presets_row, text="P1", command=self.load_aliquot_preset_1).pack(
+            side="left", expand=True, fill="x", padx=2, ipady=2
+        )
+        ttk.Button(presets_row, text="P2", command=self.load_aliquot_preset_2).pack(
+            side="left", expand=True, fill="x", padx=2, ipady=2
+        )
+        ttk.Button(presets_row, text="P3", command=self.load_aliquot_preset_3).pack(
+            side="left", expand=True, fill="x", padx=2, ipady=2
+        )
+
         ttk.Label(
             btn_frame,
             text="Check 'Execute' box for rows you want to run. Robot will pick fresh tip for each row.",
@@ -1455,6 +1553,21 @@ class LiquidHandlerApp:
             command=self.toggle_pause
         )
         self.dilution_pause_btn.pack(side="left", fill="x", padx=(5, 0), ipady=5)
+
+        ttk.Label(btn_frame, text="Presets:", font=("Arial", 8, "italic")).pack(anchor="w", pady=(8, 2))
+
+        presets_row = ttk.Frame(btn_frame)
+        presets_row.pack(fill="x")
+
+        ttk.Button(presets_row, text="P1", command=self.load_dilution_preset_1).pack(
+            side="left", expand=True, fill="x", padx=2, ipady=2
+        )
+        ttk.Button(presets_row, text="P2", command=self.load_dilution_preset_2).pack(
+            side="left", expand=True, fill="x", padx=2, ipady=2
+        )
+        ttk.Button(presets_row, text="P3", command=self.load_dilution_preset_3).pack(
+            side="left", expand=True, fill="x", padx=2, ipady=2
+        )
 
         ttk.Label(
             btn_frame,

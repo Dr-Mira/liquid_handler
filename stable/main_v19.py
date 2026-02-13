@@ -1631,7 +1631,10 @@ class LiquidHandlerApp:
                         cmds.append(f"G0 X{src_x:.2f} Y{src_y:.2f} F{JOG_SPEED_XY}")
                         cmds.append(f"G0 Z{src_safe_z:.2f} F{JOG_SPEED_Z}")
 
-                    e_loaded_pos = -1 * (air_gap_ul + transfer_vol) * STEPS_PER_UL
+                    # Overdraw 10% for small transfers (<100 uL) to compensate
+                    # for pipette under-delivery at low volumes (e.g. 80 uL -> 88 uL)
+                    asp_vol = transfer_vol * 1.10 if transfer_vol < 100 else transfer_vol
+                    e_loaded_pos = -1 * (air_gap_ul + asp_vol) * STEPS_PER_UL
                     cmds.append(f"G0 Z{src_asp_z:.2f} F{JOG_SPEED_Z}")
                     cmds.append(f"G1 E{e_loaded_pos:.3f} F{PIP_SPEED}")
                     self._send_lines_with_ok(cmds)
@@ -3804,8 +3807,11 @@ class LiquidHandlerApp:
                 self.update_last_module("TIPS")
                 current_simulated_module = "TIPS"
 
-                # Aspirate full volume from source (generic — works with any module)
-                self.log_line(f"[ALIQUOT L{line_num}] Aspirating {total_volume}uL from {source_str}...")
+                # --- MODIFIED: Aspirate user volume + 100uL trash ---
+                TRASH_VOL_UL = 100.0
+                vol_to_aspirate = total_volume + TRASH_VOL_UL
+                
+                self.log_line(f"[ALIQUOT L{line_num}] Aspirating {vol_to_aspirate}uL ({total_volume} + 100 trash) from {source_str}...")
                 src_mod, src_x, src_y, src_safe_z, src_asp_z, _ = self.get_coords_from_combo(source_str)
 
                 cmds = []
@@ -3813,7 +3819,7 @@ class LiquidHandlerApp:
                 cmds.extend(self._get_smart_travel_gcode(src_mod, src_x, src_y, src_safe_z,
                                                          start_module=current_simulated_module))
 
-                e_loaded = -1 * (air_gap_ul + total_volume) * STEPS_PER_UL
+                e_loaded = -1 * (air_gap_ul + vol_to_aspirate) * STEPS_PER_UL
                 cmds.append(f"G0 Z{src_asp_z:.2f} F{JOG_SPEED_Z}")
                 cmds.append(f"G1 E{e_loaded:.3f} F{PIP_SPEED}")
                 cmds.append(f"G0 Z{src_safe_z:.2f} F{JOG_SPEED_Z}")
@@ -3837,7 +3843,8 @@ class LiquidHandlerApp:
                     ))
 
                     remaining_volume -= vol_per_dest
-                    e_after_disp = -1 * (air_gap_ul + remaining_volume) * STEPS_PER_UL
+                    # --- MODIFIED: Ensure we keep TRASH_VOL_UL in the tip ---
+                    e_after_disp = -1 * (air_gap_ul + remaining_volume + TRASH_VOL_UL) * STEPS_PER_UL
 
                     dispense_z = dest_asp_z
                     cmds_disp.append(f"G0 Z{dispense_z:.2f} F{JOG_SPEED_Z}")
