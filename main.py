@@ -1047,6 +1047,202 @@ class LiquidHandlerApp:
         ]
         self._apply_transfer_table_preset(preset, preset_name="Preset 5")
 
+        # ==========================================
+    #           ALIQUOT PRESETS
+    # ==========================================
+
+    def _apply_aliquot_preset(self, preset_rows, preset_name=""):
+        if not hasattr(self, "aliquot_rows") or not self.aliquot_rows:
+            return
+        defaults = {
+            "execute": False,
+            "source": "",
+            "volume": "800.0",
+            "dest_start": "",
+            "dest_end": "",
+        }
+        for i, row_vars in enumerate(self.aliquot_rows):
+            spec = preset_rows[i] if i < len(preset_rows) else {}
+            if spec is None:
+                spec = {}
+            execute = bool(spec.get("execute", defaults["execute"]))
+            source = spec.get("source", defaults["source"])
+            volume = self._preset_val_to_str(spec.get("volume", defaults["volume"]))
+            dest_start = spec.get("dest_start", defaults["dest_start"])
+            dest_end = spec.get("dest_end", defaults["dest_end"])
+
+            row_vars["execute"].set(execute)
+            row_vars["source"].set(source)
+            row_vars["volume"].set(volume)
+            row_vars["dest_start"].set(dest_start)
+            row_vars["dest_end"].set(dest_end)
+        try:
+            if preset_name:
+                self.log_line(f"[UI] Aliquot preset loaded: {preset_name}")
+        except Exception:
+            pass
+
+    def load_aliquot_preset_1(self):
+        preset = [
+            {"execute": True, "source": "96Well A1", "volume": 640, "dest_start": "Eppi C1", "dest_end": "Eppi C4"},
+            {"execute": True, "source": "96Well B1", "volume": 640, "dest_start": "Eppi C5", "dest_end": "Eppi C8"},
+            {"execute": True, "source": "96Well C1", "volume": 640, "dest_start": "Screwcap F1",
+             "dest_end": "Screwcap F4"},
+            {"execute": True, "source": "96Well D1", "volume": 640, "dest_start": "Screwcap F5",
+             "dest_end": "Screwcap F8"},
+            {"execute": False, "source": "96Well E1", "volume": 640, "dest_start": "Eppi C1",
+             "dest_end": "Eppi C4"},
+            {"execute": False, "source": "96Well F1", "volume": 640, "dest_start": "Eppi C5",
+             "dest_end": "Eppi C8"},
+            {"execute": False, "source": "96Well G1", "volume": 640, "dest_start": "Screwcap F1",
+             "dest_end": "Screwcap F4"},
+            {"execute": False, "source": "96Well H1", "volume": 640, "dest_start": "Screwcap F5",
+             "dest_end": "Screwcap F8"},
+        ]
+        self._apply_aliquot_preset(preset, preset_name="P1")
+
+    def load_aliquot_preset_2(self):
+        preset = [
+            {"execute": True, "source": "96Well A5", "volume": 640, "dest_start": "Eppi C1", "dest_end": "Eppi C4"},
+            {"execute": True, "source": "96Well B5", "volume": 640, "dest_start": "Eppi C5", "dest_end": "Eppi C8"},
+            {"execute": True, "source": "96Well C5", "volume": 640, "dest_start": "Screwcap F1",
+             "dest_end": "Screwcap F4"},
+            {"execute": True, "source": "96Well D5", "volume": 640, "dest_start": "Screwcap F5",
+             "dest_end": "Screwcap F8"},
+            {"execute": False, "source": "96Well E5", "volume": 640, "dest_start": "Eppi C1",
+             "dest_end": "Eppi C4"},
+            {"execute": False, "source": "96Well F5", "volume": 640, "dest_start": "Eppi C5",
+             "dest_end": "Eppi C8"},
+            {"execute": False, "source": "96Well G5", "volume": 640, "dest_start": "Screwcap F1",
+             "dest_end": "Screwcap F4"},
+            {"execute": False, "source": "96Well H5", "volume": 640, "dest_start": "Screwcap F5",
+             "dest_end": "Screwcap F8"},
+        ]
+        self._apply_aliquot_preset(preset, preset_name="P2")
+
+    def load_aliquot_preset_3(self):
+        preset = [
+            {"execute": True, "source": "96Well A9", "volume": 640, "dest_start": "Eppi C1", "dest_end": "Eppi C4"},
+            {"execute": True, "source": "96Well B9", "volume": 640, "dest_start": "Eppi C5", "dest_end": "Eppi C8"},
+            {"execute": True, "source": "96Well C9", "volume": 640, "dest_start": "Screwcap F1",
+             "dest_end": "Screwcap F4"},
+            {"execute": True, "source": "96Well D9", "volume": 640, "dest_start": "Screwcap F5",
+             "dest_end": "Screwcap F8"},
+            {"execute": False, "source": "96Well E9", "volume": 640, "dest_start": "Eppi C1",
+             "dest_end": "Eppi C4"},
+            {"execute": False, "source": "96Well F9", "volume": 640, "dest_start": "Eppi C5",
+             "dest_end": "Eppi C8"},
+            {"execute": False, "source": "96Well G9", "volume": 640, "dest_start": "Screwcap F1",
+             "dest_end": "Screwcap F4"},
+            {"execute": False, "source": "96Well H9", "volume": 640, "dest_start": "Screwcap F5",
+             "dest_end": "Screwcap F8"},
+        ]
+        self._apply_aliquot_preset(preset, preset_name="P3")
+
+    # ==========================================
+    #           DILUTION PRESETS
+    # ==========================================
+
+    def _apply_dilution_preset(self, preset_rows, preset_name=""):
+        if not hasattr(self, "dilution_rows") or not self.dilution_rows:
+            return
+        defaults = {
+            "execute": False,
+            "src_mod": "",
+            "src_pos": "",
+            "src_conc": "",
+            "diluent": "Wash A",
+            "plate_col": "1",
+            "final_conc": "",
+        }
+        for i, row_vars in enumerate(self.dilution_rows):
+            spec = preset_rows[i] if i < len(preset_rows) else {}
+            if spec is None:
+                spec = {}
+            execute = bool(spec.get("execute", defaults["execute"]))
+            src_mod = spec.get("src_mod", defaults["src_mod"])
+            src_pos = spec.get("src_pos", defaults["src_pos"])
+            src_conc = self._preset_val_to_str(spec.get("src_conc", defaults["src_conc"]))
+            diluent = spec.get("diluent", defaults["diluent"])
+            plate_col = self._preset_val_to_str(spec.get("plate_col", defaults["plate_col"]))
+            final_conc = self._preset_val_to_str(spec.get("final_conc", defaults["final_conc"]))
+
+            row_vars["execute"].set(execute)
+            self._set_transfer_row_source(row_vars, src_mod, src_pos)
+            row_vars["src_conc"].set(src_conc)
+            row_vars["diluent"].set(diluent)
+            row_vars["plate_col"].set(plate_col)
+            row_vars["final_conc"].set(final_conc)
+        try:
+            if preset_name:
+                self.log_line(f"[UI] Dilution preset loaded: {preset_name}")
+        except Exception:
+            pass
+
+    def load_dilution_preset_1(self):
+        preset = [
+            {"execute": False, "src_mod": "Screwcap Vial", "src_pos": "F1", "src_conc": 0, "diluent": "Wash A",
+             "plate_col": 1, "final_conc": 1.25},
+            {"execute": False, "src_mod": "Screwcap Vial", "src_pos": "F2", "src_conc": 0, "diluent": "Wash A",
+             "plate_col": 1, "final_conc": 1.25},
+            {"execute": False, "src_mod": "Screwcap Vial", "src_pos": "F3", "src_conc": 0, "diluent": "Wash A",
+             "plate_col": 1, "final_conc": 1.25},
+            {"execute": False, "src_mod": "Screwcap Vial", "src_pos": "F4", "src_conc": 0, "diluent": "Wash A",
+             "plate_col": 1, "final_conc": 1.25},
+            {"execute": False, "src_mod": "Screwcap Vial", "src_pos": "F5", "src_conc": 0, "diluent": "Wash A",
+             "plate_col": 1, "final_conc": 1.25},
+            {"execute": False, "src_mod": "Screwcap Vial", "src_pos": "F6", "src_conc": 0, "diluent": "Wash A",
+             "plate_col": 1, "final_conc": 1.25},
+            {"execute": False, "src_mod": "Screwcap Vial", "src_pos": "F7", "src_conc": 0, "diluent": "Wash A",
+             "plate_col": 1, "final_conc": 1.25},
+            {"execute": False, "src_mod": "Screwcap Vial", "src_pos": "F8", "src_conc": 0, "diluent": "Wash A",
+             "plate_col": 1, "final_conc": 1.25},
+        ]
+        self._apply_dilution_preset(preset, preset_name="P1")
+
+    def load_dilution_preset_2(self):
+        preset = [
+            {"execute": False, "src_mod": "Screwcap Vial", "src_pos": "F1", "src_conc": 0, "diluent": "Wash A",
+             "plate_col": 1, "final_conc": 1.25},
+            {"execute": False, "src_mod": "Screwcap Vial", "src_pos": "F2", "src_conc": 0, "diluent": "Wash A",
+             "plate_col": 1, "final_conc": 1.25},
+            {"execute": False, "src_mod": "Screwcap Vial", "src_pos": "F3", "src_conc": 0, "diluent": "Wash A",
+             "plate_col": 1, "final_conc": 1.25},
+            {"execute": False, "src_mod": "Screwcap Vial", "src_pos": "F4", "src_conc": 0, "diluent": "Wash A",
+             "plate_col": 1, "final_conc": 1.25},
+            {"execute": False, "src_mod": "Screwcap Vial", "src_pos": "F5", "src_conc": 0, "diluent": "Wash A",
+             "plate_col": 1, "final_conc": 1.25},
+            {"execute": False, "src_mod": "Screwcap Vial", "src_pos": "F6", "src_conc": 0, "diluent": "Wash A",
+             "plate_col": 1, "final_conc": 1.25},
+            {"execute": False, "src_mod": "Screwcap Vial", "src_pos": "F7", "src_conc": 0, "diluent": "Wash A",
+             "plate_col": 1, "final_conc": 1.25},
+            {"execute": False, "src_mod": "Screwcap Vial", "src_pos": "F8", "src_conc": 0, "diluent": "Wash A",
+             "plate_col": 1, "final_conc": 1.25},
+        ]
+        self._apply_dilution_preset(preset, preset_name="P2")
+
+    def load_dilution_preset_3(self):
+        preset = [
+            {"execute": False, "src_mod": "Screwcap Vial", "src_pos": "F1", "src_conc": 0, "diluent": "Wash A",
+             "plate_col": 1, "final_conc": 1.25},
+            {"execute": False, "src_mod": "Screwcap Vial", "src_pos": "F2", "src_conc": 0, "diluent": "Wash A",
+             "plate_col": 1, "final_conc": 1.25},
+            {"execute": False, "src_mod": "Screwcap Vial", "src_pos": "F3", "src_conc": 0, "diluent": "Wash A",
+             "plate_col": 1, "final_conc": 1.25},
+            {"execute": False, "src_mod": "Screwcap Vial", "src_pos": "F4", "src_conc": 0, "diluent": "Wash A",
+             "plate_col": 1, "final_conc": 1.25},
+            {"execute": False, "src_mod": "Screwcap Vial", "src_pos": "F5", "src_conc": 0, "diluent": "Wash A",
+             "plate_col": 1, "final_conc": 1.25},
+            {"execute": False, "src_mod": "Screwcap Vial", "src_pos": "F6", "src_conc": 0, "diluent": "Wash A",
+             "plate_col": 1, "final_conc": 1.25},
+            {"execute": False, "src_mod": "Screwcap Vial", "src_pos": "F7", "src_conc": 0, "diluent": "Wash A",
+             "plate_col": 1, "final_conc": 1.25},
+            {"execute": False, "src_mod": "Screwcap Vial", "src_pos": "F8", "src_conc": 0, "diluent": "Wash A",
+             "plate_col": 1, "final_conc": 1.25},
+        ]
+        self._apply_dilution_preset(preset, preset_name="P3")
+
+
     def _build_combine_fractions_tab(self, parent):
         frame = ttk.Frame(parent, padding=10)
         frame.pack(fill="both", expand=True)
@@ -1274,14 +1470,13 @@ class LiquidHandlerApp:
         small_vial_positions.extend([f"HPLC Insert {p}" for p in self.hplc_insert_positions])
         small_vial_positions.extend([f"Screwcap {p}" for p in self.screwcap_positions])
 
-        # ---- NEW: float validation for volume entry (allows "585.4") ----
-        float_re = re.compile(r"^\d*([.]\d*)?$")  # allows "", "123", "123.", "123.4"
+        # ---- float validation for volume entry (allows "585.4") ----
+        float_re = re.compile(r"^\d*([.]\d*)?$")
 
         def validate_float(P: str) -> bool:
             return bool(float_re.match(P))
 
         vcmd = (self.root.register(validate_float), "%P")
-        # ---------------------------------------------------------------
 
         self.aliquot_rows = []
 
@@ -1289,7 +1484,7 @@ class LiquidHandlerApp:
             row_vars = {
                 "execute": tk.BooleanVar(value=False),
                 "source": tk.StringVar(value=""),
-                "volume": tk.StringVar(value="800.0"),  # default can be float string
+                "volume": tk.StringVar(value="800.0"),
                 "dest_start": tk.StringVar(value=""),
                 "dest_end": tk.StringVar(value=""),
             }
@@ -1304,7 +1499,6 @@ class LiquidHandlerApp:
                 values=source_vial_positions, width=14, state="readonly"
             ).grid(row=r, column=2, padx=2, pady=2)
 
-            # ---- CHANGED: Volume is now a writable Entry (float-capable) ----
             ttk.Entry(
                 table,
                 textvariable=row_vars["volume"],
@@ -1313,7 +1507,6 @@ class LiquidHandlerApp:
                 validate="key",
                 validatecommand=vcmd
             ).grid(row=r, column=3, padx=2, pady=2)
-            # ---------------------------------------------------------------
 
             ttk.Combobox(
                 table, textvariable=row_vars["dest_start"],
@@ -1345,6 +1538,22 @@ class LiquidHandlerApp:
             command=self.toggle_pause
         )
         self.aliquot_pause_btn.pack(side="left", fill="x", padx=(5, 0), ipady=5)
+
+        # PRESET BUTTONS
+        ttk.Label(btn_frame, text="Presets:", font=("Arial", 8, "italic")).pack(anchor="w", pady=(8, 2))
+
+        presets_row = ttk.Frame(btn_frame)
+        presets_row.pack(fill="x")
+
+        ttk.Button(presets_row, text="P1", command=self.load_aliquot_preset_1).pack(
+            side="left", expand=True, fill="x", padx=2, ipady=2
+        )
+        ttk.Button(presets_row, text="P2", command=self.load_aliquot_preset_2).pack(
+            side="left", expand=True, fill="x", padx=2, ipady=2
+        )
+        ttk.Button(presets_row, text="P3", command=self.load_aliquot_preset_3).pack(
+            side="left", expand=True, fill="x", padx=2, ipady=2
+        )
 
         ttk.Label(
             btn_frame,
@@ -1455,6 +1664,22 @@ class LiquidHandlerApp:
             command=self.toggle_pause
         )
         self.dilution_pause_btn.pack(side="left", fill="x", padx=(5, 0), ipady=5)
+
+        # PRESET BUTTONS
+        ttk.Label(btn_frame, text="Presets:", font=("Arial", 8, "italic")).pack(anchor="w", pady=(8, 2))
+
+        presets_row = ttk.Frame(btn_frame)
+        presets_row.pack(fill="x")
+
+        ttk.Button(presets_row, text="P1", command=self.load_dilution_preset_1).pack(
+            side="left", expand=True, fill="x", padx=2, ipady=2
+        )
+        ttk.Button(presets_row, text="P2", command=self.load_dilution_preset_2).pack(
+            side="left", expand=True, fill="x", padx=2, ipady=2
+        )
+        ttk.Button(presets_row, text="P3", command=self.load_dilution_preset_3).pack(
+            side="left", expand=True, fill="x", padx=2, ipady=2
+        )
 
         ttk.Label(
             btn_frame,
@@ -2245,8 +2470,8 @@ class LiquidHandlerApp:
         self.transfer_pause_btn.config(text=status)
         self.combine_pause_btn.config(text=status)
         self.aliquot_pause_btn.config(text=status)
+        self.dilution_pause_btn.config(text=status)  # <-- ADD THIS LINE
 
-        # Enable Soft Stop only when paused
         if self.is_paused:
             self.log_line("[USER] Paused sequence.")
             self.last_cmd_var.set("PAUSED")
