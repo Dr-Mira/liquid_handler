@@ -1052,10 +1052,10 @@ class LiquidHandlerApp:
             return
         defaults = {
             "execute": False,
-            "source": "Falcon A1",
-            "volume": "800.0",
-            "dest_start": "Eppi C1",
-            "dest_end": "Eppi C8",
+            "source": "",
+            "volume": "",
+            "dest_start": "",
+            "dest_end": "",
         }
         for i, row_vars in enumerate(self.aliquot_rows):
             spec = preset_rows[i] if i < len(preset_rows) else {}
@@ -1070,20 +1070,40 @@ class LiquidHandlerApp:
 
     def load_aliquot_preset_1(self):
         preset = [
-            {"execute": True, "source": "Falcon A1", "volume": 500.0, "dest_start": "Eppi C1", "dest_end": "Eppi C8"},
-            {"execute": True, "source": "Falcon A2", "volume": 500.0, "dest_start": "HPLC D1", "dest_end": "HPLC D8"},
+            {"execute": True, "source": "96Well A1", "volume": 640, "dest_start": "Eppi C1", "dest_end": "Eppi C4"},
+            {"execute": True, "source": "96Well B1", "volume": 640, "dest_start": "Eppi C5", "dest_end": "Eppi C8"},
+            {"execute": True, "source": "96Well C1", "volume": 640, "dest_start": "Screwcap F1", "dest_end": "Screwcap F4"},
+            {"execute": True, "source": "96Well D1", "volume": 640, "dest_start": "Screwcap F5", "dest_end": "Screwcap F8"},
+            {"execute": False, "source": "96Well E1", "volume": 640, "dest_start": "Eppi C1", "dest_end": "Eppi C4"},
+            {"execute": False, "source": "96Well F1", "volume": 640, "dest_start": "Eppi C5", "dest_end": "Eppi C8"},
+            {"execute": False, "source": "96Well G1", "volume": 640, "dest_start": "Screwcap F1", "dest_end": "Screwcap F4"},
+            {"execute": False, "source": "96Well H1", "volume": 640, "dest_start": "Screwcap F5", "dest_end": "Screwcap F8"},
         ]
         self._apply_aliquot_preset(preset, preset_name="P1")
 
     def load_aliquot_preset_2(self):
         preset = [
-            {"execute": True, "source": "4mL A1", "volume": 200.0, "dest_start": "HPLC Insert E1", "dest_end": "HPLC Insert E8"},
+            {"execute": True, "source": "96Well A5", "volume": 640, "dest_start": "Eppi C1", "dest_end": "Eppi C4"},
+            {"execute": True, "source": "96Well B5", "volume": 640, "dest_start": "Eppi C5", "dest_end": "Eppi C8"},
+            {"execute": True, "source": "96Well C5", "volume": 640, "dest_start": "Screwcap F1", "dest_end": "Screwcap F4"},
+            {"execute": True, "source": "96Well D5", "volume": 640, "dest_start": "Screwcap F5", "dest_end": "Screwcap F8"},
+            {"execute": False, "source": "96Well E5", "volume": 640, "dest_start": "Eppi C1", "dest_end": "Eppi C4"},
+            {"execute": False, "source": "96Well F5", "volume": 640, "dest_start": "Eppi C5", "dest_end": "Eppi C8"},
+            {"execute": False, "source": "96Well G5", "volume": 640, "dest_start": "Screwcap F1", "dest_end": "Screwcap F4"},
+            {"execute": False, "source": "96Well H5", "volume": 640, "dest_start": "Screwcap F5", "dest_end": "Screwcap F8"},
         ]
         self._apply_aliquot_preset(preset, preset_name="P2")
 
     def load_aliquot_preset_3(self):
         preset = [
-            {"execute": True, "source": "96Well A1", "volume": 100.0, "dest_start": "Screwcap F1", "dest_end": "Screwcap F8"},
+            {"execute": True, "source": "96Well A9", "volume": 640, "dest_start": "Eppi C1", "dest_end": "Eppi C4"},
+            {"execute": True, "source": "96Well B9", "volume": 640, "dest_start": "Eppi C5", "dest_end": "Eppi C8"},
+            {"execute": True, "source": "96Well C9", "volume": 640, "dest_start": "Screwcap F1", "dest_end": "Screwcap F4"},
+            {"execute": True, "source": "96Well D9", "volume": 640, "dest_start": "Screwcap F5", "dest_end": "Screwcap F8"},
+            {"execute": False, "source": "96Well E9", "volume": 640, "dest_start": "Eppi C1", "dest_end": "Eppi C4"},
+            {"execute": False, "source": "96Well F9", "volume": 640, "dest_start": "Eppi C5", "dest_end": "Eppi C8"},
+            {"execute": False, "source": "96Well G9", "volume": 640, "dest_start": "Screwcap F1", "dest_end": "Screwcap F4"},
+            {"execute": False, "source": "96Well H9", "volume": 640, "dest_start": "Screwcap F5", "dest_end": "Screwcap F8"},
         ]
         self._apply_aliquot_preset(preset, preset_name="P3")
 
@@ -1092,12 +1112,12 @@ class LiquidHandlerApp:
             return
         defaults = {
             "execute": False,
-            "src_mod": "4mL Rack",
-            "src_pos": "A1",
-            "src_conc": "1000",
-            "diluent": "Wash A",
-            "plate_col": "1",
-            "final_conc": "10",
+            "src_mod": "",
+            "src_pos": "",
+            "src_conc": "",
+            "diluent": "",
+            "plate_col": "",
+            "final_conc": "",
         }
         for i, row_vars in enumerate(self.dilution_rows):
             spec = preset_rows[i] if i < len(preset_rows) else {}
@@ -1113,8 +1133,15 @@ class LiquidHandlerApp:
 
     def load_dilution_preset_1(self):
         preset = [
-            {"execute": True, "src_mod": "4mL Rack", "src_pos": "A1", "src_conc": 1000, "diluent": "Wash A", "plate_col": 1, "final_conc": 1},
-            {"execute": True, "src_mod": "4mL Rack", "src_pos": "A2", "src_conc": 1000, "diluent": "Wash A", "plate_col": 1, "final_conc": 1},
+            {"execute": False, "src_mod": "Screwcap Vial", "src_pos": "F1", "src_conc": 0, "diluent": "Wash A", "plate_col": 1, "final_conc": 1.25},
+            {"execute": False, "src_mod": "Screwcap Vial", "src_pos": "F2", "src_conc": 0, "diluent": "Wash A", "plate_col": 1, "final_conc": 1.25},
+            {"execute": False, "src_mod": "Screwcap Vial", "src_pos": "F3", "src_conc": 0, "diluent": "Wash A", "plate_col": 1, "final_conc": 1.25},
+            {"execute": False, "src_mod": "Screwcap Vial", "src_pos": "F4", "src_conc": 0, "diluent": "Wash A", "plate_col": 1, "final_conc": 1.25},
+            {"execute": False, "src_mod": "Screwcap Vial", "src_pos": "F5", "src_conc": 0, "diluent": "Wash A", "plate_col": 1, "final_conc": 1.25},
+            {"execute": False, "src_mod": "Screwcap Vial", "src_pos": "F6", "src_conc": 0, "diluent": "Wash A", "plate_col": 1, "final_conc": 1.25},
+            {"execute": False, "src_mod": "Screwcap Vial", "src_pos": "F7", "src_conc": 0, "diluent": "Wash A", "plate_col": 1, "final_conc": 1.25},
+            {"execute": False, "src_mod": "Screwcap Vial", "src_pos": "F8", "src_conc": 0, "diluent": "Wash A", "plate_col": 1, "final_conc": 1.25},
+
         ]
         self._apply_dilution_preset(preset, preset_name="P1")
 
@@ -1372,7 +1399,7 @@ class LiquidHandlerApp:
             row_vars = {
                 "execute": tk.BooleanVar(value=False),
                 "source": tk.StringVar(value=""),
-                "volume": tk.StringVar(value="800.0"),  # default can be float string
+                "volume": tk.StringVar(value=""),  # default can be float string
                 "dest_start": tk.StringVar(value=""),
                 "dest_end": tk.StringVar(value=""),
             }
