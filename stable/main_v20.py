@@ -1048,6 +1048,7 @@ class LiquidHandlerApp:
         self._apply_transfer_table_preset(preset, preset_name="Preset 5")
 
         # ==========================================
+
     #           ALIQUOT PRESETS
     # ==========================================
 
@@ -1241,7 +1242,6 @@ class LiquidHandlerApp:
              "plate_col": 9, "final_conc": 1.25},
         ]
         self._apply_dilution_preset(preset, preset_name="P3")
-
 
     def _build_combine_fractions_tab(self, parent):
         frame = ttk.Frame(parent, padding=10)
@@ -2292,14 +2292,72 @@ class LiquidHandlerApp:
         self.log_line(f"[HOST] Connected to {port} @ {baud}")
         self.update_connection_status_icon(True)
 
-        # Check logs immediately after connection logic
-        self.root.after(500, self.check_last_position_log)
+        # Check logs after hardware has time to initialize (3 seconds)
+        # This gives the startup sequence time to complete before checking positions
+        self.root.after(3000, self.check_last_position_log)
 
         threading.Thread(target=self._run_startup_sequence, daemon=True).start()
+
+    def _get_live_coordinates(self, timeout=3.0):
+        """
+        Send M114 command and get live coordinates from the machine.
+        Returns (x, y, z) as floats or (None, None, None) if failed/timeout.
+        """
+        if not self.ser or not self.ser.is_open:
+            return None, None, None
+
+        # Use a local event to wait for response
+        response_event = threading.Event()
+        result = {'x': None, 'y': None, 'z': None}
+
+        def parse_response(line):
+            match = re.search(r"X:([0-9.-]+)\s*Y:([0-9.-]+)\s*Z:([0-9.-]+)", line)
+            if match:
+                result['x'] = float(match.group(1))
+                result['y'] = float(match.group(2))
+                result['z'] = float(match.group(3))
+                response_event.set()
+
+        # Temporarily add a custom parser for this request
+        original_parse = self._parse_coordinates
+        self._parse_coordinates = parse_response
+
+        try:
+            self._send_raw("M114\n")
+            # Wait for response with timeout
+            if response_event.wait(timeout=timeout):
+                return result['x'], result['y'], result['z']
+            else:
+                return None, None, None
+        except Exception as e:
+            print(f"Error getting live coordinates: {e}")
+            return None, None, None
+        finally:
+            # Restore original parser
+            self._parse_coordinates = original_parse
+
+    def _is_valid_coordinates(self, x, y, z):
+        """
+        Check if coordinates are valid (not magic numbers).
+        Magic numbers indicate machine is off/frozen: X=-13, Y=-15, Z=0
+        Returns True if coordinates are valid, False if they are magic/unreasonable.
+        """
+        if x is None or y is None or z is None:
+            return False
+        # Check for magic numbers (machine off/frozen)
+        if int(x) == -13 and int(y) == -15 and int(z) == 0:
+            return False
+        # Check for other unreasonable values
+        # Valid range: X and Y typically -10 to 200, Z typically 0 to 210
+        if x < -50 or x > 500 or y < -50 or y > 500 or z < -10 or z > 250:
+            return False
+        return True
 
     def check_last_position_log(self):
         """
         Reads the last line of the most recent log file to determine safety.
+        Implements a 5-second delay before showing popup to allow hardware sync.
+        Only shows popup if machine is not homed (magic number coordinates detected).
         """
         try:
             # Find most recent file
@@ -2318,47 +2376,88 @@ class LiquidHandlerApp:
             if not last_line:
                 return
 
-            # Parse X, Y, Z
+            # Parse X, Y, Z from log
             # Format: HH:MM:SS -> X:0.00 Y:0.00 Z:0.00 Vol:200.0
             match = re.search(r"X:([0-9.-]+)\s*Y:([0-9.-]+)\s*Z:([0-9.-]+)", last_line)
-            if match:
-                log_x = float(match.group(1))
-                log_y = float(match.group(2))
-                log_z = float(match.group(3))
+            if not match:
+                return
 
-                # CHECK 1: Magic Numbers (Machine Off/Freeze)
-                # X -13 Y -15 Z 0
-                if int(log_x) == -13 and int(log_y) == -15 and int(log_z) == 0:
-                    response = messagebox.askyesno(
-                        "Startup Check",
-                        "Last log entry indicates machine was off or frozen (Magic Coordinates).\n\nDo you want to HOME ALL now?"
-                    )
-                    if response:
-                        self.send_home("All")
-                    return
+            log_x = float(match.group(1))
+            log_y = float(match.group(2))
+            log_z = float(match.group(3))
 
-                # CHECK 2: High Z Danger
-                if log_z > 190:
-                    messagebox.showwarning(
-                        "High Z Warning",
-                        f"Last known Z position was {log_z:.1f} (High).\n\nPlease move the head down manually before homing to avoid crashing into the top frame."
-                    )
-                    return
+            # CHECK 1: Magic Numbers (Machine Off/Freeze)
+            # X -13 Y -15 Z 0
+            if int(log_x) == -13 and int(log_y) == -15 and int(log_z) == 0:
+                # Machine was off/frozen - need to show popup after delay
+                self._show_delayed_home_popup(log_x, log_y, log_z, is_magic_numbers=True)
+                return
 
-                # CHECK 3: Position Mismatch (Generic)
-                # On startup, machine usually reports 0,0,0 or unknown until homed.
-                # If log says we were at X:100, Y:100, Z:50, and machine says 0,0,0 (unhomed), warn user.
-                # We can't easily check 'machine reported' here synchronously without blocking,
-                # but usually startup implies unhomed.
-                response = messagebox.askyesno(
-                    "Position Check",
-                    f"Last known position: X{log_x} Y{log_y} Z{log_z}.\nMachine likely not homed.\n\nDo you want to HOME ALL now?"
+            # CHECK 2: High Z Danger
+            if log_z > 190:
+                messagebox.showwarning(
+                    "High Z Warning",
+                    f"Last known Z position was {log_z:.1f} (High).\n\nPlease move the head down manually before homing to avoid crashing into the top frame."
                 )
-                if response:
-                    self.send_home("All")
+                return
+
+            # CHECK 3: Position Mismatch (Generic)
+            # On startup, machine usually reports 0,0,0 or unknown until homed.
+            # Check live coordinates to see if machine is properly initialized
+            live_x, live_y, live_z = self._get_live_coordinates(timeout=3.0)
+
+            # If live coordinates are valid (not magic numbers), skip popup
+            if self._is_valid_coordinates(live_x, live_y, live_z):
+                self.log_line("[STARTUP] Live coordinates valid, skipping home popup.")
+                return
+
+            # Machine appears not homed - show popup after delay
+            self._show_delayed_home_popup(log_x, log_y, log_z, is_magic_numbers=False)
 
         except Exception as e:
             print(f"Error checking log file: {e}")
+
+    def _show_delayed_home_popup(self, log_x, log_y, log_z, is_magic_numbers=False):
+        """
+        Shows a delayed popup asking user to home the machine.
+        Implements 5-second delay to allow hardware to synchronize.
+        """
+
+        def show_popup():
+            """This runs after the 5-second delay"""
+            # Get fresh live coordinates before showing popup
+            live_x, live_y, live_z = self._get_live_coordinates(timeout=2.0)
+
+            # Check if coordinates are now valid - if so, don't show popup
+            if self._is_valid_coordinates(live_x, live_y, live_z):
+                self.log_line("[STARTUP] Coordinates now valid, skipping home popup.")
+                return
+
+            # Show the popup with option to home
+            if is_magic_numbers:
+                response = messagebox.askyesno(
+                    "Startup Check",
+                    f"Machine may not be properly homed.\n\n"
+                    f"Last log position: X{log_x:.1f} Y{log_y:.1f} Z{log_z:.1f}\n"
+                    f"Current position: X{live_x if live_x is not None else '?'} "
+                    f"Y{live_y if live_y is not None else '?'} "
+                    f"Z{live_z if live_z is not None else '?'}\n\n"
+                    f"Do you want to HOME ALL now?"
+                )
+            else:
+                response = messagebox.askyesno(
+                    "Position Check",
+                    f"Last known position: X{log_x:.1f} Y{log_y:.1f} Z{log_z:.1f}.\n"
+                    f"Machine may not be homed.\n\n"
+                    f"Do you want to HOME ALL now?"
+                )
+
+            if response:
+                self.send_home("All")
+
+        # Schedule popup after 5 seconds (5000ms)
+        self.root.after(5000, show_popup)
+        self.log_line("[STARTUP] Waiting 5 seconds for hardware sync before showing home prompt...")
 
     def _run_startup_sequence(self):
         self.last_cmd_var.set("Initializing...")

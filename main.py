@@ -4317,10 +4317,24 @@ class LiquidHandlerApp:
     def _open_calibration_jog_window(self):
         jog_win = tk.Toplevel(self.root)
         jog_win.title("Fine Tune Position")
-        jog_win.geometry("400x350")
+        jog_win.geometry("450x420")
         jog_win.grab_set()
         ttk.Label(jog_win, text="Jog head until tip touches pin.", font=("Arial", 10, "bold")).pack(pady=10)
-        ttk.Label(jog_win, text="Precision: 0.1 mm", font=("Arial", 9)).pack(pady=5)
+        
+        # Precision selection frame
+        precision_frame = ttk.LabelFrame(jog_win, text="Step Precision", padding=10)
+        precision_frame.pack(pady=5)
+        self.calib_step_var = tk.DoubleVar(value=0.1)  # Default to 0.1mm
+        ttk.Radiobutton(precision_frame, text="0.1 mm", variable=self.calib_step_var, value=0.1).pack(side="left", padx=10)
+        ttk.Radiobutton(precision_frame, text="1.0 mm", variable=self.calib_step_var, value=1.0).pack(side="left", padx=10)
+        
+        # Current precision display
+        self.calib_precision_label = ttk.Label(jog_win, text="Current Step: 0.1 mm", font=("Arial", 9))
+        self.calib_precision_label.pack(pady=5)
+        
+        def update_precision_label():
+            self.calib_precision_label.config(text=f"Current Step: {self.calib_step_var.get()} mm")
+        
         ctrl_frame = ttk.Frame(jog_win)
         ctrl_frame.pack(pady=10)
         original_step = self.step_size_var.get()
@@ -4330,21 +4344,27 @@ class LiquidHandlerApp:
             self.step_size_var.set(original_step)
             jog_win.destroy()
 
+        def jog_with_precision(axis, direction):
+            # Update step_size_var to use selected precision
+            self.step_size_var.set(self.calib_step_var.get())
+            update_precision_label()
+            self.send_jog(axis, direction)
+
         jog_win.protocol("WM_DELETE_WINDOW", close_and_restore)
         btn_w = 6
-        ttk.Button(ctrl_frame, text="Y+", width=btn_w, command=lambda: self.send_jog("Y", 1)).grid(row=0, column=1,
+        ttk.Button(ctrl_frame, text="Y+", width=btn_w, command=lambda: jog_with_precision("Y", 1)).grid(row=0, column=1,
                                                                                                    pady=5)
-        ttk.Button(ctrl_frame, text="Y-", width=btn_w, command=lambda: self.send_jog("Y", -1)).grid(row=2, column=1,
+        ttk.Button(ctrl_frame, text="Y-", width=btn_w, command=lambda: jog_with_precision("Y", -1)).grid(row=2, column=1,
                                                                                                     pady=5)
-        ttk.Button(ctrl_frame, text="X-", width=btn_w, command=lambda: self.send_jog("X", -1)).grid(row=1, column=0,
+        ttk.Button(ctrl_frame, text="X-", width=btn_w, command=lambda: jog_with_precision("X", -1)).grid(row=1, column=0,
                                                                                                     padx=5)
-        ttk.Button(ctrl_frame, text="X+", width=btn_w, command=lambda: self.send_jog("X", 1)).grid(row=1, column=2,
+        ttk.Button(ctrl_frame, text="X+", width=btn_w, command=lambda: jog_with_precision("X", 1)).grid(row=1, column=2,
                                                                                                    padx=5)
-        ttk.Button(ctrl_frame, text="Z+ (Up)", width=btn_w, command=lambda: self.send_jog("Z", 1)).grid(row=0, column=4,
-                                                                                                        padx=20)
-        ttk.Button(ctrl_frame, text="Z- (Dn)", width=btn_w, command=lambda: self.send_jog("Z", -1)).grid(row=2,
-                                                                                                         column=4,
-                                                                                                         padx=20)
+        ttk.Button(ctrl_frame, text="Z+ (Up)", width=btn_w, command=lambda: jog_with_precision("Z", 1)).grid(row=0, column=4,
+                                                                                                            padx=20)
+        ttk.Button(ctrl_frame, text="Z- (Dn)", width=btn_w, command=lambda: jog_with_precision("Z", -1)).grid(row=2,
+                                                                                                             column=4,
+                                                                                                             padx=20)
         bot_frame = ttk.Frame(jog_win)
         bot_frame.pack(side="bottom", fill="x", pady=10, padx=10)
         ttk.Button(bot_frame, text="Revert to Default",
@@ -4354,6 +4374,11 @@ class LiquidHandlerApp:
 
     def save_calibration_position(self):
         """Save the calibrated pin position to config.json"""
+        # Round values to 0.1 mm precision
+        rounded_x = round(self.current_x, 1)
+        rounded_y = round(self.current_y, 1)
+        rounded_z = round(self.current_z, 1)
+        
         # Load existing full config from file
         try:
             if os.path.exists(self.config_file):
@@ -4365,26 +4390,26 @@ class LiquidHandlerApp:
             messagebox.showerror("Error", f"Could not load config file: {e}")
             return
 
-        # Update only the PIN coordinates
-        full_config["PIN_X"] = self.current_x
-        full_config["PIN_Y"] = self.current_y
-        full_config["PIN_Z"] = self.current_z
+        # Update only the PIN coordinates (rounded to 0.1mm)
+        full_config["PIN_X"] = rounded_x
+        full_config["PIN_Y"] = rounded_y
+        full_config["PIN_Z"] = rounded_z
 
         # Save the complete config back to file
         try:
             with open(self.config_file, "w") as f:
                 json.dump(full_config, f, indent=4)
 
-            # Update the global config in memory
+            # Update the global config in memory (rounded values)
             global CALIBRATION_PIN_CONFIG
-            CALIBRATION_PIN_CONFIG["PIN_X"] = self.current_x
-            CALIBRATION_PIN_CONFIG["PIN_Y"] = self.current_y
-            CALIBRATION_PIN_CONFIG["PIN_Z"] = self.current_z
+            CALIBRATION_PIN_CONFIG["PIN_X"] = rounded_x
+            CALIBRATION_PIN_CONFIG["PIN_Y"] = rounded_y
+            CALIBRATION_PIN_CONFIG["PIN_Z"] = rounded_z
 
             self.log_line(
-                f"[CALIB] New Pin Config Saved: X={self.current_x:.2f}, Y={self.current_y:.2f}, Z={self.current_z:.2f}")
+                f"[CALIB] New Pin Config Saved: X={rounded_x}, Y={rounded_y}, Z={rounded_z}")
             messagebox.showinfo("Saved",
-                                f"New calibration coordinates saved to config.json\nX={self.current_x:.2f}, Y={self.current_y:.2f}, Z={self.current_z:.2f}")
+                                f"New calibration coordinates saved to config.json\nX={rounded_x}, Y={rounded_y}, Z={rounded_z}")
 
         except Exception as e:
             messagebox.showerror("Error", f"Could not save config: {e}")
@@ -4582,7 +4607,7 @@ class LiquidHandlerApp:
         """Open jog window for fine-tuning module position"""
         jog_win = tk.Toplevel(self.root)
         jog_win.title("Fine Tune Module Position")
-        jog_win.geometry("400x380")
+        jog_win.geometry("450x430")
         jog_win.grab_set()
 
         module_name = self.current_calibration_module
@@ -4590,7 +4615,20 @@ class LiquidHandlerApp:
 
         ttk.Label(jog_win, text=f"Jog head to correct {module_name} {position} position.",
                   font=("Arial", 10, "bold")).pack(pady=10)
-        ttk.Label(jog_win, text="Precision: 0.1 mm", font=("Arial", 9)).pack(pady=5)
+        
+        # Precision selection frame
+        precision_frame = ttk.LabelFrame(jog_win, text="Step Precision", padding=10)
+        precision_frame.pack(pady=5)
+        self.calib_step_var = tk.DoubleVar(value=0.1)  # Default to 0.1mm
+        ttk.Radiobutton(precision_frame, text="0.1 mm", variable=self.calib_step_var, value=0.1).pack(side="left", padx=10)
+        ttk.Radiobutton(precision_frame, text="1.0 mm", variable=self.calib_step_var, value=1.0).pack(side="left", padx=10)
+        
+        # Current precision display
+        self.calib_precision_label = ttk.Label(jog_win, text="Current Step: 0.1 mm", font=("Arial", 9))
+        self.calib_precision_label.pack(pady=5)
+        
+        def update_precision_label():
+            self.calib_precision_label.config(text=f"Current Step: {self.calib_step_var.get()} mm")
 
         ctrl_frame = ttk.Frame(jog_win)
         ctrl_frame.pack(pady=10)
@@ -4603,23 +4641,29 @@ class LiquidHandlerApp:
             self.step_size_var.set(original_step)
             jog_win.destroy()
 
+        def jog_with_precision(axis, direction):
+            # Update step_size_var to use selected precision
+            self.step_size_var.set(self.calib_step_var.get())
+            update_precision_label()
+            self.send_jog(axis, direction)
+
         jog_win.protocol("WM_DELETE_WINDOW", close_and_restore)
 
         # Jog buttons
         btn_w = 6
-        ttk.Button(ctrl_frame, text="Y+", width=btn_w, command=lambda: self.send_jog("Y", 1)).grid(row=0, column=1,
+        ttk.Button(ctrl_frame, text="Y+", width=btn_w, command=lambda: jog_with_precision("Y", 1)).grid(row=0, column=1,
                                                                                                    pady=5)
-        ttk.Button(ctrl_frame, text="Y-", width=btn_w, command=lambda: self.send_jog("Y", -1)).grid(row=2, column=1,
+        ttk.Button(ctrl_frame, text="Y-", width=btn_w, command=lambda: jog_with_precision("Y", -1)).grid(row=2, column=1,
                                                                                                     pady=5)
-        ttk.Button(ctrl_frame, text="X-", width=btn_w, command=lambda: self.send_jog("X", -1)).grid(row=1, column=0,
+        ttk.Button(ctrl_frame, text="X-", width=btn_w, command=lambda: jog_with_precision("X", -1)).grid(row=1, column=0,
                                                                                                     padx=5)
-        ttk.Button(ctrl_frame, text="X+", width=btn_w, command=lambda: self.send_jog("X", 1)).grid(row=1, column=2,
+        ttk.Button(ctrl_frame, text="X+", width=btn_w, command=lambda: jog_with_precision("X", 1)).grid(row=1, column=2,
                                                                                                    padx=5)
-        ttk.Button(ctrl_frame, text="Z+ (Up)", width=btn_w, command=lambda: self.send_jog("Z", 1)).grid(row=0, column=4,
-                                                                                                        padx=20)
-        ttk.Button(ctrl_frame, text="Z- (Dn)", width=btn_w, command=lambda: self.send_jog("Z", -1)).grid(row=2,
-                                                                                                         column=4,
-                                                                                                         padx=20)
+        ttk.Button(ctrl_frame, text="Z+ (Up)", width=btn_w, command=lambda: jog_with_precision("Z", 1)).grid(row=0, column=4,
+                                                                                                            padx=20)
+        ttk.Button(ctrl_frame, text="Z- (Dn)", width=btn_w, command=lambda: jog_with_precision("Z", -1)).grid(row=2,
+                                                                                                             column=4,
+                                                                                                             padx=20)
 
         # Bottom buttons
         bot_frame = ttk.Frame(jog_win)
@@ -4646,6 +4690,11 @@ class LiquidHandlerApp:
         rel_x = new_x - CALIBRATION_PIN_CONFIG["PIN_X"]
         rel_y = new_y - CALIBRATION_PIN_CONFIG["PIN_Y"]
         rel_z = new_z - CALIBRATION_PIN_CONFIG["PIN_Z"]
+        
+        # Round values to 0.1 mm precision
+        rel_x = round(rel_x, 1)
+        rel_y = round(rel_y, 1)
+        rel_z = round(rel_z, 1)
 
         # Load existing full config from file
         try:
@@ -4771,9 +4820,9 @@ class LiquidHandlerApp:
                 json.dump(full_config, f, indent=4)
 
             self.log_line(
-                f"[MODULE_CALIB] Saved {module_name} {position}: X={rel_x:.2f}, Y={rel_y:.2f}, Z_CALIBRATE={rel_z:.2f}")
+                f"[MODULE_CALIB] Saved {module_name} {position}: X={rel_x}, Y={rel_y}, Z_CALIBRATE={rel_z}")
             messagebox.showinfo("Saved",
-                                f"{module_name} {position} calibration saved!\nX={rel_x:.2f}, Y={rel_y:.2f}, Z_CALIBRATE={rel_z:.2f}")
+                                f"{module_name} {position} calibration saved!\nX={rel_x}, Y={rel_y}, Z_CALIBRATE={rel_z}")
 
         except Exception as e:
             messagebox.showerror("Error", f"Failed to save calibration: {e}")
