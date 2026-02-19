@@ -22,14 +22,14 @@ from datetime import datetime
 
 # --- CALIBRATION PIN ANCHOR (The Reference Point) ---
 CALIBRATION_PIN_CONFIG_DEFAULT = {
-    "PIN_X": 109.2,
-    "PIN_Y": 114.3,
-    "PIN_Z": 132.8
+    "PIN_X": 109.7,
+    "PIN_Y": 112.0,
+    "PIN_Z": 133.7
 }
 
 # Center Default Configuration
 CENTER_CONFIG_DEFAULT = {
-    "GLOBAL_SAFE_Z_OFFSET": 62.2,
+    "GLOBAL_SAFE_Z_OFFSET": 37.2,
     "SAFE_CENTER_X_OFFSET": 0.8,
     "SAFE_CENTER_Y_OFFSET": -4.3
 }
@@ -38,7 +38,7 @@ CENTER_CONFIG_DEFAULT = {
 PARKING_CONFIG_DEFAULT = {
     "PARK_HEAD_X": 79.5,
     "PARK_HEAD_Y": 71.1,
-    "PARK_HEAD_Z": 27.4
+    "PARK_HEAD_Z": 2.4
 }
 
 # Pipette Constants Default Configuration
@@ -113,66 +113,66 @@ IDLE_TIMEOUT_BEFORE_POLL = COMMUNICATION_CONFIG["IDLE_TIMEOUT_BEFORE_POLL"]
 
 # --- EJECT STATION CONFIGURATION DEFAULT (Relative Offsets) ---
 EJECT_STATION_CONFIG_DEFAULT = {
-    "APPROACH_X": 79.5,
+    "APPROACH_X": 78.5,
     "APPROACH_Y": 71.1,
-    "Z_SAFE": 57.2,
-    "Z_EJECT_START": 27.0,
+    "Z_SAFE": 32.2,
+    "Z_EJECT_START": 2.0,
     "EJECT_TARGET_Y": 106.7,
-    "Z_RETRACT": 57.2
+    "Z_RETRACT": 32.2
 }
 
 # --- TIP RACK CONFIGURATION DEFAULT (Relative Offsets) ---
 TIP_RACK_CONFIG_DEFAULT = {
-    "A1_X": 68.7, "A1_Y": 29.9,
-    "F4_X": 99.0, "F4_Y": -19.9,
-    "Z_TRAVEL": 52.2,
-    "Z_PICK": -37.8
+    "A1_X": 69.4, "A1_Y": 31.0,
+    "F4_X": 99.8, "F4_Y": -18.9,
+    "Z_TRAVEL": 27.2,
+    "Z_PICK": -62.8
 }
 
 # --- 96 WELL PLATE CONFIGURATION DEFAULT (Relative Offsets) ---
 PLATE_CONFIG_DEFAULT = {
-    "A1_X": -104.8, "A1_Y": 112.7,
-    "H12_X": -5.7, "H12_Y": 49.8,
-    "Z_SAFE": 27.2,
-    "Z_ASPIRATE": -5.5,
-    "Z_DISPENSE": 14.5
+    "A1_X": -104.6, "A1_Y": 112.1,
+    "H12_X": -5.4, "H12_Y": 49.3,
+    "Z_SAFE": 2.2,
+    "Z_ASPIRATE": -30.5,
+    "Z_DISPENSE": -10.5
 }
 
 # --- FALCON RACK CONFIGURATION DEFAULT (Relative Offsets) ---
 FALCON_RACK_CONFIG_DEFAULT = {
-    "15ML_A1_X": -93.6, "15ML_A1_Y": 15.8,
-    "15ML_B3_X": -55.4, "15ML_B3_Y": -4.3,
-    "50ML_X": -30.9, "50ML_Y": 6.2,
-    "Z_SAFE": 62.2,
-    "Z_ASPIRATE": -58.5,
-    "Z_DISPENSE": 47.2
+    "15ML_A1_X": -94.9, "15ML_A1_Y": 15.8,
+    "15ML_B3_X": -57.0, "15ML_B3_Y": -4.4,
+    "50ML_X": -31.3, "50ML_Y": 5.5,
+    "Z_SAFE": 37.2,
+    "Z_ASPIRATE": -85.0,
+    "Z_DISPENSE": 22.2
 }
 
 # --- WASH STATION CONFIGURATION DEFAULT (Relative Offsets) ---
 WASH_RACK_CONFIG_DEFAULT = {
     "A1_X": 51.5, "A1_Y": -51.5,
-    "B2_X": 86.9, "B2_Y": -85.9,
-    "Z_SAFE": 62.2,
-    "Z_ASPIRATE": -27.8,
-    "Z_DISPENSE": 37.2
+    "B2_X": 88.3, "B2_Y": -88.0,
+    "Z_SAFE": 37.2,
+    "Z_ASPIRATE": -52.8,
+    "Z_DISPENSE": 12.2
 }
 
 # --- 4 ML RACK CONFIGURATION DEFAULT (Relative Offsets) ---
 _4ML_RACK_CONFIG_DEFAULT = {
-    "A1_X": -113.2, "A1_Y": -34.6,
+    "A1_X": -114.5, "A1_Y": -34.6,
     "A8_X": 12.4, "A8_Y": -34.6,
-    "Z_SAFE": 38.8,
-    "Z_ASPIRATE": -6.5,
-    "Z_DISPENSE": 17.2
+    "Z_SAFE": 13.8,
+    "Z_ASPIRATE": -31.5,
+    "Z_DISPENSE": -1.0
 }
 
 # --- FILTER EPPI RACK CONFIGURATION DEFAULT (Row B) (Relative Offsets) ---
 FILTER_EPPI_RACK_CONFIG_DEFAULT = {
-    "B1_X": -113.2, "B1_Y": -51.2,
+    "B1_X": -114.1, "B1_Y": -51.2,
     "B8_X": 12.4, "B8_Y": -51.2,
-    "Z_SAFE": 38.8,
-    "Z_ASPIRATE": 10.8,
-    "Z_DISPENSE": 27.2
+    "Z_SAFE": 13.8,
+    "Z_ASPIRATE": -14.2,
+    "Z_DISPENSE": 2.2
 }
 
 # --- ACTIVE CONFIGURATIONS (Will be overwritten by JSON if exists) ---
@@ -186,38 +186,38 @@ FILTER_EPPI_RACK_CONFIG = FILTER_EPPI_RACK_CONFIG_DEFAULT.copy()
 
 # --- EPPI RACK CONFIGURATION DEFAULT (Row C) (Relative Offsets) ---
 EPPI_RACK_CONFIG_DEFAULT = {
-    "C1_X": -113.2, "C1_Y": -65.7,
-    "C8_X": 12.4, "C8_Y": -65.7,
-    "Z_SAFE": 38.8,
-    "Z_ASPIRATE": -10.8,
-    "Z_DISPENSE": 22.2
+    "C1_X": -113.6, "C1_Y": -66.2,
+    "C8_X": 12.2, "C8_Y": -67.2,
+    "Z_SAFE": 13.8,
+    "Z_ASPIRATE": -35.2,
+    "Z_DISPENSE": -2.8
 }
 
 # --- HPLC VIAL RACK CONFIGURATION DEFAULT (Row D) (Relative Offsets) ---
 HPLC_VIAL_RACK_CONFIG_DEFAULT = {
     "D1_X": -113.2, "D1_Y": -81.7,
     "D8_X": 12.4, "D8_Y": -81.7,
-    "Z_SAFE": 38.8,
-    "Z_ASPIRATE": 5.8,
-    "Z_DISPENSE": 27.2
+    "Z_SAFE": 13.8,
+    "Z_ASPIRATE": -19.2,
+    "Z_DISPENSE": 2.2
 }
 
 # --- HPLC VIAL INSERT RACK CONFIGURATION DEFAULT (Row E) (Relative Offsets) ---
 HPLC_VIAL_INSERT_RACK_CONFIG_DEFAULT = {
-    "E1_X": -113.1, "E1_Y": -97.3,
-    "E8_X": 12.4, "E8_Y": -97.3,
-    "Z_SAFE": 38.8,
-    "Z_ASPIRATE": 22.7,
-    "Z_DISPENSE": 27.2
+    "E1_X": -113.6, "E1_Y": -97.9,
+    "E8_X": 12.9, "E8_Y": -98.7,
+    "Z_SAFE": 13.8,
+    "Z_ASPIRATE": -2.3,
+    "Z_DISPENSE": 2.2
 }
 
 # --- SCREWCAP VIAL RACK CONFIGURATION DEFAULT (Row F) (Relative Offsets) ---
 SCREWCAP_VIAL_RACK_CONFIG_DEFAULT = {
-    "F1_X": -113.2, "F1_Y": -112.8,
-    "F8_X": 12.4, "F8_Y": -112.8,
-    "Z_SAFE": 38.8,
-    "Z_ASPIRATE": -8.9,
-    "Z_DISPENSE": 22.2
+    "F1_X": -113.6, "F1_Y": -113.7,
+    "F8_X": 12.9, "F8_Y": -114.2,
+    "Z_SAFE": 13.8,
+    "Z_ASPIRATE": -31.9,
+    "Z_DISPENSE": -2.8
 }
 
 # --- ACTIVE CONFIGURATIONS (Will be overwritten by JSON if exists) ---
