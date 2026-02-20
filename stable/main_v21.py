@@ -139,10 +139,9 @@ PLATE_CONFIG_DEFAULT = {
 }
 
 # --- FALCON RACK CONFIGURATION DEFAULT (Relative Offsets) ---
-# 15mL Falcon Grid: 3 rows (A-C) x 4 columns (1-4)
 FALCON_RACK_CONFIG_DEFAULT = {
     "15ML_A1_X": -94.9, "15ML_A1_Y": 15.8,
-    "15ML_C4_X": -57.0, "15ML_C4_Y": -24.6,
+    "15ML_B3_X": -57.0, "15ML_B3_Y": -4.4,
     "50ML_X": -31.3, "50ML_Y": 5.5,
     "Z_SAFE": 37.2,
     "Z_ASPIRATE": -85.0,
@@ -331,7 +330,7 @@ class LiquidHandlerApp:
         self.plate_cols = [str(i) for i in range(1, 13)]
         self.plate_wells = [f"{r}{c}" for r in self.plate_rows for c in self.plate_cols]
 
-        self.falcon_positions = ["A1", "A2", "A3", "A4", "B1", "B2", "B3", "B4", "C1", "C2", "C3", "C4", "50mL"]
+        self.falcon_positions = ["A1", "A2", "A3", "B1", "B2", "B3", "50mL"]
         self.wash_positions = ["Wash A", "Wash B", "Wash C", "Trash"]
         self._4ml_positions = [f"A{i}" for i in range(1, 9)]
         self.filter_eppi_positions = [f"B{i}" for i in range(1, 9)]
@@ -1274,7 +1273,7 @@ class LiquidHandlerApp:
 
         self.combine_rows = []
         vol_options = [str(x) for x in range(100, 1700, 100)]
-        default_falcons = ["A1", "A2", "A3", "A4", "B1", "B2", "B3", "B4", "C1", "C2", "C3", "C4"]
+        default_falcons = ["A1", "A2", "A3", "B1", "B2", "B3"]
         wash_vol_options = ["0"] + [str(x) for x in range(100, 900, 100)]
         wash_times_options = [str(x) for x in range(1, 6)]
         source_options = self.wash_positions + [f"Falcon {p}" for p in self.falcon_positions]
@@ -2820,13 +2819,13 @@ class LiquidHandlerApp:
             return self.resolve_coords(FALCON_RACK_CONFIG["50ML_X"], FALCON_RACK_CONFIG["50ML_Y"])
         row_char = falcon_key[0]
         col_num = int(falcon_key[1:])
-        falcon_rows = ["A", "B", "C"]
+        falcon_rows = ["A", "B"]
         if row_char not in falcon_rows: return 0.0, 0.0
         row_idx = falcon_rows.index(row_char)
         col_idx = col_num - 1
-        rx, ry = self._get_interpolated_coords(col_idx, row_idx, 4, 3, FALCON_RACK_CONFIG["15ML_A1_X"],
-                                               FALCON_RACK_CONFIG["15ML_A1_Y"], FALCON_RACK_CONFIG["15ML_C4_X"],
-                                               FALCON_RACK_CONFIG["15ML_C4_Y"])
+        rx, ry = self._get_interpolated_coords(col_idx, row_idx, 3, 2, FALCON_RACK_CONFIG["15ML_A1_X"],
+                                               FALCON_RACK_CONFIG["15ML_A1_Y"], FALCON_RACK_CONFIG["15ML_B3_X"],
+                                               FALCON_RACK_CONFIG["15ML_B3_Y"])
         return self.resolve_coords(rx, ry)
 
     def get_wash_coordinates(self, wash_name):
@@ -4455,7 +4454,7 @@ class LiquidHandlerApp:
         positions = {
             "tip rack": ("A1", "F4"),
             "96 well plate": ("A1", "H12"),
-            "15 mL falcon rack": ("A1", "C4"),
+            "15 mL falcon rack": ("A1", "B3"),
             "50 mL falcon rack": ("50mL", "50mL"),  # Single position
             "wash rack": ("Wash A", "Trash"),
             "4mL rack": ("A1", "A8"),
@@ -4738,9 +4737,9 @@ class LiquidHandlerApp:
                 if position == "A1":
                     full_config["FALCON_RACK_CONFIG"]["15ML_A1_X"] = rel_x
                     full_config["FALCON_RACK_CONFIG"]["15ML_A1_Y"] = rel_y
-                elif position == "C4":
-                    full_config["FALCON_RACK_CONFIG"]["15ML_C4_X"] = rel_x
-                    full_config["FALCON_RACK_CONFIG"]["15ML_C4_Y"] = rel_y
+                elif position == "B3":
+                    full_config["FALCON_RACK_CONFIG"]["15ML_B3_X"] = rel_x
+                    full_config["FALCON_RACK_CONFIG"]["15ML_B3_Y"] = rel_y
                 full_config["FALCON_RACK_CONFIG"]["Z_CALIBRATE"] = rel_z
 
             elif module_name == "50 mL falcon rack":
