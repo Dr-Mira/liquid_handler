@@ -413,6 +413,21 @@ class LiquidHandlerApp:
 
         # --- CALIBRATION VARIABLES ---
         self.calibration_module_var = tk.StringVar(value="96 well plate")
+        self.calibration_z_height_var = tk.StringVar(value="Z_CALIBRATE")
+
+        # Define available Z heights for each module type
+        self.module_z_heights = {
+            "tip rack": ["Z_TRAVEL", "Z_PICK", "Z_CALIBRATE"],
+            "96 well plate": ["Z_SAFE", "Z_ASPIRATE", "Z_DISPENSE", "Z_CALIBRATE"],
+            "15 mL falcon rack": ["Z_SAFE", "Z_ASPIRATE", "Z_DISPENSE", "Z_CALIBRATE"],
+            "50 mL falcon rack": ["Z_SAFE", "Z_ASPIRATE", "Z_DISPENSE", "Z_CALIBRATE"],
+            "wash rack": ["Z_SAFE", "Z_ASPIRATE", "Z_DISPENSE", "Z_CALIBRATE"],
+            "4mL rack": ["Z_SAFE", "Z_ASPIRATE", "Z_DISPENSE", "Z_CALIBRATE"],
+            "filter eppi rack": ["Z_SAFE", "Z_ASPIRATE", "Z_DISPENSE", "Z_CALIBRATE"],
+            "eppi rack": ["Z_SAFE", "Z_ASPIRATE", "Z_DISPENSE", "Z_CALIBRATE"],
+            "hplc vial insert rack": ["Z_SAFE", "Z_ASPIRATE", "Z_DISPENSE", "Z_CALIBRATE"],
+            "screwcap vial rack": ["Z_SAFE", "Z_ASPIRATE", "Z_DISPENSE", "Z_CALIBRATE"]
+        }
 
         self._build_ui()
         self._poll_rx_queue()
@@ -2186,6 +2201,16 @@ class LiquidHandlerApp:
 
         ttk.Combobox(module_row, textvariable=self.calibration_module_var, values=module_options,
                      width=20, state="readonly").pack(side="left", padx=(0, 10))
+        self.calibration_module_var.trace("w", self._on_module_selection_changed)
+
+        # Z-height selection row
+        z_height_row = ttk.Frame(module_calib_frame)
+        z_height_row.pack(fill="x", pady=(0, 10))
+        ttk.Label(z_height_row, text="Z Height:").pack(side="left", padx=(0, 5))
+        self.z_height_combobox = ttk.Combobox(z_height_row, textvariable=self.calibration_z_height_var,
+                                                values=self.module_z_heights["96 well plate"],
+                                                width=15, state="readonly")
+        self.z_height_combobox.pack(side="left", padx=(0, 10))
 
         ttk.Button(module_row, text="Calibrate Module",
                    command=self.start_module_calibration_sequence).pack(side="left")
@@ -2193,6 +2218,17 @@ class LiquidHandlerApp:
     # ==========================================
     #           LOGIC & COMMS
     # ==========================================
+
+    def _on_module_selection_changed(self, *args):
+        """Update Z-height combobox when module selection changes"""
+        module_name = self.calibration_module_var.get()
+        z_heights = self.module_z_heights.get(module_name, ["Z_CALIBRATE"])
+        self.z_height_combobox['values'] = z_heights
+        # Set default to Z_CALIBRATE if available, otherwise first option
+        if "Z_CALIBRATE" in z_heights:
+            self.calibration_z_height_var.set("Z_CALIBRATE")
+        else:
+            self.calibration_z_height_var.set(z_heights[0])
 
     def log_line(self, text):
         # 1. Update GUI
@@ -4450,6 +4486,22 @@ class LiquidHandlerApp:
             messagebox.showerror("Error", f"Could not save config: {e}")
             self.log_line(f"[CALIB] Error reverting pin config: {e}")
 
+    def _get_module_config(self, module_name):
+        """Get the config dictionary for a given module"""
+        config_map = {
+            "tip rack": TIP_RACK_CONFIG,
+            "96 well plate": PLATE_CONFIG,
+            "15 mL falcon rack": FALCON_RACK_CONFIG,
+            "50 mL falcon rack": FALCON_RACK_CONFIG,
+            "wash rack": WASH_RACK_CONFIG,
+            "4mL rack": _4ML_RACK_CONFIG,
+            "filter eppi rack": FILTER_EPPI_RACK_CONFIG,
+            "eppi rack": EPPI_RACK_CONFIG,
+            "hplc vial insert rack": HPLC_VIAL_INSERT_RACK_CONFIG,
+            "screwcap vial rack": SCREWCAP_VIAL_RACK_CONFIG
+        }
+        return config_map.get(module_name)
+
     def get_module_first_last_positions(self, module_name):
         """Get the first and last positions for a given module"""
         positions = {
@@ -4472,15 +4524,18 @@ class LiquidHandlerApp:
             return
 
         module_name = self.calibration_module_var.get()
+        selected_z_height = self.calibration_z_height_var.get()
         first_pos, last_pos = self.get_module_first_last_positions(module_name)
 
         # Store calibration state
         self.current_calibration_module = module_name
         self.current_calibration_positions = [first_pos, last_pos]
         self.current_calibration_step = 0  # 0 = first position, 1 = last position
+        self.current_calibration_z_height = selected_z_height  # Store selected Z height
 
         self.log_line(f"[MODULE_CALIB] Starting {module_name} calibration sequence...")
         self.log_line(f"[MODULE_CALIB] Will calibrate positions: {first_pos} and {last_pos}")
+        self.log_line(f"[MODULE_CALIB] Z height to calibrate: {selected_z_height}")
 
         # Start with first position
         self._calibrate_module_position(first_pos)
@@ -4488,69 +4543,60 @@ class LiquidHandlerApp:
     def _calibrate_module_position(self, position):
         """Move to a specific position in the current module and show calibration dialog"""
         module_name = self.current_calibration_module
-
+        selected_z_height = self.calibration_z_height_var.get()
+        
+        # Store the selected Z height key for saving later
+        self.current_calibration_z_height = selected_z_height
+        
+        # Get the appropriate config based on module type
+        module_config = self._get_module_config(module_name)
+        if not module_config:
+            messagebox.showerror("Error", f"Unknown module: {module_name}")
+            return
+        
         # Get coordinates based on module type
         try:
             if module_name == "tip rack":
                 x, y = self.get_tip_coordinates(position)
-                safe_z = self.resolve_coords(0, 0, TIP_RACK_CONFIG["Z_TRAVEL"])[2]
-                calib_z = self.resolve_coords(0, 0, TIP_RACK_CONFIG.get("Z_CALIBRATE", TIP_RACK_CONFIG["Z_PICK"]))[2]
+                safe_z = self.resolve_coords(0, 0, module_config["Z_TRAVEL"])[2]
             elif module_name == "96 well plate":
                 x, y = self.get_well_coordinates(position)
-                safe_z = self.resolve_coords(0, 0, PLATE_CONFIG["Z_SAFE"])[2]
-                calib_z = self.resolve_coords(0, 0, PLATE_CONFIG.get("Z_CALIBRATE", PLATE_CONFIG["Z_DISPENSE"]))[2]
-            elif module_name == "15 mL falcon rack":
+                safe_z = self.resolve_coords(0, 0, module_config["Z_SAFE"])[2]
+            elif module_name in ["15 mL falcon rack", "50 mL falcon rack"]:
                 x, y = self.get_falcon_coordinates(position)
-                safe_z = self.resolve_coords(0, 0, FALCON_RACK_CONFIG["Z_SAFE"])[2]
-                calib_z = \
-                    self.resolve_coords(0, 0, FALCON_RACK_CONFIG.get("Z_CALIBRATE", FALCON_RACK_CONFIG["Z_DISPENSE"]))[
-                        2]
-            elif module_name == "50 mL falcon rack":
-                x, y = self.get_falcon_coordinates(position)
-                safe_z = self.resolve_coords(0, 0, FALCON_RACK_CONFIG["Z_SAFE"])[2]
-                calib_z = \
-                    self.resolve_coords(0, 0, FALCON_RACK_CONFIG.get("Z_CALIBRATE", FALCON_RACK_CONFIG["Z_DISPENSE"]))[
-                        2]
+                safe_z = self.resolve_coords(0, 0, module_config["Z_SAFE"])[2]
             elif module_name == "wash rack":
                 x, y = self.get_wash_coordinates(position)
-                safe_z = self.resolve_coords(0, 0, WASH_RACK_CONFIG["Z_SAFE"])[2]
-                calib_z = \
-                    self.resolve_coords(0, 0, WASH_RACK_CONFIG.get("Z_CALIBRATE", WASH_RACK_CONFIG["Z_DISPENSE"]))[2]
+                safe_z = self.resolve_coords(0, 0, module_config["Z_SAFE"])[2]
             elif module_name == "4mL rack":
                 x, y = self.get_4ml_coordinates(position)
-                safe_z = self.resolve_coords(0, 0, _4ML_RACK_CONFIG["Z_SAFE"])[2]
-                calib_z = \
-                    self.resolve_coords(0, 0, _4ML_RACK_CONFIG.get("Z_CALIBRATE", _4ML_RACK_CONFIG["Z_DISPENSE"]))[2]
+                safe_z = self.resolve_coords(0, 0, module_config["Z_SAFE"])[2]
             elif module_name == "filter eppi rack":
-                x, y = self.get_1x8_rack_coordinates(position, FILTER_EPPI_RACK_CONFIG, "B")
-                safe_z = self.resolve_coords(0, 0, FILTER_EPPI_RACK_CONFIG["Z_SAFE"])[2]
-                calib_z = self.resolve_coords(0, 0, FILTER_EPPI_RACK_CONFIG.get("Z_CALIBRATE",
-                                                                                FILTER_EPPI_RACK_CONFIG["Z_DISPENSE"]))[
-                    2]
+                x, y = self.get_1x8_rack_coordinates(position, module_config, "B")
+                safe_z = self.resolve_coords(0, 0, module_config["Z_SAFE"])[2]
             elif module_name == "eppi rack":
-                x, y = self.get_1x8_rack_coordinates(position, EPPI_RACK_CONFIG, "C")
-                safe_z = self.resolve_coords(0, 0, EPPI_RACK_CONFIG["Z_SAFE"])[2]
-                calib_z = \
-                    self.resolve_coords(0, 0, EPPI_RACK_CONFIG.get("Z_CALIBRATE", EPPI_RACK_CONFIG["Z_DISPENSE"]))[2]
+                x, y = self.get_1x8_rack_coordinates(position, module_config, "C")
+                safe_z = self.resolve_coords(0, 0, module_config["Z_SAFE"])[2]
             elif module_name == "hplc vial insert rack":
-                x, y = self.get_1x8_rack_coordinates(position, HPLC_VIAL_INSERT_RACK_CONFIG, "E")
-                safe_z = self.resolve_coords(0, 0, HPLC_VIAL_INSERT_RACK_CONFIG["Z_SAFE"])[2]
-                calib_z = self.resolve_coords(0, 0, HPLC_VIAL_INSERT_RACK_CONFIG.get("Z_CALIBRATE",
-                                                                                     HPLC_VIAL_INSERT_RACK_CONFIG[
-                                                                                         "Z_DISPENSE"]))[2]
+                x, y = self.get_1x8_rack_coordinates(position, module_config, "E")
+                safe_z = self.resolve_coords(0, 0, module_config["Z_SAFE"])[2]
             elif module_name == "screwcap vial rack":
-                x, y = self.get_1x8_rack_coordinates(position, SCREWCAP_VIAL_RACK_CONFIG, "F")
-                safe_z = self.resolve_coords(0, 0, SCREWCAP_VIAL_RACK_CONFIG["Z_SAFE"])[2]
-                calib_z = self.resolve_coords(0, 0, SCREWCAP_VIAL_RACK_CONFIG.get("Z_CALIBRATE",
-                                                                                  SCREWCAP_VIAL_RACK_CONFIG[
-                                                                                      "Z_DISPENSE"]))[2]
+                x, y = self.get_1x8_rack_coordinates(position, module_config, "F")
+                safe_z = self.resolve_coords(0, 0, module_config["Z_SAFE"])[2]
             else:
                 messagebox.showerror("Error", f"Unknown module: {module_name}")
                 return
         except Exception as e:
             messagebox.showerror("Error", f"Failed to get coordinates for {position}: {e}")
             return
-
+        
+        # Get the selected Z height value from config
+        try:
+            calib_z = self.resolve_coords(0, 0, module_config[selected_z_height])[2]
+        except KeyError:
+            # Fallback to Z_CALIBRATE if selected height not found
+            calib_z = self.resolve_coords(0, 0, module_config.get("Z_CALIBRATE", module_config["Z_DISPENSE"]))[2]
+        
         # Store current position being calibrated
         self.current_calibration_position = position
         self.current_calibration_coords = (x, y, calib_z)
@@ -4576,7 +4622,7 @@ class LiquidHandlerApp:
         """Show popup asking user to accept or calibrate the current module position"""
         popup = tk.Toplevel(self.root)
         popup.title("Module Calibration Check")
-        popup.geometry("350x180")
+        popup.geometry("400x280")
         popup.grab_set()
 
         module_name = self.current_calibration_module
@@ -4588,6 +4634,19 @@ class LiquidHandlerApp:
                   font=("Arial", 10)).pack(pady=10)
         ttk.Label(popup, text=f"Step {step + 1} of {total_positions}",
                   font=("Arial", 9, "italic")).pack(pady=5)
+        
+        # Z-height selection in popup
+        z_height_frame = ttk.Frame(popup)
+        z_height_frame.pack(pady=10)
+        ttk.Label(z_height_frame, text="Z Height to Calibrate:").pack(side="left", padx=(0, 5))
+        
+        # Get available Z heights for this module
+        z_heights = self.module_z_heights.get(module_name, ["Z_CALIBRATE"])
+        popup_z_height_var = tk.StringVar(value=self.current_calibration_z_height)
+        z_height_combo = ttk.Combobox(z_height_frame, textvariable=popup_z_height_var,
+                                       values=z_heights, width=15, state="readonly")
+        z_height_combo.pack(side="left", padx=5)
+        
         ttk.Label(popup, text="Is the position correct?", font=("Arial", 10)).pack(pady=5)
 
         btn_frame = ttk.Frame(popup)
@@ -4598,6 +4657,8 @@ class LiquidHandlerApp:
             self._proceed_to_next_calibration_step()
 
         def calibrate_position():
+            # Update the Z height selection from popup
+            self.current_calibration_z_height = popup_z_height_var.get()
             popup.destroy()
             self._open_module_calibration_jog_window()
 
@@ -4719,7 +4780,7 @@ class LiquidHandlerApp:
                 elif position == "F4":
                     full_config["TIP_RACK_CONFIG"]["F4_X"] = rel_x
                     full_config["TIP_RACK_CONFIG"]["F4_Y"] = rel_y
-                full_config["TIP_RACK_CONFIG"]["Z_CALIBRATE"] = rel_z
+                full_config["TIP_RACK_CONFIG"][self.current_calibration_z_height] = rel_z
 
             elif module_name == "96 well plate":
                 if "PLATE_CONFIG" not in full_config:
@@ -4730,7 +4791,7 @@ class LiquidHandlerApp:
                 elif position == "H12":
                     full_config["PLATE_CONFIG"]["H12_X"] = rel_x
                     full_config["PLATE_CONFIG"]["H12_Y"] = rel_y
-                full_config["PLATE_CONFIG"]["Z_CALIBRATE"] = rel_z
+                full_config["PLATE_CONFIG"][self.current_calibration_z_height] = rel_z
 
             elif module_name == "15 mL falcon rack":
                 if "FALCON_RACK_CONFIG" not in full_config:
@@ -4741,14 +4802,14 @@ class LiquidHandlerApp:
                 elif position == "C4":
                     full_config["FALCON_RACK_CONFIG"]["15ML_C4_X"] = rel_x
                     full_config["FALCON_RACK_CONFIG"]["15ML_C4_Y"] = rel_y
-                full_config["FALCON_RACK_CONFIG"]["Z_CALIBRATE"] = rel_z
+                full_config["FALCON_RACK_CONFIG"][self.current_calibration_z_height] = rel_z
 
             elif module_name == "50 mL falcon rack":
                 if "FALCON_RACK_CONFIG" not in full_config:
                     full_config["FALCON_RACK_CONFIG"] = {}
                 full_config["FALCON_RACK_CONFIG"]["50ML_X"] = rel_x
                 full_config["FALCON_RACK_CONFIG"]["50ML_Y"] = rel_y
-                full_config["FALCON_RACK_CONFIG"]["Z_CALIBRATE"] = rel_z
+                full_config["FALCON_RACK_CONFIG"][self.current_calibration_z_height] = rel_z
 
             elif module_name == "wash rack":
                 if "WASH_RACK_CONFIG" not in full_config:
@@ -4759,7 +4820,7 @@ class LiquidHandlerApp:
                 elif position == "Trash":
                     full_config["WASH_RACK_CONFIG"]["B2_X"] = rel_x
                     full_config["WASH_RACK_CONFIG"]["B2_Y"] = rel_y
-                full_config["WASH_RACK_CONFIG"]["Z_CALIBRATE"] = rel_z
+                full_config["WASH_RACK_CONFIG"][self.current_calibration_z_height] = rel_z
 
             elif module_name == "4mL rack":
                 if "4ML_RACK_CONFIG" not in full_config:
@@ -4770,7 +4831,7 @@ class LiquidHandlerApp:
                 elif position == "A8":
                     full_config["4ML_RACK_CONFIG"]["A8_X"] = rel_x
                     full_config["4ML_RACK_CONFIG"]["A8_Y"] = rel_y
-                full_config["4ML_RACK_CONFIG"]["Z_CALIBRATE"] = rel_z
+                full_config["4ML_RACK_CONFIG"][self.current_calibration_z_height] = rel_z
 
             elif module_name == "filter eppi rack":
                 if "FILTER_EPPI_RACK_CONFIG" not in full_config:
@@ -4781,7 +4842,7 @@ class LiquidHandlerApp:
                 elif position == "B8":
                     full_config["FILTER_EPPI_RACK_CONFIG"]["B8_X"] = rel_x
                     full_config["FILTER_EPPI_RACK_CONFIG"]["B8_Y"] = rel_y
-                full_config["FILTER_EPPI_RACK_CONFIG"]["Z_CALIBRATE"] = rel_z
+                full_config["FILTER_EPPI_RACK_CONFIG"][self.current_calibration_z_height] = rel_z
 
             elif module_name == "eppi rack":
                 if "EPPI_RACK_CONFIG" not in full_config:
@@ -4792,7 +4853,7 @@ class LiquidHandlerApp:
                 elif position == "C8":
                     full_config["EPPI_RACK_CONFIG"]["C8_X"] = rel_x
                     full_config["EPPI_RACK_CONFIG"]["C8_Y"] = rel_y
-                full_config["EPPI_RACK_CONFIG"]["Z_CALIBRATE"] = rel_z
+                full_config["EPPI_RACK_CONFIG"][self.current_calibration_z_height] = rel_z
 
             elif module_name == "hplc vial insert rack":
                 if "HPLC_VIAL_INSERT_RACK_CONFIG" not in full_config:
@@ -4803,7 +4864,7 @@ class LiquidHandlerApp:
                 elif position == "E8":
                     full_config["HPLC_VIAL_INSERT_RACK_CONFIG"]["E8_X"] = rel_x
                     full_config["HPLC_VIAL_INSERT_RACK_CONFIG"]["E8_Y"] = rel_y
-                full_config["HPLC_VIAL_INSERT_RACK_CONFIG"]["Z_CALIBRATE"] = rel_z
+                full_config["HPLC_VIAL_INSERT_RACK_CONFIG"][self.current_calibration_z_height] = rel_z
 
             elif module_name == "screwcap vial rack":
                 if "SCREWCAP_VIAL_RACK_CONFIG" not in full_config:
@@ -4814,16 +4875,17 @@ class LiquidHandlerApp:
                 elif position == "F8":
                     full_config["SCREWCAP_VIAL_RACK_CONFIG"]["F8_X"] = rel_x
                     full_config["SCREWCAP_VIAL_RACK_CONFIG"]["F8_Y"] = rel_y
-                full_config["SCREWCAP_VIAL_RACK_CONFIG"]["Z_CALIBRATE"] = rel_z
+                full_config["SCREWCAP_VIAL_RACK_CONFIG"][self.current_calibration_z_height] = rel_z
 
             # Save the complete config back to file
             with open(self.config_file, "w") as f:
                 json.dump(full_config, f, indent=4)
 
+            z_height_key = self.current_calibration_z_height
             self.log_line(
-                f"[MODULE_CALIB] Saved {module_name} {position}: X={rel_x}, Y={rel_y}, Z_CALIBRATE={rel_z}")
+                f"[MODULE_CALIB] Saved {module_name} {position}: X={rel_x}, Y={rel_y}, {z_height_key}={rel_z}")
             messagebox.showinfo("Saved",
-                                f"{module_name} {position} calibration saved!\nX={rel_x}, Y={rel_y}, Z_CALIBRATE={rel_z}")
+                                f"{module_name} {position} calibration saved!\nX={rel_x}, Y={rel_y}, {z_height_key}={rel_z}")
 
         except Exception as e:
             messagebox.showerror("Error", f"Failed to save calibration: {e}")

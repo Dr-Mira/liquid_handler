@@ -139,9 +139,10 @@ PLATE_CONFIG_DEFAULT = {
 }
 
 # --- FALCON RACK CONFIGURATION DEFAULT (Relative Offsets) ---
+# 15mL Falcon Grid: 3 rows (A-C) x 4 columns (1-4)
 FALCON_RACK_CONFIG_DEFAULT = {
     "15ML_A1_X": -94.9, "15ML_A1_Y": 15.8,
-    "15ML_B3_X": -57.0, "15ML_B3_Y": -4.4,
+    "15ML_C4_X": -57.0, "15ML_C4_Y": -24.6,
     "50ML_X": -31.3, "50ML_Y": 5.5,
     "Z_SAFE": 37.2,
     "Z_ASPIRATE": -85.0,
@@ -330,7 +331,7 @@ class LiquidHandlerApp:
         self.plate_cols = [str(i) for i in range(1, 13)]
         self.plate_wells = [f"{r}{c}" for r in self.plate_rows for c in self.plate_cols]
 
-        self.falcon_positions = ["A1", "A2", "A3", "B1", "B2", "B3", "50mL"]
+        self.falcon_positions = ["A1", "A2", "A3", "A4", "B1", "B2", "B3", "B4", "C1", "C2", "C3", "C4", "50mL"]
         self.wash_positions = ["Wash A", "Wash B", "Wash C", "Trash"]
         self._4ml_positions = [f"A{i}" for i in range(1, 9)]
         self.filter_eppi_positions = [f"B{i}" for i in range(1, 9)]
@@ -1048,6 +1049,7 @@ class LiquidHandlerApp:
         self._apply_transfer_table_preset(preset, preset_name="Preset 5")
 
         # ==========================================
+
     #           ALIQUOT PRESETS
     # ==========================================
 
@@ -1242,7 +1244,6 @@ class LiquidHandlerApp:
         ]
         self._apply_dilution_preset(preset, preset_name="P3")
 
-
     def _build_combine_fractions_tab(self, parent):
         frame = ttk.Frame(parent, padding=10)
         frame.pack(fill="both", expand=True)
@@ -1273,7 +1274,7 @@ class LiquidHandlerApp:
 
         self.combine_rows = []
         vol_options = [str(x) for x in range(100, 1700, 100)]
-        default_falcons = ["A1", "A2", "A3", "B1", "B2", "B3"]
+        default_falcons = ["A1", "A2", "A3", "A4", "B1", "B2", "B3", "B4", "C1", "C2", "C3", "C4"]
         wash_vol_options = ["0"] + [str(x) for x in range(100, 900, 100)]
         wash_times_options = [str(x) for x in range(1, 6)]
         source_options = self.wash_positions + [f"Falcon {p}" for p in self.falcon_positions]
@@ -2305,11 +2306,11 @@ class LiquidHandlerApp:
         """
         if not self.ser or not self.ser.is_open:
             return None, None, None
-        
+
         # Use a local event to wait for response
         response_event = threading.Event()
         result = {'x': None, 'y': None, 'z': None}
-        
+
         def parse_response(line):
             match = re.search(r"X:([0-9.-]+)\s*Y:([0-9.-]+)\s*Z:([0-9.-]+)", line)
             if match:
@@ -2317,11 +2318,11 @@ class LiquidHandlerApp:
                 result['y'] = float(match.group(2))
                 result['z'] = float(match.group(3))
                 response_event.set()
-        
+
         # Temporarily add a custom parser for this request
         original_parse = self._parse_coordinates
         self._parse_coordinates = parse_response
-        
+
         try:
             self._send_raw("M114\n")
             # Wait for response with timeout
@@ -2405,12 +2406,12 @@ class LiquidHandlerApp:
             # On startup, machine usually reports 0,0,0 or unknown until homed.
             # Check live coordinates to see if machine is properly initialized
             live_x, live_y, live_z = self._get_live_coordinates(timeout=3.0)
-            
+
             # If live coordinates are valid (not magic numbers), skip popup
             if self._is_valid_coordinates(live_x, live_y, live_z):
                 self.log_line("[STARTUP] Live coordinates valid, skipping home popup.")
                 return
-            
+
             # Machine appears not homed - show popup after delay
             self._show_delayed_home_popup(log_x, log_y, log_z, is_magic_numbers=False)
 
@@ -2422,16 +2423,17 @@ class LiquidHandlerApp:
         Shows a delayed popup asking user to home the machine.
         Implements 5-second delay to allow hardware to synchronize.
         """
+
         def show_popup():
             """This runs after the 5-second delay"""
             # Get fresh live coordinates before showing popup
             live_x, live_y, live_z = self._get_live_coordinates(timeout=2.0)
-            
+
             # Check if coordinates are now valid - if so, don't show popup
             if self._is_valid_coordinates(live_x, live_y, live_z):
                 self.log_line("[STARTUP] Coordinates now valid, skipping home popup.")
                 return
-            
+
             # Show the popup with option to home
             if is_magic_numbers:
                 response = messagebox.askyesno(
@@ -2450,10 +2452,10 @@ class LiquidHandlerApp:
                     f"Machine may not be homed.\n\n"
                     f"Do you want to HOME ALL now?"
                 )
-            
+
             if response:
                 self.send_home("All")
-        
+
         # Schedule popup after 5 seconds (5000ms)
         self.root.after(5000, show_popup)
         self.log_line("[STARTUP] Waiting 5 seconds for hardware sync before showing home prompt...")
@@ -2819,13 +2821,13 @@ class LiquidHandlerApp:
             return self.resolve_coords(FALCON_RACK_CONFIG["50ML_X"], FALCON_RACK_CONFIG["50ML_Y"])
         row_char = falcon_key[0]
         col_num = int(falcon_key[1:])
-        falcon_rows = ["A", "B"]
+        falcon_rows = ["A", "B", "C"]
         if row_char not in falcon_rows: return 0.0, 0.0
         row_idx = falcon_rows.index(row_char)
         col_idx = col_num - 1
-        rx, ry = self._get_interpolated_coords(col_idx, row_idx, 3, 2, FALCON_RACK_CONFIG["15ML_A1_X"],
-                                               FALCON_RACK_CONFIG["15ML_A1_Y"], FALCON_RACK_CONFIG["15ML_B3_X"],
-                                               FALCON_RACK_CONFIG["15ML_B3_Y"])
+        rx, ry = self._get_interpolated_coords(col_idx, row_idx, 4, 3, FALCON_RACK_CONFIG["15ML_A1_X"],
+                                               FALCON_RACK_CONFIG["15ML_A1_Y"], FALCON_RACK_CONFIG["15ML_C4_X"],
+                                               FALCON_RACK_CONFIG["15ML_C4_Y"])
         return self.resolve_coords(rx, ry)
 
     def get_wash_coordinates(self, wash_name):
@@ -4320,21 +4322,23 @@ class LiquidHandlerApp:
         jog_win.geometry("450x420")
         jog_win.grab_set()
         ttk.Label(jog_win, text="Jog head until tip touches pin.", font=("Arial", 10, "bold")).pack(pady=10)
-        
+
         # Precision selection frame
         precision_frame = ttk.LabelFrame(jog_win, text="Step Precision", padding=10)
         precision_frame.pack(pady=5)
         self.calib_step_var = tk.DoubleVar(value=0.1)  # Default to 0.1mm
-        ttk.Radiobutton(precision_frame, text="0.1 mm", variable=self.calib_step_var, value=0.1).pack(side="left", padx=10)
-        ttk.Radiobutton(precision_frame, text="1.0 mm", variable=self.calib_step_var, value=1.0).pack(side="left", padx=10)
-        
+        ttk.Radiobutton(precision_frame, text="0.1 mm", variable=self.calib_step_var, value=0.1).pack(side="left",
+                                                                                                      padx=10)
+        ttk.Radiobutton(precision_frame, text="1.0 mm", variable=self.calib_step_var, value=1.0).pack(side="left",
+                                                                                                      padx=10)
+
         # Current precision display
         self.calib_precision_label = ttk.Label(jog_win, text="Current Step: 0.1 mm", font=("Arial", 9))
         self.calib_precision_label.pack(pady=5)
-        
+
         def update_precision_label():
             self.calib_precision_label.config(text=f"Current Step: {self.calib_step_var.get()} mm")
-        
+
         ctrl_frame = ttk.Frame(jog_win)
         ctrl_frame.pack(pady=10)
         original_step = self.step_size_var.get()
@@ -4353,18 +4357,21 @@ class LiquidHandlerApp:
         jog_win.protocol("WM_DELETE_WINDOW", close_and_restore)
         btn_w = 6
         ttk.Button(ctrl_frame, text="Y+", width=btn_w, command=lambda: jog_with_precision("Y", 1)).grid(row=0, column=1,
-                                                                                                   pady=5)
-        ttk.Button(ctrl_frame, text="Y-", width=btn_w, command=lambda: jog_with_precision("Y", -1)).grid(row=2, column=1,
-                                                                                                    pady=5)
-        ttk.Button(ctrl_frame, text="X-", width=btn_w, command=lambda: jog_with_precision("X", -1)).grid(row=1, column=0,
-                                                                                                    padx=5)
+                                                                                                        pady=5)
+        ttk.Button(ctrl_frame, text="Y-", width=btn_w, command=lambda: jog_with_precision("Y", -1)).grid(row=2,
+                                                                                                         column=1,
+                                                                                                         pady=5)
+        ttk.Button(ctrl_frame, text="X-", width=btn_w, command=lambda: jog_with_precision("X", -1)).grid(row=1,
+                                                                                                         column=0,
+                                                                                                         padx=5)
         ttk.Button(ctrl_frame, text="X+", width=btn_w, command=lambda: jog_with_precision("X", 1)).grid(row=1, column=2,
-                                                                                                   padx=5)
-        ttk.Button(ctrl_frame, text="Z+ (Up)", width=btn_w, command=lambda: jog_with_precision("Z", 1)).grid(row=0, column=4,
-                                                                                                            padx=20)
-        ttk.Button(ctrl_frame, text="Z- (Dn)", width=btn_w, command=lambda: jog_with_precision("Z", -1)).grid(row=2,
+                                                                                                        padx=5)
+        ttk.Button(ctrl_frame, text="Z+ (Up)", width=btn_w, command=lambda: jog_with_precision("Z", 1)).grid(row=0,
                                                                                                              column=4,
                                                                                                              padx=20)
+        ttk.Button(ctrl_frame, text="Z- (Dn)", width=btn_w, command=lambda: jog_with_precision("Z", -1)).grid(row=2,
+                                                                                                              column=4,
+                                                                                                              padx=20)
         bot_frame = ttk.Frame(jog_win)
         bot_frame.pack(side="bottom", fill="x", pady=10, padx=10)
         ttk.Button(bot_frame, text="Revert to Default",
@@ -4378,7 +4385,7 @@ class LiquidHandlerApp:
         rounded_x = round(self.current_x, 1)
         rounded_y = round(self.current_y, 1)
         rounded_z = round(self.current_z, 1)
-        
+
         # Load existing full config from file
         try:
             if os.path.exists(self.config_file):
@@ -4454,7 +4461,7 @@ class LiquidHandlerApp:
         positions = {
             "tip rack": ("A1", "F4"),
             "96 well plate": ("A1", "H12"),
-            "15 mL falcon rack": ("A1", "B3"),
+            "15 mL falcon rack": ("A1", "C4"),
             "50 mL falcon rack": ("50mL", "50mL"),  # Single position
             "wash rack": ("Wash A", "Trash"),
             "4mL rack": ("A1", "A8"),
@@ -4615,18 +4622,20 @@ class LiquidHandlerApp:
 
         ttk.Label(jog_win, text=f"Jog head to correct {module_name} {position} position.",
                   font=("Arial", 10, "bold")).pack(pady=10)
-        
+
         # Precision selection frame
         precision_frame = ttk.LabelFrame(jog_win, text="Step Precision", padding=10)
         precision_frame.pack(pady=5)
         self.calib_step_var = tk.DoubleVar(value=0.1)  # Default to 0.1mm
-        ttk.Radiobutton(precision_frame, text="0.1 mm", variable=self.calib_step_var, value=0.1).pack(side="left", padx=10)
-        ttk.Radiobutton(precision_frame, text="1.0 mm", variable=self.calib_step_var, value=1.0).pack(side="left", padx=10)
-        
+        ttk.Radiobutton(precision_frame, text="0.1 mm", variable=self.calib_step_var, value=0.1).pack(side="left",
+                                                                                                      padx=10)
+        ttk.Radiobutton(precision_frame, text="1.0 mm", variable=self.calib_step_var, value=1.0).pack(side="left",
+                                                                                                      padx=10)
+
         # Current precision display
         self.calib_precision_label = ttk.Label(jog_win, text="Current Step: 0.1 mm", font=("Arial", 9))
         self.calib_precision_label.pack(pady=5)
-        
+
         def update_precision_label():
             self.calib_precision_label.config(text=f"Current Step: {self.calib_step_var.get()} mm")
 
@@ -4652,18 +4661,21 @@ class LiquidHandlerApp:
         # Jog buttons
         btn_w = 6
         ttk.Button(ctrl_frame, text="Y+", width=btn_w, command=lambda: jog_with_precision("Y", 1)).grid(row=0, column=1,
-                                                                                                   pady=5)
-        ttk.Button(ctrl_frame, text="Y-", width=btn_w, command=lambda: jog_with_precision("Y", -1)).grid(row=2, column=1,
-                                                                                                    pady=5)
-        ttk.Button(ctrl_frame, text="X-", width=btn_w, command=lambda: jog_with_precision("X", -1)).grid(row=1, column=0,
-                                                                                                    padx=5)
+                                                                                                        pady=5)
+        ttk.Button(ctrl_frame, text="Y-", width=btn_w, command=lambda: jog_with_precision("Y", -1)).grid(row=2,
+                                                                                                         column=1,
+                                                                                                         pady=5)
+        ttk.Button(ctrl_frame, text="X-", width=btn_w, command=lambda: jog_with_precision("X", -1)).grid(row=1,
+                                                                                                         column=0,
+                                                                                                         padx=5)
         ttk.Button(ctrl_frame, text="X+", width=btn_w, command=lambda: jog_with_precision("X", 1)).grid(row=1, column=2,
-                                                                                                   padx=5)
-        ttk.Button(ctrl_frame, text="Z+ (Up)", width=btn_w, command=lambda: jog_with_precision("Z", 1)).grid(row=0, column=4,
-                                                                                                            padx=20)
-        ttk.Button(ctrl_frame, text="Z- (Dn)", width=btn_w, command=lambda: jog_with_precision("Z", -1)).grid(row=2,
+                                                                                                        padx=5)
+        ttk.Button(ctrl_frame, text="Z+ (Up)", width=btn_w, command=lambda: jog_with_precision("Z", 1)).grid(row=0,
                                                                                                              column=4,
                                                                                                              padx=20)
+        ttk.Button(ctrl_frame, text="Z- (Dn)", width=btn_w, command=lambda: jog_with_precision("Z", -1)).grid(row=2,
+                                                                                                              column=4,
+                                                                                                              padx=20)
 
         # Bottom buttons
         bot_frame = ttk.Frame(jog_win)
@@ -4690,7 +4702,7 @@ class LiquidHandlerApp:
         rel_x = new_x - CALIBRATION_PIN_CONFIG["PIN_X"]
         rel_y = new_y - CALIBRATION_PIN_CONFIG["PIN_Y"]
         rel_z = new_z - CALIBRATION_PIN_CONFIG["PIN_Z"]
-        
+
         # Round values to 0.1 mm precision
         rel_x = round(rel_x, 1)
         rel_y = round(rel_y, 1)
@@ -4737,9 +4749,9 @@ class LiquidHandlerApp:
                 if position == "A1":
                     full_config["FALCON_RACK_CONFIG"]["15ML_A1_X"] = rel_x
                     full_config["FALCON_RACK_CONFIG"]["15ML_A1_Y"] = rel_y
-                elif position == "B3":
-                    full_config["FALCON_RACK_CONFIG"]["15ML_B3_X"] = rel_x
-                    full_config["FALCON_RACK_CONFIG"]["15ML_B3_Y"] = rel_y
+                elif position == "C4":
+                    full_config["FALCON_RACK_CONFIG"]["15ML_C4_X"] = rel_x
+                    full_config["FALCON_RACK_CONFIG"]["15ML_C4_Y"] = rel_y
                 full_config["FALCON_RACK_CONFIG"]["Z_CALIBRATE"] = rel_z
 
             elif module_name == "50 mL falcon rack":
