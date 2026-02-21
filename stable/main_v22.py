@@ -1072,56 +1072,23 @@ class LiquidHandlerApp:
             return
         defaults = {
             "execute": False,
-            "src_mod": "",
-            "src_pos": "",
+            "source": "",
             "volume": "800.0",
             "dest_start": "",
             "dest_end": "",
         }
-        
-        # Mapping from internal module names to UI module names
-        internal_to_ui_map = {
-            "FALCON": "Falcon Rack",
-            "PLATE": "96 Well Plate",
-            "4ML": "4mL Rack",
-            "FILTER_EPPI": "Filter Eppi",
-            "EPPI": "Eppi Rack",
-            "HPLC": "HPLC Vial",
-            "HPLC_INSERT": "HPLC Insert",
-            "SCREWCAP": "Screwcap Vial",
-            "WASH": "Wash Station",
-        }
-        
         for i, row_vars in enumerate(self.aliquot_rows):
             spec = preset_rows[i] if i < len(preset_rows) else {}
             if spec is None:
                 spec = {}
             execute = bool(spec.get("execute", defaults["execute"]))
+            source = spec.get("source", defaults["source"])
             volume = self._preset_val_to_str(spec.get("volume", defaults["volume"]))
             dest_start = spec.get("dest_start", defaults["dest_start"])
             dest_end = spec.get("dest_end", defaults["dest_end"])
 
-            # Handle both new format (src_mod/src_pos) and old format (source)
-            src_mod = spec.get("src_mod", defaults["src_mod"])
-            src_pos = spec.get("src_pos", defaults["src_pos"])
-            
-            # If old format (source) is used, parse it to extract mod and pos
-            old_source = spec.get("source", "")
-            if old_source and not src_mod:
-                internal_mod, src_pos = self._parse_combo_string(old_source)
-                src_mod = internal_to_ui_map.get(internal_mod, internal_mod)
-
             row_vars["execute"].set(execute)
-            row_vars["src_mod"].set(src_mod)
-            
-            # Update the position combobox values based on module
-            pos_combo = row_vars.get("_src_pos_combo")
-            if src_mod in self.module_options_map:
-                pos_values = self.module_options_map[src_mod]
-                if pos_combo:
-                    pos_combo["values"] = pos_values
-            
-            row_vars["src_pos"].set(src_pos)
+            row_vars["source"].set(source)
             row_vars["volume"].set(volume)
             row_vars["dest_start"].set(dest_start)
             row_vars["dest_end"].set(dest_end)
@@ -1488,7 +1455,7 @@ class LiquidHandlerApp:
         table.grid_anchor("w")
 
         cols = [
-            ("Execute", 8), ("Line", 4), ("Source Mod", 12), ("Source Pos", 10), ("Volume (uL)", 10),
+            ("Execute", 8), ("Line", 4), ("Source Vial", 14), ("Volume (uL)", 10),
             ("Dest Start", 15), ("Dest End", 15)
         ]
 
@@ -1499,18 +1466,25 @@ class LiquidHandlerApp:
                 anchor="center"
             ).grid(row=0, column=c, padx=2, pady=(0, 4), sticky="ew")
 
-        # Module names for source selection (includes Wash Station)
-        module_names = list(self.module_options_map.keys())
+        # SOURCE OPTIONS: All small vial modules + Falcon + 96 Well Plate
+        source_vial_positions = []
+        source_vial_positions.extend([f"Falcon {p}" for p in self.falcon_positions])
+        source_vial_positions.extend([f"4mL {p}" for p in self._4ml_positions])
+        source_vial_positions.extend([f"Filter Eppi {p}" for p in self.filter_eppi_positions])
+        source_vial_positions.extend([f"Eppi {p}" for p in self.eppi_positions])
+        source_vial_positions.extend([f"HPLC {p}" for p in self.hplc_positions])
+        source_vial_positions.extend([f"HPLC Insert {p}" for p in self.hplc_insert_positions])
+        source_vial_positions.extend([f"Screwcap {p}" for p in self.screwcap_positions])
+        source_vial_positions.extend([f"96Well {p}" for p in self.plate_wells])
 
-        # Destination options: 12 falcons A1 to C4 + small vial modules
-        dest_positions = []
-        dest_positions.extend([f"Falcon {p}" for p in self.falcon_positions])
-        dest_positions.extend([f"4mL {p}" for p in self._4ml_positions])
-        dest_positions.extend([f"Filter Eppi {p}" for p in self.filter_eppi_positions])
-        dest_positions.extend([f"Eppi {p}" for p in self.eppi_positions])
-        dest_positions.extend([f"HPLC {p}" for p in self.hplc_positions])
-        dest_positions.extend([f"HPLC Insert {p}" for p in self.hplc_insert_positions])
-        dest_positions.extend([f"Screwcap {p}" for p in self.screwcap_positions])
+        # Destination options: only small vial modules (A1 to F8)
+        small_vial_positions = []
+        small_vial_positions.extend([f"4mL {p}" for p in self._4ml_positions])
+        small_vial_positions.extend([f"Filter Eppi {p}" for p in self.filter_eppi_positions])
+        small_vial_positions.extend([f"Eppi {p}" for p in self.eppi_positions])
+        small_vial_positions.extend([f"HPLC {p}" for p in self.hplc_positions])
+        small_vial_positions.extend([f"HPLC Insert {p}" for p in self.hplc_insert_positions])
+        small_vial_positions.extend([f"Screwcap {p}" for p in self.screwcap_positions])
 
         # ---- float validation for volume entry (allows "585.4") ----
         float_re = re.compile(r"^\d*([.]\d*)?$")
@@ -1525,8 +1499,7 @@ class LiquidHandlerApp:
         for i in range(8):
             row_vars = {
                 "execute": tk.BooleanVar(value=False),
-                "src_mod": tk.StringVar(value=""),
-                "src_pos": tk.StringVar(value=""),
+                "source": tk.StringVar(value=""),
                 "volume": tk.StringVar(value="800.0"),
                 "dest_start": tk.StringVar(value=""),
                 "dest_end": tk.StringVar(value=""),
@@ -1537,22 +1510,10 @@ class LiquidHandlerApp:
             ttk.Checkbutton(table, variable=row_vars["execute"]).grid(row=r, column=0, padx=2, pady=2)
             ttk.Label(table, text=f"{i + 1}", width=4, anchor="center").grid(row=r, column=1, padx=2, pady=2)
 
-            cb_mod = ttk.Combobox(
-                table, textvariable=row_vars["src_mod"],
-                values=module_names, width=12, state="readonly"
-            )
-            cb_mod.grid(row=r, column=2, padx=2, pady=2)
-
-            cb_pos = ttk.Combobox(table, textvariable=row_vars["src_pos"], width=10, state="readonly")
-            cb_pos.grid(row=r, column=3, padx=2, pady=2)
-            row_vars["_src_pos_combo"] = cb_pos
-
-            cb_mod.bind(
-                "<<ComboboxSelected>>",
-                lambda e, m=row_vars["src_mod"], p=cb_pos, v=row_vars["src_pos"]:
-                self._update_source_pos_options(m, p, v)
-            )
-            self._update_source_pos_options(row_vars["src_mod"], cb_pos, row_vars["src_pos"])
+            ttk.Combobox(
+                table, textvariable=row_vars["source"],
+                values=source_vial_positions, width=14, state="readonly"
+            ).grid(row=r, column=2, padx=2, pady=2)
 
             ttk.Entry(
                 table,
@@ -1561,17 +1522,17 @@ class LiquidHandlerApp:
                 justify="center",
                 validate="key",
                 validatecommand=vcmd
-            ).grid(row=r, column=4, padx=2, pady=2)
+            ).grid(row=r, column=3, padx=2, pady=2)
 
             ttk.Combobox(
                 table, textvariable=row_vars["dest_start"],
-                values=dest_positions, width=15, state="readonly"
-            ).grid(row=r, column=5, padx=2, pady=2)
+                values=small_vial_positions, width=15, state="readonly"
+            ).grid(row=r, column=4, padx=2, pady=2)
 
             ttk.Combobox(
                 table, textvariable=row_vars["dest_end"],
-                values=dest_positions, width=15, state="readonly"
-            ).grid(row=r, column=6, padx=2, pady=2)
+                values=small_vial_positions, width=15, state="readonly"
+            ).grid(row=r, column=5, padx=2, pady=2)
 
             self.aliquot_rows.append(row_vars)
 
@@ -4140,17 +4101,14 @@ class LiquidHandlerApp:
             if not row["execute"].get():
                 continue
 
-            src_mod_name = row["src_mod"].get()
-            src_pos_name = row["src_pos"].get()
+            source = row["source"].get()
             volume_str = row["volume"].get()
             dest_start_str = row["dest_start"].get()
             dest_end_str = row["dest_end"].get()
 
-            if not src_mod_name or not src_pos_name or not volume_str or not dest_start_str or not dest_end_str:
+            if not source or not volume_str or not dest_start_str or not dest_end_str:
                 self.log_line(f"[ALIQUOT] Skipping line {idx + 1}: missing configuration.")
                 continue
-
-            source = self._construct_combo_string(src_mod_name, src_pos_name)
 
             try:
                 volume = float(volume_str)
