@@ -257,7 +257,7 @@ class LiquidHandlerApp:
     def __init__(self, root):
         self.root = root
         self.root.title("Mira Liquid Handler")
-        self.root.geometry("1024x580")
+        self.root.geometry("1024x550")
         self.root.resizable(False, False)
 
         # --- LOGGING SETUP ---
