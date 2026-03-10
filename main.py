@@ -1657,9 +1657,9 @@ class LiquidHandlerApp:
                 "src_pos": tk.StringVar(value=f"{plate_row}1"),
                 "src_conc": tk.StringVar(value=""),
                 "diluent": tk.StringVar(value="Wash A"),
-                "aliquot_conc": tk.StringVar(value=""),
+                "aliquot_conc": tk.StringVar(value="1.25"),
                 "aliquot_vol": tk.StringVar(value="160"),
-                "bottom_offset": tk.StringVar(value="11"),
+                "bottom_offset": tk.StringVar(value="14.5"),
             }
 
             r = i + 1
