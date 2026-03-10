@@ -1634,8 +1634,7 @@ class LiquidHandlerApp:
         cols = [
             ("Exec", 4), ("Line", 3), ("Fixed Source", 12),
             ("Source Conc", 10), ("Diluent", 14),
-            ("Aliquot Conc", 10), ("Aliquot Vol", 10),
-            ("Bottom Offset (mm)", 16)
+            ("Aliquot Conc", 10), ("Aliquot Vol", 10)
         ]
 
         for c, (text, w) in enumerate(cols):
@@ -1659,7 +1658,6 @@ class LiquidHandlerApp:
                 "diluent": tk.StringVar(value="Wash A"),
                 "aliquot_conc": tk.StringVar(value=""),
                 "aliquot_vol": tk.StringVar(value="160"),
-                "bottom_offset": tk.StringVar(value="11"),
             }
 
             r = i + 1
@@ -1687,11 +1685,6 @@ class LiquidHandlerApp:
                 table, textvariable=row_vars["aliquot_vol"],
                 width=10, justify="center"
             ).grid(row=r, column=6, padx=2, pady=2)
-
-            ttk.Entry(
-                table, textvariable=row_vars["bottom_offset"],
-                width=16, justify="center"
-            ).grid(row=r, column=7, padx=2, pady=2)
 
             self.dilution_aliquots_rows.append(row_vars)
 
@@ -2213,7 +2206,6 @@ class LiquidHandlerApp:
                 src_conc = float(row["src_conc"].get())
                 aliquot_conc = float(row["aliquot_conc"].get())
                 aliquot_vol = float(row["aliquot_vol"].get())
-                bottom_offset_mm = float(row["bottom_offset"].get())
             except (TypeError, ValueError):
                 self.log_line(f"[DIL+ALIQ] Skipping line {idx + 1}: invalid numeric input.")
                 continue
@@ -2263,7 +2255,6 @@ class LiquidHandlerApp:
                 "aliquot_vol": aliquot_vol,
                 "aliquot_total": total_aliquot,
                 "aliquot_aspirate": aspirate_for_aliquots,
-                "bottom_offset_mm": bottom_offset_mm,
             })
 
         if not tasks:
@@ -2411,8 +2402,7 @@ class LiquidHandlerApp:
 
                     asp_vol = transfer_vol * 1.10 if transfer_vol < 100 else transfer_vol
                     e_loaded_pos = -1 * (air_gap_ul + asp_vol) * STEPS_PER_UL
-                    asp_z = src_asp_z + task["bottom_offset_mm"] if step_idx == 0 else src_asp_z
-                    cmds.append(f"G0 Z{asp_z:.2f} F{JOG_SPEED_Z}")
+                    cmds.append(f"G0 Z{src_asp_z:.2f} F{JOG_SPEED_Z}")
                     cmds.append(f"G1 E{e_loaded_pos:.3f} F{PIP_SPEED}")
                     cmds.append(f"G0 Z{src_safe_z:.2f} F{JOG_SPEED_Z}")
                     self._send_lines_with_ok(cmds)
@@ -2488,7 +2478,7 @@ class LiquidHandlerApp:
                     remaining_volume -= task["aliquot_vol"]
                     e_after_disp = -1 * (air_gap_ul + remaining_volume + 100.0) * STEPS_PER_UL
 
-                    dispense_z = dest_asp_z + task["bottom_offset_mm"]
+                    dispense_z = dest_asp_z
                     cmds_disp.append(f"G0 Z{dispense_z:.2f} F{JOG_SPEED_Z}")
                     cmds_disp.append(f"G1 E{e_after_disp:.3f} F{PIP_SPEED}")
                     cmds_disp.append(f"G0 Z{dest_safe_z:.2f} F{JOG_SPEED_Z}")
@@ -2626,22 +2616,14 @@ class LiquidHandlerApp:
 
     def _build_maintenance_tab(self, parent):
         split_frame = ttk.Frame(parent, padding=10)
-        split_frame.pack(fill="x", expand=False)
-
+        split_frame.pack(fill="both", expand=True)
         left_frame = ttk.LabelFrame(split_frame, text="Controls", padding=10)
-        left_frame.pack(side="left", fill="y", padx=(0, 5), pady=5)
+        left_frame.pack(side="left", fill="y", padx=(0, 5))
         ttk.Button(left_frame, text="PARK HEAD", command=self.park_head_sequence).pack(fill="x", pady=10)
         ttk.Button(left_frame, text="UNPAUSE / RESUME", command=self.send_resume).pack(fill="x", pady=10)
-
         right_frame = ttk.LabelFrame(split_frame, text="System Log", padding=5)
-        right_frame.pack(side="left", fill="y", expand=False, padx=(5, 0), pady=5)
-        self.log = scrolledtext.ScrolledText(
-            right_frame,
-            state="disabled",
-            wrap="word",
-            font=("Consolas", 9),
-            height=24,
-        )
+        right_frame.pack(side="right", fill="both", expand=True, padx=5, pady=5)
+        self.log = scrolledtext.ScrolledText(right_frame, state="disabled", wrap="word", font=("Consolas", 9))
         self.log.pack(fill="both", expand=True)
 
     def _build_testing_tab(self, parent):
