@@ -2289,14 +2289,16 @@ class LiquidHandlerApp:
 
         threading.Thread(target=run_seq, daemon=True).start()
 
-    def dilution_aliquots_sequence(self, rows=None, plate_name="plate"):
+    def dilution_aliquots_sequence(self, rows=None, plate_name="plate", plate_data=None):
         if not self.ser or not self.ser.is_open:
             messagebox.showwarning("Not Connected", "Please connect to the printer first.")
             return
 
-        # Use provided rows or default to legacy single-plate rows
-        if rows is None:
-            rows = getattr(self, 'dilution_aliquots_rows', [])
+        # Use provided plate_data or construct it from legacy single-plate arguments
+        if plate_data is None:
+            if rows is None:
+                rows = getattr(self, 'dilution_aliquots_rows', [])
+            plate_data = [(plate_name, rows)]
 
         # Set running flag for execute_all_plates to wait
         self._dilution_aliquots_running = True
@@ -2310,70 +2312,72 @@ class LiquidHandlerApp:
         global_safe_z = self.resolve_coords(0, 0, GLOBAL_SAFE_Z_OFFSET)[2]
 
         tasks = []
-        for idx, row in enumerate(rows):
-            if not row["execute"].get():
-                continue
+        for p_name, p_rows in plate_data:
+            for idx, row in enumerate(p_rows):
+                if not row["execute"].get():
+                    continue
 
-            plate_row_char = plate_rows[idx]
-            source_str = f"PLATE {plate_row_char}1"
-            diluent_str = row["diluent"].get().strip()
+                plate_row_char = plate_rows[idx]
+                source_str = f"{p_name.upper()} {plate_row_char}1"
+                diluent_str = row["diluent"].get().strip()
 
-            try:
-                src_conc = float(row["src_conc"].get())
-                aliquot_conc = float(row["aliquot_conc"].get())
-                aliquot_vol = float(row["aliquot_vol"].get())
-                bottom_offset_mm = float(row["bottom_offset"].get())
-            except (TypeError, ValueError):
-                self.log_line(f"[DIL+ALIQ] Skipping line {idx + 1}: invalid numeric input.")
-                continue
+                try:
+                    src_conc = float(row["src_conc"].get())
+                    aliquot_conc = float(row["aliquot_conc"].get())
+                    aliquot_vol = float(row["aliquot_vol"].get())
+                    bottom_offset_mm = float(row["bottom_offset"].get())
+                except (TypeError, ValueError):
+                    self.log_line(f"[DIL+ALIQ] Skipping {p_name} line {idx + 1}: invalid numeric input.")
+                    continue
 
-            if not diluent_str:
-                self.log_line(f"[DIL+ALIQ] Skipping line {idx + 1}: missing diluent.")
-                continue
-            if src_conc <= 0 or aliquot_conc <= 0 or aliquot_conc >= src_conc:
-                self.log_line(f"[DIL+ALIQ] Skipping line {idx + 1}: conc must be positive and aliquot conc < source conc.")
-                continue
-            if aliquot_vol <= 0:
-                self.log_line(f"[DIL+ALIQ] Skipping line {idx + 1}: aliquot volume must be positive.")
-                continue
+                if not diluent_str:
+                    self.log_line(f"[DIL+ALIQ] Skipping {p_name} line {idx + 1}: missing diluent.")
+                    continue
+                if src_conc <= 0 or aliquot_conc <= 0 or aliquot_conc >= src_conc:
+                    self.log_line(f"[DIL+ALIQ] Skipping {p_name} line {idx + 1}: conc must be positive and aliquot conc < source conc.")
+                    continue
+                if aliquot_vol <= 0:
+                    self.log_line(f"[DIL+ALIQ] Skipping {p_name} line {idx + 1}: aliquot volume must be positive.")
+                    continue
 
-            total_aliquot = aliquot_vol * len(aliquot_cols)
-            trash_vol_ul = 100.0
-            aspirate_for_aliquots = total_aliquot + trash_vol_ul
-            if aspirate_for_aliquots > 800.0:
-                self.log_line(
-                    f"[DIL+ALIQ] Skipping line {idx + 1}: aliquot package needs {aspirate_for_aliquots:.1f}uL (>800uL).")
-                continue
+                total_aliquot = aliquot_vol * len(aliquot_cols)
+                trash_vol_ul = 100.0
+                aspirate_for_aliquots = total_aliquot + trash_vol_ul
+                if aspirate_for_aliquots > 800.0:
+                    self.log_line(
+                        f"[DIL+ALIQ] Skipping {p_name} line {idx + 1}: aliquot package needs {aspirate_for_aliquots:.1f}uL (>800uL).")
+                    continue
 
-            steps = self._compute_dilution_steps(src_conc, aliquot_conc)
-            if not steps:
-                self.log_line(f"[DIL+ALIQ] Skipping line {idx + 1}: could not compute dilution steps.")
-                continue
+                steps = self._compute_dilution_steps(src_conc, aliquot_conc)
+                if not steps:
+                    self.log_line(f"[DIL+ALIQ] Skipping {p_name} line {idx + 1}: could not compute dilution steps.")
+                    continue
 
-            start_col = 2
-            cols_needed = len(steps)
-            if start_col + cols_needed - 1 > 8:
-                self.log_line(
-                    f"[DIL+ALIQ] Skipping line {idx + 1}: needs {cols_needed} dilution wells in cols 2-8.")
-                continue
+                start_col = 2
+                cols_needed = len(steps)
+                if start_col + cols_needed - 1 > 8:
+                    self.log_line(
+                        f"[DIL+ALIQ] Skipping {p_name} line {idx + 1}: needs {cols_needed} dilution wells in cols 2-8.")
+                    continue
 
-            wells = [f"{plate_row_char}{start_col + s}" for s in range(cols_needed)]
-            aliquot_destinations = [f"PLATE {plate_row_char}{c}" for c in aliquot_cols]
+                wells = [f"{plate_row_char}{start_col + s}" for s in range(cols_needed)]
+                aliquot_destinations = [f"{p_name.upper()} {plate_row_char}{c}" for c in aliquot_cols]
 
-            tasks.append({
-                "line": idx + 1,
-                "source": source_str,
-                "diluent": diluent_str,
-                "src_conc": src_conc,
-                "aliquot_conc": aliquot_conc,
-                "steps": steps,
-                "wells": wells,
-                "aliquot_destinations": aliquot_destinations,
-                "aliquot_vol": aliquot_vol,
-                "aliquot_total": total_aliquot,
-                "aliquot_aspirate": aspirate_for_aliquots,
-                "bottom_offset_mm": bottom_offset_mm,
-            })
+                tasks.append({
+                    "plate_name": p_name,
+                    "line": idx + 1,
+                    "source": source_str,
+                    "diluent": diluent_str,
+                    "src_conc": src_conc,
+                    "aliquot_conc": aliquot_conc,
+                    "steps": steps,
+                    "wells": wells,
+                    "aliquot_destinations": aliquot_destinations,
+                    "aliquot_vol": aliquot_vol,
+                    "aliquot_total": total_aliquot,
+                    "aliquot_aspirate": aspirate_for_aliquots,
+                    "bottom_offset_mm": bottom_offset_mm,
+                })
 
         if not tasks:
             messagebox.showinfo("No Tasks", "No valid Dilution+Aliquot lines selected for execution.")
@@ -2399,7 +2403,7 @@ class LiquidHandlerApp:
                 if dil_src not in diluent_jobs:
                     diluent_jobs[dil_src] = []
                 for step_idx, step in enumerate(task["steps"]):
-                    diluent_jobs[dil_src].append((task["wells"][step_idx], step["diluent_vol"]))
+                    diluent_jobs[dil_src].append((task["plate_name"], task["wells"][step_idx], step["diluent_vol"]))
 
             for dil_str, wells_and_vols in diluent_jobs.items():
                 self.log_line(f"[DIL+ALIQ] === PREFILL: {len(wells_and_vols)} wells with {dil_str} ===")
@@ -2420,10 +2424,10 @@ class LiquidHandlerApp:
 
                 dil_mod, dil_x, dil_y, dil_safe_z, dil_asp_z, _ = self.get_coords_from_combo(dil_str)
 
-                for well_name, diluent_vol in wells_and_vols:
-                    dest_str = f"PLATE {well_name}"
-                    self.log_line(f"[DIL+ALIQ] Prefilling {well_name} with {diluent_vol}uL diluent...")
-                    self.last_cmd_var.set(f"Prefill: {diluent_vol}uL -> {well_name}")
+                for p_name, well_name, diluent_vol in wells_and_vols:
+                    dest_str = f"{p_name.upper()} {well_name}"
+                    self.log_line(f"[DIL+ALIQ] Prefilling {p_name} {well_name} with {diluent_vol}uL diluent...")
+                    self.last_cmd_var.set(f"Prefill: {diluent_vol}uL -> {p_name} {well_name}")
 
                     use_opt_z_dil = (current_simulated_module in SMALL_VIAL_MODULES and dil_mod in SMALL_VIAL_MODULES)
                     travel_z_dil = self.resolve_coords(0, 0, _4ML_RACK_CONFIG["Z_SAFE"])[2] if use_opt_z_dil else global_safe_z
@@ -2468,26 +2472,23 @@ class LiquidHandlerApp:
 
             self.log_line("[DIL+ALIQ] === PREFILL COMPLETE. Starting transfer+mix+aliquot phase. ===")
 
-            abs_plate_asp_z = self.resolve_coords(0, 0, PLATE_CONFIG["Z_ASPIRATE"])[2]
-            abs_plate_disp_z = self.resolve_coords(0, 0, PLATE_CONFIG["Z_DISPENSE"])[2]
-            abs_plate_safe_z = self.resolve_coords(0, 0, PLATE_CONFIG["Z_SAFE"])[2]
-
             for task in tasks:
                 line_num = task["line"]
+                p_name = task["plate_name"]
                 steps = task["steps"]
                 wells = task["wells"]
                 source_str = task["source"]
 
                 self.log_line(
-                    f"=== DIL+ALIQ Line {line_num}: {task['src_conc']} -> {task['aliquot_conc']} ug/mL, {len(steps)} dilution step(s) ===")
+                    f"=== DIL+ALIQ {p_name} Line {line_num}: {task['src_conc']} -> {task['aliquot_conc']} ug/mL, {len(steps)} dilution step(s) ===")
 
                 tip_key = self._find_next_available_tip()
                 if not tip_key:
-                    messagebox.showerror("No Tips", f"Ran out of tips at Line {line_num}.")
+                    messagebox.showerror("No Tips", f"Ran out of tips at {p_name} Line {line_num}.")
                     self.last_cmd_var.set("Idle")
                     return
 
-                self.log_line(f"[L{line_num}] Picking tip {tip_key} for dilution + mixing + aliquot...")
+                self.log_line(f"[{p_name} L{line_num}] Picking tip {tip_key} for dilution + mixing + aliquot...")
                 self._send_lines_with_ok(self._get_pick_tip_commands(tip_key, start_module=current_simulated_module))
                 self.tip_inventory[tip_key] = False
                 self.root.after(0, self.update_tip_grid_colors)
@@ -2498,12 +2499,12 @@ class LiquidHandlerApp:
                     transfer_vol = step["transfer_vol"]
                     result_conc = step["result_conc"]
                     dest_well = wells[step_idx]
-                    dest_str = f"PLATE {dest_well}"
-                    asp_source = source_str if step_idx == 0 else f"PLATE {wells[step_idx - 1]}"
+                    dest_str = f"{p_name.upper()} {dest_well}"
+                    asp_source = source_str if step_idx == 0 else f"{p_name.upper()} {wells[step_idx - 1]}"
 
                     self.log_line(
-                        f"--- Step {step_idx + 1}/{len(steps)}: {transfer_vol}uL from {asp_source} -> {dest_well} (target {result_conc} ug/mL) ---")
-                    self.last_cmd_var.set(f"L{line_num} Step {step_idx + 1}/{len(steps)}: {dest_well}")
+                        f"--- Step {step_idx + 1}/{len(steps)}: {transfer_vol}uL from {asp_source} -> {dest_str} (target {result_conc} ug/mL) ---")
+                    self.last_cmd_var.set(f"{p_name} L{line_num} Step {step_idx + 1}/{len(steps)}: {dest_well}")
 
                     src_mod, src_x, src_y, src_safe_z, src_asp_z, _ = self.get_coords_from_combo(asp_source)
                     use_opt_z_src = (current_simulated_module in SMALL_VIAL_MODULES and src_mod in SMALL_VIAL_MODULES)
@@ -2528,7 +2529,7 @@ class LiquidHandlerApp:
                     self.update_last_module(src_mod)
                     current_simulated_module = src_mod
 
-                    dest_mod, dest_x, dest_y, dest_safe_z, _, dest_disp_z = self.get_coords_from_combo(dest_str)
+                    dest_mod, dest_x, dest_y, dest_safe_z, dest_asp_z, dest_disp_z = self.get_coords_from_combo(dest_str)
                     use_opt_z_dest = (current_simulated_module in SMALL_VIAL_MODULES and dest_mod in SMALL_VIAL_MODULES)
                     travel_z_dest = self.resolve_coords(0, 0, _4ML_RACK_CONFIG["Z_SAFE"])[2] if use_opt_z_dest else global_safe_z
 
@@ -2545,19 +2546,19 @@ class LiquidHandlerApp:
                     current_simulated_module = dest_mod
 
                     mix_times = 1 if step_idx == 0 and (transfer_vol / 800.0) >= 0.5 else 2
-                    self.log_line(f"[L{line_num}] Mixing {dest_well} {mix_times} time(s)...")
+                    self.log_line(f"[{p_name} L{line_num}] Mixing {dest_str} {mix_times} time(s)...")
 
                     e_mix_start = -1 * 200.0 * STEPS_PER_UL
                     e_mix_asp = -1 * 1000.0 * STEPS_PER_UL
                     e_mix_disp = -1 * 100.0 * STEPS_PER_UL
 
-                    cmds_mix = [f"G1 E{e_mix_start:.3f} F{PIP_SPEED}", f"G0 Z{abs_plate_asp_z:.2f} F{JOG_SPEED_Z}"]
+                    cmds_mix = [f"G1 E{e_mix_start:.3f} F{PIP_SPEED}", f"G0 Z{dest_asp_z:.2f} F{JOG_SPEED_Z}"]
                     for _ in range(mix_times):
                         cmds_mix.append(f"G1 E{e_mix_asp:.3f} F{PIP_SPEED}")
-                        cmds_mix.append(f"G0 Z{abs_plate_disp_z:.2f} F{JOG_SPEED_Z}")
+                        cmds_mix.append(f"G0 Z{dest_disp_z:.2f} F{JOG_SPEED_Z}")
                         cmds_mix.append(f"G1 E{e_mix_disp:.3f} F{PIP_SPEED}")
-                        cmds_mix.append(f"G0 Z{abs_plate_asp_z:.2f} F{JOG_SPEED_Z}")
-                    cmds_mix.append(f"G0 Z{abs_plate_safe_z:.2f} F{JOG_SPEED_Z}")
+                        cmds_mix.append(f"G0 Z{dest_asp_z:.2f} F{JOG_SPEED_Z}")
+                    cmds_mix.append(f"G0 Z{dest_safe_z:.2f} F{JOG_SPEED_Z}")
                     cmds_mix.append("M18 E")
                     self._send_lines_with_ok(cmds_mix)
 
@@ -2566,9 +2567,9 @@ class LiquidHandlerApp:
                     self.live_vol_var.set(f"{self.current_pipette_volume:.1f}")
 
                 final_well = wells[-1]
-                final_source = f"PLATE {final_well}"
+                final_source = f"{p_name.upper()} {final_well}"
                 self.log_line(
-                    f"[L{line_num}] Aliquoting from {final_well}: {task['aliquot_vol']:.2f}uL into {len(task['aliquot_destinations'])} wells...")
+                    f"[{p_name} L{line_num}] Aliquoting from {final_source}: {task['aliquot_vol']:.2f}uL into {len(task['aliquot_destinations'])} wells...")
 
                 src_mod, src_x, src_y, src_safe_z, src_asp_z, _ = self.get_coords_from_combo(final_source)
                 cmds_asp_aliq = [f"G1 E{e_gap_pos:.3f} F{PIP_SPEED}"]
@@ -2584,8 +2585,8 @@ class LiquidHandlerApp:
 
                 remaining_volume = task["aliquot_total"]
                 for dest_str in task["aliquot_destinations"]:
-                    self.log_line(f"[L{line_num}] Aliquot dispense {task['aliquot_vol']:.2f}uL -> {dest_str}")
-                    self.last_cmd_var.set(f"L{line_num}: {task['aliquot_vol']:.2f}uL -> {dest_str}")
+                    self.log_line(f"[{p_name} L{line_num}] Aliquot dispense {task['aliquot_vol']:.2f}uL -> {dest_str}")
+                    self.last_cmd_var.set(f"{p_name} L{line_num}: {task['aliquot_vol']:.2f}uL -> {dest_str}")
 
                     dest_mod, dest_x, dest_y, dest_safe_z, dest_asp_z, _ = self.get_coords_from_combo(dest_str)
                     cmds_disp = []
@@ -2610,12 +2611,12 @@ class LiquidHandlerApp:
                 self.vol_display_var.set(f"{self.current_pipette_volume:.1f} uL")
                 self.live_vol_var.set(f"{self.current_pipette_volume:.1f}")
 
-                self.log_line(f"[L{line_num}] Ejecting compound/aliquot tip...")
+                self.log_line(f"[{p_name} L{line_num}] Ejecting compound/aliquot tip...")
                 self._send_lines_with_ok(self._get_eject_tip_commands())
                 self.update_last_module("EJECT")
                 current_simulated_module = "EJECT"
 
-                self.log_line(f"=== DIL+ALIQ Line {line_num} COMPLETE ===")
+                self.log_line(f"=== DIL+ALIQ {p_name} Line {line_num} COMPLETE ===")
 
             self.log_command("[DIL+ALIQ] All lines complete. Parking.")
             self.last_cmd_var.set("Parking...")
@@ -2656,26 +2657,8 @@ class LiquidHandlerApp:
 
         self.log_command("[DIL+ALIQ ALL] Starting execution of all plates...")
 
-        # Execute each plate sequentially
-        for plate_name, rows in plates:
-            # Check if this plate has any rows selected
-            has_selection = False
-            for row in rows:
-                if row["execute"].get():
-                    has_selection = True
-                    break
-
-            if has_selection:
-                self.log_line(f"[DIL+ALIQ ALL] Executing {plate_name}...")
-                # Run the sequence for this plate
-                self.dilution_aliquots_sequence(rows, plate_name)
-                # Wait for the sequence to complete before starting the next plate
-                # The sequence runs in a thread, so we need to wait for it to finish
-                # We'll use a simple polling approach
-                while hasattr(self, '_dilution_aliquots_running') and self._dilution_aliquots_running:
-                    time.sleep(0.1)
-
-        self.log_command("[DIL+ALIQ ALL] All plates execution complete.")
+        # Execute all plates in a single sequence
+        self.dilution_aliquots_sequence(plate_data=plates)
 
     def _update_falcon_exclusivity(self):
         # Include both Falcon and 4mL vials for destination exclusivity
