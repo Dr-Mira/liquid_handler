@@ -2311,14 +2311,19 @@ class LiquidHandlerApp:
         e_blowout_pos = -1 * 100.0 * STEPS_PER_UL
         global_safe_z = self.resolve_coords(0, 0, GLOBAL_SAFE_Z_OFFSET)[2]
 
+        # Helper to convert plate_name to module format (e.g., "plate left" -> "PLATE_LEFT")
+        def plate_name_to_module(name):
+            return name.upper().replace(" ", "_")
+
         tasks = []
         for p_name, p_rows in plate_data:
+            p_mod = plate_name_to_module(p_name)
             for idx, row in enumerate(p_rows):
                 if not row["execute"].get():
                     continue
 
                 plate_row_char = plate_rows[idx]
-                source_str = f"{p_name.upper()} {plate_row_char}1"
+                source_str = f"{p_mod} {plate_row_char}1"
                 diluent_str = row["diluent"].get().strip()
 
                 try:
@@ -2361,10 +2366,11 @@ class LiquidHandlerApp:
                     continue
 
                 wells = [f"{plate_row_char}{start_col + s}" for s in range(cols_needed)]
-                aliquot_destinations = [f"{p_name.upper()} {plate_row_char}{c}" for c in aliquot_cols]
+                aliquot_destinations = [f"{p_mod} {plate_row_char}{c}" for c in aliquot_cols]
 
                 tasks.append({
                     "plate_name": p_name,
+                    "plate_module": p_mod,
                     "line": idx + 1,
                     "source": source_str,
                     "diluent": diluent_str,
@@ -2403,7 +2409,7 @@ class LiquidHandlerApp:
                 if dil_src not in diluent_jobs:
                     diluent_jobs[dil_src] = []
                 for step_idx, step in enumerate(task["steps"]):
-                    diluent_jobs[dil_src].append((task["plate_name"], task["wells"][step_idx], step["diluent_vol"]))
+                    diluent_jobs[dil_src].append((task["plate_module"], task["wells"][step_idx], step["diluent_vol"]))
 
             for dil_str, wells_and_vols in diluent_jobs.items():
                 self.log_line(f"[DIL+ALIQ] === PREFILL: {len(wells_and_vols)} wells with {dil_str} ===")
@@ -2424,10 +2430,10 @@ class LiquidHandlerApp:
 
                 dil_mod, dil_x, dil_y, dil_safe_z, dil_asp_z, _ = self.get_coords_from_combo(dil_str)
 
-                for p_name, well_name, diluent_vol in wells_and_vols:
-                    dest_str = f"{p_name.upper()} {well_name}"
-                    self.log_line(f"[DIL+ALIQ] Prefilling {p_name} {well_name} with {diluent_vol}uL diluent...")
-                    self.last_cmd_var.set(f"Prefill: {diluent_vol}uL -> {p_name} {well_name}")
+                for p_mod, well_name, diluent_vol in wells_and_vols:
+                    dest_str = f"{p_mod} {well_name}"
+                    self.log_line(f"[DIL+ALIQ] Prefilling {p_mod} {well_name} with {diluent_vol}uL diluent...")
+                    self.last_cmd_var.set(f"Prefill: {diluent_vol}uL -> {p_mod} {well_name}")
 
                     use_opt_z_dil = (current_simulated_module in SMALL_VIAL_MODULES and dil_mod in SMALL_VIAL_MODULES)
                     travel_z_dil = self.resolve_coords(0, 0, _4ML_RACK_CONFIG["Z_SAFE"])[2] if use_opt_z_dil else global_safe_z
@@ -2475,6 +2481,7 @@ class LiquidHandlerApp:
             for task in tasks:
                 line_num = task["line"]
                 p_name = task["plate_name"]
+                p_mod = task["plate_module"]
                 steps = task["steps"]
                 wells = task["wells"]
                 source_str = task["source"]
@@ -2499,8 +2506,8 @@ class LiquidHandlerApp:
                     transfer_vol = step["transfer_vol"]
                     result_conc = step["result_conc"]
                     dest_well = wells[step_idx]
-                    dest_str = f"{p_name.upper()} {dest_well}"
-                    asp_source = source_str if step_idx == 0 else f"{p_name.upper()} {wells[step_idx - 1]}"
+                    dest_str = f"{p_mod} {dest_well}"
+                    asp_source = source_str if step_idx == 0 else f"{p_mod} {wells[step_idx - 1]}"
 
                     self.log_line(
                         f"--- Step {step_idx + 1}/{len(steps)}: {transfer_vol}uL from {asp_source} -> {dest_str} (target {result_conc} ug/mL) ---")
@@ -2567,7 +2574,7 @@ class LiquidHandlerApp:
                     self.live_vol_var.set(f"{self.current_pipette_volume:.1f}")
 
                 final_well = wells[-1]
-                final_source = f"{p_name.upper()} {final_well}"
+                final_source = f"{p_mod} {final_well}"
                 self.log_line(
                     f"[{p_name} L{line_num}] Aliquoting from {final_source}: {task['aliquot_vol']:.2f}uL into {len(task['aliquot_destinations'])} wells...")
 
