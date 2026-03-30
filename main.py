@@ -178,9 +178,10 @@ FALCON_RACK_CONFIG_DEFAULT = {
 }
 
 # --- WASH STATION CONFIGURATION DEFAULT (Relative Offsets) ---
+# 1x2 layout: A1 (top) and B1 (bottom), single column, two rows
 WASH_RACK_CONFIG_DEFAULT = {
     "A1_X": 51.5, "A1_Y": -51.5,
-    "B2_X": 88.3, "B2_Y": -88.0,
+    "B1_X": 88.3, "B1_Y": -88.0,
     "Z_SAFE": 37.2,
     "Z_ASPIRATE": -52.8,
     "Z_DISPENSE": 12.2,
@@ -378,7 +379,7 @@ class LiquidHandlerApp:
         self.plate_wells_right = [f"{r}{c}" for r in self.plate_rows for c in self.plate_cols]
 
         self.falcon_positions = ["A1", "A2", "A3", "A4", "B1", "B2", "B3", "B4", "C1", "C2", "C3", "C4", "50mL"]
-        self.wash_positions = ["Wash A", "Wash B", "Wash C", "Trash"]
+        self.wash_positions = ["Wash A", "Wash B"]
         self._4ml_positions = [f"A{i}" for i in range(1, 9)]
         self.filter_eppi_positions = [f"B{i}" for i in range(1, 9)]
         self.eppi_positions = [f"C{i}" for i in range(1, 9)]
@@ -1029,21 +1030,21 @@ class LiquidHandlerApp:
     def load_transfer_preset_1(self):
         preset = [
             {"execute": False, "src_mod": "4mL Rack", "src_pos": "A1", "dest": "Filter Eppi B1", "vol": 900,
-             "volatile": True, "wash_vol": 200, "wash_times": 2, "wash_src": "Wash B"},
+             "volatile": True, "wash_vol": 200, "wash_times": 2, "wash_src": "Wash A"},
             {"execute": False, "src_mod": "4mL Rack", "src_pos": "A2", "dest": "Filter Eppi B2", "vol": 900,
-             "volatile": True, "wash_vol": 200, "wash_times": 2, "wash_src": "Wash B"},
+             "volatile": True, "wash_vol": 200, "wash_times": 2, "wash_src": "Wash A"},
             {"execute": False, "src_mod": "4mL Rack", "src_pos": "A3", "dest": "Filter Eppi B3", "vol": 900,
-             "volatile": True, "wash_vol": 200, "wash_times": 2, "wash_src": "Wash B"},
+             "volatile": True, "wash_vol": 200, "wash_times": 2, "wash_src": "Wash A"},
             {"execute": False, "src_mod": "4mL Rack", "src_pos": "A4", "dest": "Filter Eppi B4", "vol": 900,
-             "volatile": True, "wash_vol": 200, "wash_times": 2, "wash_src": "Wash B"},
+             "volatile": True, "wash_vol": 200, "wash_times": 2, "wash_src": "Wash A"},
             {"execute": False, "src_mod": "4mL Rack", "src_pos": "A5", "dest": "Filter Eppi B5", "vol": 900,
-             "volatile": True, "wash_vol": 200, "wash_times": 2, "wash_src": "Wash B"},
+             "volatile": True, "wash_vol": 200, "wash_times": 2, "wash_src": "Wash A"},
             {"execute": False, "src_mod": "4mL Rack", "src_pos": "A6", "dest": "Filter Eppi B6", "vol": 900,
-             "volatile": True, "wash_vol": 200, "wash_times": 2, "wash_src": "Wash B"},
+             "volatile": True, "wash_vol": 200, "wash_times": 2, "wash_src": "Wash A"},
             {"execute": False, "src_mod": "4mL Rack", "src_pos": "A7", "dest": "Filter Eppi B7", "vol": 900,
-             "volatile": True, "wash_vol": 200, "wash_times": 2, "wash_src": "Wash B"},
+             "volatile": True, "wash_vol": 200, "wash_times": 2, "wash_src": "Wash A"},
             {"execute": False, "src_mod": "4mL Rack", "src_pos": "A8", "dest": "Filter Eppi B8", "vol": 900,
-             "volatile": True, "wash_vol": 200, "wash_times": 2, "wash_src": "Wash B"},
+             "volatile": True, "wash_vol": 200, "wash_times": 2, "wash_src": "Wash A"},
         ]
         self._apply_transfer_table_preset(preset, preset_name="Preset 1")
 
@@ -1399,13 +1400,13 @@ class LiquidHandlerApp:
         wash_vol_options = ["0"] + [str(x) for x in range(100, 900, 100)]
         wash_times_options = [str(x) for x in range(1, 6)]
         source_options = self.wash_positions + [f"Falcon {p}" for p in self.falcon_positions]
-        presat_options = ["Wash A", "Wash B", "Wash C"]
+        presat_options = ["Wash A", "Wash B"]
 
         for i in range(12):
             row_vars = {
                 "execute": tk.BooleanVar(value=False),
                 "presat": tk.BooleanVar(value=True),
-                "presat_src": tk.StringVar(value="Wash B"),
+                "presat_src": tk.StringVar(value="Wash A"),
                 "start": tk.StringVar(),
                 "end": tk.StringVar(),
                 "dest": tk.StringVar(),
@@ -1715,7 +1716,7 @@ class LiquidHandlerApp:
                 anchor="center"
             ).grid(row=0, column=c, padx=2, pady=(0, 4), sticky="ew")
 
-        diluent_options = ["Wash A", "Wash B", "Wash C"]
+        diluent_options = ["Wash A", "Wash B"]
         diluent_options.extend([f"Falcon {p}" for p in self.falcon_positions])
 
         rows = []
@@ -1726,7 +1727,7 @@ class LiquidHandlerApp:
                 "execute": tk.BooleanVar(value=False),
                 "src_pos": tk.StringVar(value=f"{plate_row}1"),
                 "src_conc": tk.StringVar(value=""),
-                "diluent": tk.StringVar(value="Wash B"),
+                "diluent": tk.StringVar(value="Wash A"),
                 "aliquot_conc": tk.StringVar(value="1.25"),
                 "aliquot_vol": tk.StringVar(value="160"),
                 "bottom_offset": tk.StringVar(value="14.5"),
@@ -1843,7 +1844,7 @@ class LiquidHandlerApp:
             ).grid(row=0, column=c, padx=2, pady=(0, 4), sticky="ew")
 
         diluent_options = []
-        diluent_options.extend(["Wash A", "Wash B", "Wash C"])
+        diluent_options.extend(["Wash A", "Wash B"])
         diluent_options.extend([f"Falcon {p}" for p in self.falcon_positions])
 
         plate_col_options = [str(i) for i in range(1, 13)]
@@ -3608,12 +3609,13 @@ class LiquidHandlerApp:
         return self.resolve_coords(rx, ry)
 
     def get_wash_coordinates(self, wash_name):
-        mapping = {"Wash A": (0, 0), "Wash B": (1, 0), "Wash C": (0, 1), "Trash": (1, 1)}
+        # 1x2 layout: Wash A (row 0, top) and Wash B (row 1, bottom), single column
+        mapping = {"Wash A": (0, 0), "Wash B": (0, 1)}
         col_idx, row_idx = mapping.get(wash_name, (0, 0))
-        orientation = WASH_RACK_CONFIG.get("ORIENTATION", "horizontal")
-        rx, ry = self._get_interpolated_coords(col_idx, row_idx, 2, 2, WASH_RACK_CONFIG["A1_X"],
+        orientation = WASH_RACK_CONFIG.get("ORIENTATION", "vertical")
+        rx, ry = self._get_interpolated_coords(col_idx, row_idx, 1, 2, WASH_RACK_CONFIG["A1_X"],
                                                WASH_RACK_CONFIG["A1_Y"],
-                                               WASH_RACK_CONFIG["B2_X"], WASH_RACK_CONFIG["B2_Y"], orientation)
+                                               WASH_RACK_CONFIG["B1_X"], WASH_RACK_CONFIG["B1_Y"], orientation)
         return self.resolve_coords(rx, ry)
 
     def get_4ml_coordinates(self, key):
@@ -5279,7 +5281,7 @@ class LiquidHandlerApp:
             "96 well plate right": ("A1", "H12"),
             "15 mL falcon rack": ("A1", "C4"),
             "50 mL falcon rack": ("50mL", "50mL"),  # Single position
-            "wash rack": ("Wash A", "Trash"),
+            "wash rack": ("Wash A", "Wash B"),
             "4mL rack": ("A1", "A8"),
             "filter eppi rack": ("B1", "B8"),
             "eppi rack": ("C1", "C8"),
@@ -5615,9 +5617,9 @@ class LiquidHandlerApp:
                 if position == "Wash A":
                     full_config["WASH_RACK_CONFIG"]["A1_X"] = rel_x
                     full_config["WASH_RACK_CONFIG"]["A1_Y"] = rel_y
-                elif position == "Trash":
-                    full_config["WASH_RACK_CONFIG"]["B2_X"] = rel_x
-                    full_config["WASH_RACK_CONFIG"]["B2_Y"] = rel_y
+                elif position == "Wash B":
+                    full_config["WASH_RACK_CONFIG"]["B1_X"] = rel_x
+                    full_config["WASH_RACK_CONFIG"]["B1_Y"] = rel_y
                 full_config["WASH_RACK_CONFIG"][self.current_calibration_z_height] = rel_z
 
             elif module_name == "4mL rack":
