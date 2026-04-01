@@ -3260,37 +3260,11 @@ class LiquidHandlerApp:
             pass
         self.root.after(50, self._poll_rx_queue)
 
-    def show_time_popup(self, total_seconds):
-        """Displays a simple popup with a countdown timer."""
-        popup = tk.Toplevel(self.root)
-        popup.title("Sequence Time")
-        popup.geometry("300x150")
-        
-        time_var = tk.StringVar()
-        time_var.set(time.strftime('%H:%M:%S', time.gmtime(total_seconds)))
-        
-        label = tk.Label(popup, text="Estimated Time Remaining:", font=("Arial", 12))
-        label.pack(pady=10)
-        
-        timer_label = tk.Label(popup, textvariable=time_var, font=("Arial", 24, "bold"))
-        timer_label.pack(pady=10)
-        
-        def update_timer():
-            nonlocal total_seconds
-            if total_seconds > 0:
-                total_seconds -= 1
-                time_var.set(time.strftime('%H:%M:%S', time.gmtime(total_seconds)))
-                popup.after(1000, update_timer)
-            else:
-                popup.destroy()
-        
-        update_timer()
-        
-        # Add a close button
-        tk.Button(popup, text="Close", command=popup.destroy).pack(pady=5)
-        
-        # Add a pause button
-        tk.Button(popup, text="Pause/Resume", command=self.toggle_pause).pack(pady=5)
+    def _send_raw(self, data: str):
+        with self.serial_lock:
+            if self.ser and self.ser.is_open:
+                self.ser.write(data.encode("utf-8", errors="replace"))
+                self.ser.flush()
 
     # ==========================================
     #           PAUSE / ABORT LOGIC
@@ -3373,10 +3347,6 @@ class LiquidHandlerApp:
             pass
 
     def _send_lines_with_ok(self, lines):
-        # Calculate time and show popup
-        total_time = self.calculate_gcode_time(lines)
-        self.root.after(0, lambda: self.show_time_popup(total_time))
-        
         self.is_sequence_running = True
         self.last_action_time = time.time()
         try:
