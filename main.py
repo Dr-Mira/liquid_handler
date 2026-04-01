@@ -111,6 +111,12 @@ PIP_SPEED = MANUAL_CONTROL_CONFIG["PIP_SPEED"]
 POLL_INTERVAL_MS = COMMUNICATION_CONFIG["POLL_INTERVAL_MS"]
 IDLE_TIMEOUT_BEFORE_POLL = COMMUNICATION_CONFIG["IDLE_TIMEOUT_BEFORE_POLL"]
 
+# --- SEQUENCE TIMER ESTIMATION CONSTANTS ---
+SEQUENCE_TIMER_XY_MAX_SPEED_MM_S = 133.0
+SEQUENCE_TIMER_XY_ACCEL_MM_S2 = 2500.0
+SEQUENCE_TIMER_Z_SPEED_MM_S = 5.0
+SEQUENCE_TIMER_PIPETTE_UL_S = 100.0
+
 # --- EJECT STATION CONFIGURATION DEFAULT (Relative Offsets) ---
 EJECT_STATION_CONFIG_DEFAULT = {
     "APPROACH_X": 78.5,
@@ -334,6 +340,16 @@ class LiquidHandlerApp:
         self.current_x = 0.0
         self.current_y = 0.0
         self.current_z = 0.0
+
+        # --- SEQUENCE TIMER STATE ---
+        self.sequence_timer_popup = None
+        self.sequence_timer_value_var = None
+        self.sequence_timer_name_var = None
+        self.sequence_timer_after_id = None
+        self.sequence_timer_active = False
+        self.sequence_timer_remaining_s = 0.0
+        self.sequence_timer_last_tick = None
+        self.sequence_timer_motion_state = None
 
         # UI Variables
         self.port_var = tk.StringVar(value="/dev/ttyUSB0")
@@ -2296,7 +2312,15 @@ class LiquidHandlerApp:
             self.update_last_module("PARK")
             self.last_cmd_var.set("Idle")
 
-        threading.Thread(target=run_seq, daemon=True).start()
+        self._start_sequence_timer("Dilution Sequence")
+
+        def sequence_thread():
+            try:
+                run_seq()
+            finally:
+                self._stop_sequence_timer()
+
+        threading.Thread(target=sequence_thread, daemon=True).start()
 
     def dilution_aliquots_sequence(self, rows=None, plate_name="plate", plate_data=None):
         if not self.ser or not self.ser.is_open:
@@ -2642,7 +2666,16 @@ class LiquidHandlerApp:
             # Clear running flag
             self._dilution_aliquots_running = False
 
-        threading.Thread(target=run_seq, daemon=True).start()
+        self._start_sequence_timer("Dilution + Aliquots Sequence")
+
+        def sequence_thread():
+            try:
+                run_seq()
+            finally:
+                self._dilution_aliquots_running = False
+                self._stop_sequence_timer()
+
+        threading.Thread(target=sequence_thread, daemon=True).start()
 
     def execute_all_plates(self):
         """Execute dilution+aliquot sequence for all plates with selected exec checkboxes."""
@@ -3260,37 +3293,11 @@ class LiquidHandlerApp:
             pass
         self.root.after(50, self._poll_rx_queue)
 
-    def show_time_popup(self, total_seconds):
-        """Displays a simple popup with a countdown timer."""
-        popup = tk.Toplevel(self.root)
-        popup.title("Sequence Time")
-        popup.geometry("300x150")
-        
-        time_var = tk.StringVar()
-        time_var.set(time.strftime('%H:%M:%S', time.gmtime(total_seconds)))
-        
-        label = tk.Label(popup, text="Estimated Time Remaining:", font=("Arial", 12))
-        label.pack(pady=10)
-        
-        timer_label = tk.Label(popup, textvariable=time_var, font=("Arial", 24, "bold"))
-        timer_label.pack(pady=10)
-        
-        def update_timer():
-            nonlocal total_seconds
-            if total_seconds > 0:
-                total_seconds -= 1
-                time_var.set(time.strftime('%H:%M:%S', time.gmtime(total_seconds)))
-                popup.after(1000, update_timer)
-            else:
-                popup.destroy()
-        
-        update_timer()
-        
-        # Add a close button
-        tk.Button(popup, text="Close", command=popup.destroy).pack(pady=5)
-        
-        # Add a pause button
-        tk.Button(popup, text="Pause/Resume", command=self.toggle_pause).pack(pady=5)
+    def _send_raw(self, data: str):
+        with self.serial_lock:
+            if self.ser and self.ser.is_open:
+                self.ser.write(data.encode("utf-8", errors="replace"))
+                self.ser.flush()
 
     # ==========================================
     #           PAUSE / ABORT LOGIC
@@ -3372,11 +3379,193 @@ class LiquidHandlerApp:
         except:
             pass
 
+    def _format_hhmmss(self, total_seconds):
+        sec = max(0, int(math.ceil(total_seconds)))
+        h = sec // 3600
+        m = (sec % 3600) // 60
+        s = sec % 60
+        return f"{h:02d}:{m:02d}:{s:02d}"
+
+    def _estimate_xy_time_seconds(self, distance_mm):
+        if distance_mm <= 0:
+            return 0.0
+
+        vmax = SEQUENCE_TIMER_XY_MAX_SPEED_MM_S
+        acc = SEQUENCE_TIMER_XY_ACCEL_MM_S2
+        t_to_vmax = vmax / acc
+        d_acc = 0.5 * acc * (t_to_vmax ** 2)
+
+        if distance_mm <= (2.0 * d_acc):
+            return 2.0 * math.sqrt(distance_mm / acc)
+
+        cruise_d = distance_mm - (2.0 * d_acc)
+        return (2.0 * t_to_vmax) + (cruise_d / vmax)
+
+    def _parse_motion_axes(self, line):
+        clean = line.split(";", 1)[0].strip().upper()
+        if not clean:
+            return {}
+        if not (clean.startswith("G0") or clean.startswith("G1")):
+            return {}
+
+        axes = {}
+        for axis, value in re.findall(r"([XYZEF])\s*(-?\d+(?:\.\d+)?)", clean):
+            try:
+                axes[axis] = float(value)
+            except ValueError:
+                continue
+        return axes
+
+    def _estimate_gcode_duration_seconds(self, lines):
+        if self.sequence_timer_motion_state is None:
+            self.sequence_timer_motion_state = {
+                "X": float(self.current_x),
+                "Y": float(self.current_y),
+                "Z": float(self.current_z),
+                "E": None,
+            }
+
+        state = self.sequence_timer_motion_state
+        total_seconds = 0.0
+
+        for line in lines:
+            axes = self._parse_motion_axes(line)
+            if not axes:
+                continue
+
+            x0, y0, z0 = state["X"], state["Y"], state["Z"]
+            x1 = axes.get("X", x0)
+            y1 = axes.get("Y", y0)
+            z1 = axes.get("Z", z0)
+
+            xy_dist = math.hypot(x1 - x0, y1 - y0)
+            z_dist = abs(z1 - z0)
+
+            xy_t = self._estimate_xy_time_seconds(xy_dist)
+            z_t = z_dist / SEQUENCE_TIMER_Z_SPEED_MM_S
+
+            e_t = 0.0
+            if "E" in axes:
+                if state["E"] is not None and STEPS_PER_UL > 0:
+                    delta_ul = abs(axes["E"] - state["E"]) / STEPS_PER_UL
+                    e_t = delta_ul / SEQUENCE_TIMER_PIPETTE_UL_S
+                state["E"] = axes["E"]
+
+            total_seconds += max(xy_t, z_t, e_t)
+
+            state["X"] = x1
+            state["Y"] = y1
+            state["Z"] = z1
+
+        return total_seconds
+
+    def _update_sequence_timer_label(self):
+        if self.sequence_timer_value_var is not None:
+            self.sequence_timer_value_var.set(self._format_hhmmss(self.sequence_timer_remaining_s))
+
+    def _sequence_timer_tick(self):
+        if not self.sequence_timer_active:
+            return
+
+        now = time.time()
+        if self.sequence_timer_last_tick is None:
+            self.sequence_timer_last_tick = now
+        else:
+            dt = now - self.sequence_timer_last_tick
+            if not self.is_paused:
+                self.sequence_timer_remaining_s = max(0.0, self.sequence_timer_remaining_s - dt)
+            self.sequence_timer_last_tick = now
+
+        self._update_sequence_timer_label()
+        self.sequence_timer_after_id = self.root.after(250, self._sequence_timer_tick)
+
+    def _open_sequence_timer_popup(self):
+        if self.sequence_timer_popup is not None and self.sequence_timer_popup.winfo_exists():
+            try:
+                self.sequence_timer_popup.destroy()
+            except Exception:
+                pass
+
+        self.sequence_timer_popup = tk.Toplevel(self.root)
+        self.sequence_timer_popup.title("Sequence Timer")
+        self.sequence_timer_popup.geometry("280x120")
+        self.sequence_timer_popup.resizable(False, False)
+
+        self.sequence_timer_name_var = tk.StringVar(value="Sequence")
+        self.sequence_timer_value_var = tk.StringVar(value="00:00:00")
+
+        ttk.Label(self.sequence_timer_popup, textvariable=self.sequence_timer_name_var, font=("Arial", 10, "bold")).pack(
+            pady=(14, 6)
+        )
+        ttk.Label(self.sequence_timer_popup, textvariable=self.sequence_timer_value_var, font=("Consolas", 24, "bold")).pack(
+            pady=(0, 10)
+        )
+
+        if self.sequence_timer_after_id is not None:
+            try:
+                self.root.after_cancel(self.sequence_timer_after_id)
+            except Exception:
+                pass
+            self.sequence_timer_after_id = None
+
+        self._update_sequence_timer_label()
+        self.sequence_timer_after_id = self.root.after(250, self._sequence_timer_tick)
+
+    def _start_sequence_timer(self, sequence_name):
+        self.sequence_timer_active = True
+        self.sequence_timer_remaining_s = 0.0
+        self.sequence_timer_last_tick = time.time()
+        self.sequence_timer_motion_state = {
+            "X": float(self.current_x),
+            "Y": float(self.current_y),
+            "Z": float(self.current_z),
+            "E": None,
+        }
+
+        self._open_sequence_timer_popup()
+        if self.sequence_timer_name_var is not None:
+            self.sequence_timer_name_var.set(sequence_name)
+
+    def _add_sequence_timer_estimate(self, estimated_seconds):
+        if not self.sequence_timer_active:
+            return
+        if estimated_seconds <= 0:
+            return
+
+        self.sequence_timer_remaining_s += estimated_seconds
+        self.root.after(0, self._update_sequence_timer_label)
+
+    def _stop_sequence_timer(self):
+        self.sequence_timer_active = False
+        self.sequence_timer_last_tick = None
+        self.sequence_timer_motion_state = None
+
+        def _close():
+            if self.sequence_timer_after_id is not None:
+                try:
+                    self.root.after_cancel(self.sequence_timer_after_id)
+                except Exception:
+                    pass
+                self.sequence_timer_after_id = None
+
+            if self.sequence_timer_popup is not None and self.sequence_timer_popup.winfo_exists():
+                try:
+                    self.sequence_timer_popup.destroy()
+                except Exception:
+                    pass
+            self.sequence_timer_popup = None
+            self.sequence_timer_value_var = None
+            self.sequence_timer_name_var = None
+
+        self.root.after(0, _close)
+
     def _send_lines_with_ok(self, lines):
-        # Calculate time and show popup
-        total_time = self.calculate_gcode_time(lines)
-        self.root.after(0, lambda: self.show_time_popup(total_time))
-        
+        lines = list(lines)
+
+        if self.sequence_timer_active:
+            estimate_s = self._estimate_gcode_duration_seconds(lines)
+            self._add_sequence_timer_estimate(estimate_s)
+
         self.is_sequence_running = True
         self.last_action_time = time.time()
         try:
@@ -4417,7 +4606,15 @@ class LiquidHandlerApp:
             self.update_last_module("PARK")
             self.last_cmd_var.set("Idle")
 
-        threading.Thread(target=run_seq, daemon=True).start()
+        self._start_sequence_timer("Transfer Sequence")
+
+        def sequence_thread():
+            try:
+                run_seq()
+            finally:
+                self._stop_sequence_timer()
+
+        threading.Thread(target=sequence_thread, daemon=True).start()
 
     def _perform_single_transfer(self, source_str, dest_str, vol, is_volatile, e_gap_pos, air_gap_ul,
                                  start_module=None):
@@ -4884,7 +5081,15 @@ class LiquidHandlerApp:
             self.update_last_module("PARK")
             self.last_cmd_var.set("Idle")
 
-        threading.Thread(target=run_seq, daemon=True).start()
+        self._start_sequence_timer("Pooling Sequence")
+
+        def sequence_thread():
+            try:
+                run_seq()
+            finally:
+                self._stop_sequence_timer()
+
+        threading.Thread(target=sequence_thread, daemon=True).start()
 
     def aliquots_sequence(self):
         if not self.ser or not self.ser.is_open:
@@ -5042,7 +5247,15 @@ class LiquidHandlerApp:
             self.update_last_module("PARK")
             self.last_cmd_var.set("Idle")
 
-        threading.Thread(target=run_seq, daemon=True).start()
+        self._start_sequence_timer("Aliquots Sequence")
+
+        def sequence_thread():
+            try:
+                run_seq()
+            finally:
+                self._stop_sequence_timer()
+
+        threading.Thread(target=sequence_thread, daemon=True).start()
 
     def _parse_dest_range(self, start_str, end_str):
         """
